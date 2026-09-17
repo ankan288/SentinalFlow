@@ -1,0 +1,54 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://sentinelflow/contracts/authorization/authorization-context.schema.json",
+  "title": "AuthorizationContext",
+  "description": "Context passed into Cedar policy evaluations at trust boundary TB-5. Derived strictly from trusted server-side state, never from untrusted client or LLM input.",
+  "type": "object",
+  "required": [
+    "approved_by_analyst",
+    "approved_by_admin",
+    "request_source",
+    "mfa_authenticated",
+    "risk_level",
+    "target_matches_incident"
+  ],
+  "additionalProperties": false,
+  "properties": {
+    "approved_by_analyst": {
+      "type": "boolean",
+      "description": "True if an authenticated SOC Analyst has explicitly approved this action in the UI."
+    },
+    "approved_by_admin": {
+      "type": "boolean",
+      "description": "True if an authenticated Security Admin has approved this action with elevated credentials."
+    },
+    "approval_timestamp": {
+      "type": ["string", "null"],
+      "format": "date-time",
+      "description": "ISO-8601 UTC timestamp when human approval was granted. Null if pending."
+    },
+    "request_source": {
+      "type": "string",
+      "enum": ["analyst_ui", "admin_console", "ai_agent_service", "detector_service", "system_internal"],
+      "description": "Verified caller origin established by Cognito JWT / IAM session."
+    },
+    "mfa_authenticated": {
+      "type": "boolean",
+      "description": "True if caller session was verified with Multi-Factor Authentication (required for High risk)."
+    },
+    "risk_level": {
+      "type": "string",
+      "enum": ["low", "medium", "high"],
+      "description": "Risk tier of the target action from the Phase 7 / Phase 8 taxonomy."
+    },
+    "target_matches_incident": {
+      "type": "boolean",
+      "description": "True if target entity (user_id/source_ip/device_id) exists in the verified incident's involved_entities."
+    },
+    "incident_id": {
+      "type": ["string", "null"],
+      "pattern": "^INC-[0-9]{4}(-[0-9]+)?$",
+      "description": "Target incident ID if action is scoped to an incident."
+    }
+  }
+}

@@ -1,0 +1,26 @@
+{
+  "rule_id": "RULE-003",
+  "name": "New device followed by privilege escalation",
+  "threat_ids": ["T-02", "T-03"],
+  "input": "new_device event followed by a privilege_escalation event for the same user_id.",
+  "condition": {
+    "description": "A device_id never previously seen for this user_id appears, and a privilege_escalation event for the same user_id occurs within 15 minutes of that device's first appearance.",
+    "params": {
+      "window_seconds": 900,
+      "requires_device_history_lookup": true
+    }
+  },
+  "severity": "high",
+  "evidence_template": [
+    "Login from previously unseen device {device_id} for user {user_id} at {device_ts}",
+    "Privilege escalation ({role_before} -> {role_after}) for user {user_id} at {escalation_ts}, {gap_seconds}s later"
+  ],
+  "false_positives": [
+    "Legitimate new device (new laptop, phone) combined with a coincidental, unrelated, authorized role change (e.g. approved promotion).",
+    "Device fingerprinting false negative — same physical device reported as 'new' due to browser update/reinstall."
+  ],
+  "output": {
+    "detection_type": "privilege_escalation_after_new_device",
+    "fields": ["incident_candidate_id", "severity", "involved_entities", "evidence", "related_event_ids"]
+  }
+}

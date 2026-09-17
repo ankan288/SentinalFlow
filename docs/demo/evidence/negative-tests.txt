@@ -1,0 +1,26 @@
+﻿============================= test session starts =============================
+platform win32 -- Python 3.13.7, pytest-9.1.1, pluggy-1.6.0 -- C:\Python313\python.exe
+cachedir: .pytest_cache
+rootdir: D:\CODE\Projects\Sentinal Flow\SentinelFlow
+collecting ... collected 61 items / 43 deselected / 18 selected
+
+detection/tests/test_e2e.py::test_e2e_01_valid_security_event_accepted PASSED [  5%]
+detection/tests/test_e2e.py::test_e2e_02_invalid_event_rejected PASSED   [ 11%]
+detection/tests/test_e2e.py::test_e2e_03_suspicious_event_detected PASSED [ 16%]
+detection/tests/test_e2e.py::test_e2e_04_related_events_correlated PASSED [ 22%]
+detection/tests/test_e2e.py::test_e2e_05_evidence_generated PASSED       [ 27%]
+detection/tests/test_e2e.py::test_e2e_06_ai_investigation_generated_and_validated PASSED [ 33%]
+detection/tests/test_e2e.py::test_e2e_07_evidence_references_validated PASSED [ 38%]
+detection/tests/test_e2e.py::test_e2e_08_authorized_read_request_succeeds PASSED [ 44%]
+detection/tests/test_e2e.py::test_e2e_09_unauthorized_request_denied PASSED [ 50%]
+detection/tests/test_e2e.py::test_e2e_10_prompt_injection_does_not_alter_authorization PASSED [ 55%]
+detection/tests/test_e2e.py::test_e2e_11_ai_cannot_directly_execute_remediation PASSED [ 61%]
+detection/tests/test_e2e.py::test_e2e_12_human_approval_is_required_where_defined PASSED [ 66%]
+detection/tests/test_e2e.py::test_e2e_13_unauthorized_approval_attempt_denied PASSED [ 72%]
+detection/tests/test_e2e.py::test_e2e_14_cross_incident_access_denied PASSED [ 77%]
+detection/tests/test_e2e.py::test_e2e_15_audit_record_generated PASSED   [ 83%]
+detection/tests/test_e2e.py::test_e2e_16_malformed_ai_output_rejected PASSED [ 88%]
+detection/tests/test_e2e.py::test_e2e_17_authorization_failure_fails_closed PASSED [ 94%]
+detection/tests/test_e2e.py::test_e2e_18_complete_canonical_scenario_succeeds PASSED [100%]
+
+====================== 18 passed, 43 deselected in 0.13s ======================

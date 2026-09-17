@@ -1,0 +1,43 @@
+{
+  "scenario_id": "scenario-02-privilege-escalation",
+  "description": "Previously unseen device for jordan.reyes, followed shortly by a privilege escalation for that same user. Exercises RULE-003. Chains from scenario-01 (same user_id/source_ip).",
+  "expected_detections": [
+    "RULE-003"
+  ],
+  "events": [
+    {
+      "event_id": "evt-s2-001",
+      "timestamp": "2026-03-12T09:44:06.117Z",
+      "ingested_at": "2026-03-12T09:44:06.147Z",
+      "event_type": "new_device",
+      "user_id": "u-8823",
+      "attempted_username": null,
+      "source_ip": "203.0.113.77",
+      "device_id": "dev-unknown-902",
+      "resource": "auth-service",
+      "severity": "medium",
+      "metadata": {
+        "device_first_seen": true,
+        "prior_known_devices": [
+          "dev-known-114"
+        ]
+      }
+    },
+    {
+      "event_id": "evt-s2-002",
+      "timestamp": "2026-03-12T09:45:16.117Z",
+      "ingested_at": "2026-03-12T09:45:16.142Z",
+      "event_type": "privilege_escalation",
+      "user_id": "u-8823",
+      "attempted_username": null,
+      "source_ip": "203.0.113.77",
+      "device_id": "dev-unknown-902",
+      "resource": "iam-service",
+      "severity": "high",
+      "metadata": {
+        "role_before": "student",
+        "role_after": "student_admin_assistant"
+      }
+    }
+  ]
+}

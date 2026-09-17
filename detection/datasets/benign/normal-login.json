@@ -1,0 +1,20 @@
+{
+  "scenario_id": "benign-normal-login",
+  "description": "A single successful login with a known device. Must NOT trigger any rule. Baseline negative test.",
+  "expected_detections": [],
+  "events": [
+    {
+      "event_id": "evt-b1-001",
+      "timestamp": "2026-03-10T08:15:00.000Z",
+      "ingested_at": "2026-03-10T08:15:00.030Z",
+      "event_type": "login_success",
+      "user_id": "u-4410",
+      "attempted_username": "casey.nguyen",
+      "source_ip": "198.51.100.23",
+      "device_id": "dev-known-220",
+      "resource": "auth-service",
+      "severity": "info",
+      "metadata": {}
+    }
+  ]
+}
