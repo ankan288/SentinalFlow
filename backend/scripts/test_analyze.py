@@ -9,6 +9,7 @@ sys.modules['opensearchpy'] = MagicMock()
 sys.modules['requests_aws4auth'] = MagicMock()
 import os
 os.environ['LOCAL_TEST_MODE'] = '1'
+os.environ['STATE_MACHINE_ARN'] = 'arn:aws:states:us-east-1:123456789012:stateMachine:Mock'
 import analyze_handler
 
 print('--- Testing AI Agent Integration (Phase 6) ---')
