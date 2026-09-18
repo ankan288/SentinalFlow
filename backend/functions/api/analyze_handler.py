@@ -2,7 +2,13 @@ import json
 import os
 import sys
 
-sys.path.append(os.path.join(os.path.dirname(__file__), '..', '..', 'src'))
+for src_path in (
+    os.path.abspath(os.path.join(os.path.dirname(__file__), '..', '..', 'src')),
+    os.path.abspath(os.path.join(os.path.dirname(__file__), '..', 'src')),
+):
+    if os.path.isdir(src_path) and src_path not in sys.path:
+        sys.path.append(src_path)
+        break
 from integrations.ai_agent_client import AIAgentClient
 from services.authorization_service import require_role
 
