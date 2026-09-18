@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { Shield, UserPlus } from 'lucide-react';
 import { Button } from '../components/common/Button';
 import PortalFieldCollection from '../components/ui/portal-field';
+import { authService } from '../services/auth/authService';
 
 export const Register: React.FC = () => {
   const [name, setName] = useState('');
@@ -21,12 +22,14 @@ export const Register: React.FC = () => {
     
     setLoading(true);
 
-    // Simulate backend registration delay
-    await new Promise(resolve => setTimeout(resolve, 1200));
-    
-    // Set a mock auth token in localStorage automatically upon registration
-    localStorage.setItem('sentinel_auth', 'mock-token-123');
-    navigate('/dashboard');
+    try {
+      await authService.register(email, password);
+      navigate('/dashboard');
+    } catch (err) {
+      alert(err instanceof Error ? err.message : 'Registration failed');
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (

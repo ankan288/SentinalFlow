@@ -72,6 +72,13 @@ export const IncidentTable: React.FC = () => {
             <tr 
               key={incident.id} 
               onClick={() => navigate(`/incidents/${incident.id}`)}
+              onKeyDown={(e) => {
+                if (e.key === 'Enter' || e.key === ' ') {
+                  e.preventDefault();
+                  navigate(`/incidents/${incident.id}`);
+                }
+              }}
+              tabIndex={0}
               style={{ 
                 borderBottom: '1px solid var(--border-light)',
                 cursor: 'pointer',

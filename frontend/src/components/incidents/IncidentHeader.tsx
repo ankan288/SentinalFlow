@@ -1,10 +1,11 @@
 import React, { useState } from 'react';
 import { ShieldAlert, ArrowLeft, UserPlus, CheckCircle } from 'lucide-react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 import { Button } from '../common/Button';
 
 export const IncidentHeader: React.FC = () => {
   const navigate = useNavigate();
+  const { id } = useParams();
   const [isAssigned, setIsAssigned] = useState(false);
   const [isAcknowledged, setIsAcknowledged] = useState(false);
 
@@ -32,7 +33,7 @@ export const IncidentHeader: React.FC = () => {
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
         <div>
           <div style={{ display: 'flex', alignItems: 'center', gap: 'var(--space-3)', marginBottom: 'var(--space-2)' }}>
-            <span style={{ color: 'var(--text-secondary)', fontFamily: 'var(--font-family-mono)' }}>INC-047</span>
+            <span style={{ color: 'var(--text-secondary)', fontFamily: 'var(--font-family-mono)' }}>{id || 'INC-UNKNOWN'}</span>
             <span style={{ 
               backgroundColor: 'var(--color-high-bg)', 
               color: 'var(--color-high)', 
