@@ -1,0 +1,28 @@
+{
+  "rule_id": "RULE-004",
+  "name": "Low-frequency account accessing unusual sensitive resource",
+  "threat_ids": ["T-04"],
+  "input": "resource_access events for resources tagged 'sensitive', compared against the user's historical access baseline.",
+  "condition": {
+    "description": "A user_id accesses a resource tagged sensitive that does not appear in that user's access history in the trailing 30 days (or the user has no history at all), OR the access occurs outside the user's typical active hours by more than 6 hours.",
+    "params": {
+      "baseline_window_days": 30,
+      "off_hours_threshold_hours": 6,
+      "resource_tag": "sensitive"
+    }
+  },
+  "severity": "high",
+  "evidence_template": [
+    "User {user_id} accessed sensitive resource {resource} at {access_ts}",
+    "No prior access to this resource found in the trailing {baseline_window_days} days for this user"
+  ],
+  "false_positives": [
+    "Legitimate role change granting new, first-time access to a resource (job change, new course/semester).",
+    "Scheduled batch/reporting job running under a human user's credentials outside normal hours.",
+    "Baseline period too short for a genuinely new but legitimate user."
+  ],
+  "output": {
+    "detection_type": "unusual_sensitive_access",
+    "fields": ["incident_candidate_id", "severity", "involved_entities", "evidence", "related_event_ids"]
+  }
+}

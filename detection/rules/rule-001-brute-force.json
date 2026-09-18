@@ -1,0 +1,27 @@
+{
+  "rule_id": "RULE-001",
+  "name": "Brute force / credential stuffing burst",
+  "threat_ids": ["T-01"],
+  "input": "Stream of login_failed events grouped by (source_ip) OR (user_id) within a sliding window.",
+  "condition": {
+    "description": "5 or more login_failed events for the same source_ip (or same user_id) within a 5-minute sliding window.",
+    "params": {
+      "window_seconds": 300,
+      "threshold_count": 5,
+      "group_by": ["source_ip", "user_id"]
+    }
+  },
+  "severity": "medium",
+  "evidence_template": [
+    "{count} failed authentication attempts from {source_ip} between {first_ts} and {last_ts}"
+  ],
+  "false_positives": [
+    "User genuinely forgot their password and retried manually (see benign/forgotten-password.json).",
+    "Shared NAT/VPN egress IP causing many distinct users to appear as one source_ip.",
+    "Automated health-check or monitoring script misconfigured with wrong credentials."
+  ],
+  "output": {
+    "detection_type": "brute_force_attempt",
+    "fields": ["incident_candidate_id", "severity", "involved_entities", "evidence", "related_event_ids"]
+  }
+}

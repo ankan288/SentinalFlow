@@ -1,0 +1,26 @@
+{
+  "rule_id": "RULE-002",
+  "name": "Failed login burst followed by success (credential compromise)",
+  "threat_ids": ["T-01", "T-02"],
+  "input": "A RULE-001 match plus subsequent login_success events for the same user_id/source_ip pair.",
+  "condition": {
+    "description": "A RULE-001 brute-force match is followed, within 10 minutes of the last failed attempt, by a login_success for the same user_id from the same source_ip.",
+    "params": {
+      "requires_rule": "RULE-001",
+      "follow_up_window_seconds": 600
+    }
+  },
+  "severity": "high",
+  "evidence_template": [
+    "{count} failed authentication attempts from {source_ip}",
+    "Successful login for user {user_id} from the same source at {success_ts}, {gap_seconds}s after the last failure"
+  ],
+  "false_positives": [
+    "Legitimate user succeeded on a later attempt after mistyping their own password several times.",
+    "Password manager autofill retried a stale cached credential before the current one."
+  ],
+  "output": {
+    "detection_type": "credential_compromise_suspected",
+    "fields": ["incident_candidate_id", "severity", "involved_entities", "evidence", "related_event_ids"]
+  }
+}

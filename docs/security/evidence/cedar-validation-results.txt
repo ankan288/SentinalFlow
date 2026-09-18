@@ -1,0 +1,11 @@
+AWS Cedar Engine Static Policy Validation Report
+Engine: cedarpy 4.12.0 (Backed by Cedar Rust Core)
+Schema: contracts/authorization/sentinelflow.cedarschema.json
+Policies: contracts/authorization/policies.cedar
+
+Validation Status: PASSED (True)
+Syntax Errors: None (0)
+Type Check Errors: None (0)
+Action-Resource Mappings: Validated (11 actions)
+Entity Definitions: Validated (10 entity types)
+Context Record Schema: Validated (CommonType::Context)
