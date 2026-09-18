@@ -1,0 +1,142 @@
+:root {
+  /* Color Palette - Dark Mode SOC */
+  --bg-primary: #0A0F1A;     /* Deep navy background */
+  --bg-secondary: #121A2B;   /* Lighter navy for panels */
+  --bg-tertiary: #19243C;    /* Even lighter for inputs/cards */
+  
+  --border-light: #2A364F;
+  --border-medium: #3A4B6B;
+  --border-strong: #4A5D8B;
+
+  --text-primary: #F0F4FA;
+  --text-secondary: #9BA9C6;
+  --text-muted: #64749A;
+
+  /* Semantic Colors */
+  --color-action: #3B82F6;     /* Blue */
+  --color-action-bg: rgba(59, 130, 246, 0.15);
+  
+  --color-critical: #EF4444;   /* Red */
+  --color-critical-bg: rgba(239, 68, 68, 0.15);
+  
+  --color-high: #F59E0B;       /* Orange */
+  --color-high-bg: rgba(245, 158, 11, 0.15);
+  
+  --color-medium: #EAB308;     /* Yellow */
+  --color-medium-bg: rgba(234, 179, 8, 0.15);
+  
+  --color-low: #8B5CF6;        /* Purple */
+  --color-low-bg: rgba(139, 92, 246, 0.15);
+
+  --color-success: #10B981;    /* Green */
+  --color-success-bg: rgba(16, 185, 129, 0.15);
+
+  /* Typography */
+  --font-family-base: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  --font-family-mono: 'JetBrains Mono', 'Fira Code', 'Courier New', monospace;
+
+  /* Spacing */
+  --space-1: 0.25rem;
+  --space-2: 0.5rem;
+  --space-3: 0.75rem;
+  --space-4: 1rem;
+  --space-6: 1.5rem;
+  --space-8: 2rem;
+  
+  /* Radii */
+  --radius-sm: 0.25rem;
+  --radius-md: 0.5rem;
+  --radius-lg: 0.75rem;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  font-family: var(--font-family-base);
+  background-color: var(--bg-primary);
+  color: var(--text-primary);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+a {
+  color: var(--color-action);
+  text-decoration: none;
+}
+
+a:hover {
+  text-decoration: underline;
+}
+
+/* Button Classes for Hover States */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: var(--space-2) var(--space-4);
+  border-radius: var(--radius-md);
+  font-size: 0.875rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  font-family: var(--font-family-base);
+}
+
+.btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.btn-primary {
+  background-color: var(--color-action);
+  color: #fff;
+  border: 1px solid transparent;
+}
+.btn-primary:hover:not(:disabled) {
+  background-color: #2563EB; /* Darker blue */
+}
+.btn-primary:active:not(:disabled) {
+  transform: translateY(1px);
+}
+
+.btn-secondary {
+  background-color: var(--bg-tertiary);
+  color: var(--text-primary);
+  border: 1px solid var(--border-medium);
+}
+.btn-secondary:hover:not(:disabled) {
+  background-color: var(--border-medium);
+  border-color: var(--border-strong);
+}
+.btn-secondary:active:not(:disabled) {
+  transform: translateY(1px);
+}
+
+.btn-danger {
+  background-color: var(--color-critical-bg);
+  color: var(--color-critical);
+  border: 1px solid var(--color-critical);
+}
+.btn-danger:hover:not(:disabled) {
+  background-color: var(--color-critical);
+  color: #fff;
+}
+.btn-danger:active:not(:disabled) {
+  transform: translateY(1px);
+}
+
+/* Responsive Grid Utility */
+.responsive-grid {
+  display: grid;
+  grid-template-columns: 2fr 1fr;
+  gap: var(--space-6);
+}
+
+@media (max-width: 1024px) {
+  .responsive-grid {
+    grid-template-columns: 1fr;
+  }
+}
