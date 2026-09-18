@@ -10,7 +10,7 @@ dynamodb = boto3.resource('dynamodb', region_name='us-east-1')
 table_name = os.environ.get('INCIDENTS_TABLE_NAME', 'SentinelFlow-Incidents')
 table = dynamodb.Table(table_name)
 
-@require_role(['ANALYST', 'ADMIN', 'VIEWER'])
+@require_role(['ANALYST', 'VIEWER'])
 def lambda_handler(event, context):
     """
     Handles GET /incidents/{id}
