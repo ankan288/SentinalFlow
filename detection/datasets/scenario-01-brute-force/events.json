@@ -1,22 +1,13 @@
 {
-  "scenario_id": "sentinelflow-canonical-demo",
-  "title": "Northgate Institute of Technology - Compromise & Data Access Timeline",
-  "description": "Full chained multi-stage incident: Brute force (RULE-001) -> Credential Compromise (RULE-002) -> New Device Privilege Escalation (RULE-003) -> Sensitive Database Access (RULE-004).",
-  "entities": {
-    "target_user_id": "u-8823",
-    "attacker_source_ip": "203.0.113.77",
-    "compromised_device_id": "dev-unknown-902",
-    "sensitive_resource": "srv-grades-db"
-  },
+  "scenario_id": "scenario-01-brute-force",
+  "description": "27 failed logins against user jordan.reyes from a single source, followed by a successful login. Exercises RULE-001 and RULE-002.",
   "expected_detections": [
     "RULE-001",
-    "RULE-002",
-    "RULE-003",
-    "RULE-004"
+    "RULE-002"
   ],
   "events": [
     {
-      "event_id": "evt-demo00000001",
+      "event_id": "evt-s1-001",
       "timestamp": "2026-03-12T09:41:04.418Z",
       "ingested_at": "2026-03-12T09:41:04.439Z",
       "event_type": "login_failed",
@@ -32,7 +23,7 @@
       }
     },
     {
-      "event_id": "evt-demo00000002",
+      "event_id": "evt-s1-002",
       "timestamp": "2026-03-12T09:41:09.142Z",
       "ingested_at": "2026-03-12T09:41:09.177Z",
       "event_type": "login_failed",
@@ -48,7 +39,7 @@
       }
     },
     {
-      "event_id": "evt-demo00000003",
+      "event_id": "evt-s1-003",
       "timestamp": "2026-03-12T09:41:12.312Z",
       "ingested_at": "2026-03-12T09:41:12.379Z",
       "event_type": "login_failed",
@@ -64,7 +55,7 @@
       }
     },
     {
-      "event_id": "evt-demo00000004",
+      "event_id": "evt-s1-004",
       "timestamp": "2026-03-12T09:41:15.120Z",
       "ingested_at": "2026-03-12T09:41:15.187Z",
       "event_type": "login_failed",
@@ -80,7 +71,7 @@
       }
     },
     {
-      "event_id": "evt-demo00000005",
+      "event_id": "evt-s1-005",
       "timestamp": "2026-03-12T09:41:20.296Z",
       "ingested_at": "2026-03-12T09:41:20.321Z",
       "event_type": "login_failed",
@@ -96,7 +87,7 @@
       }
     },
     {
-      "event_id": "evt-demo00000006",
+      "event_id": "evt-s1-006",
       "timestamp": "2026-03-12T09:41:24.568Z",
       "ingested_at": "2026-03-12T09:41:24.590Z",
       "event_type": "login_failed",
@@ -112,7 +103,7 @@
       }
     },
     {
-      "event_id": "evt-demo00000007",
+      "event_id": "evt-s1-007",
       "timestamp": "2026-03-12T09:41:27.157Z",
       "ingested_at": "2026-03-12T09:41:27.190Z",
       "event_type": "login_failed",
@@ -128,7 +119,7 @@
       }
     },
     {
-      "event_id": "evt-demo00000008",
+      "event_id": "evt-s1-008",
       "timestamp": "2026-03-12T09:41:30.355Z",
       "ingested_at": "2026-03-12T09:41:30.413Z",
       "event_type": "login_failed",
@@ -144,7 +135,7 @@
       }
     },
     {
-      "event_id": "evt-demo00000009",
+      "event_id": "evt-s1-009",
       "timestamp": "2026-03-12T09:41:32.935Z",
       "ingested_at": "2026-03-12T09:41:32.967Z",
       "event_type": "login_failed",
@@ -160,7 +151,7 @@
       }
     },
     {
-      "event_id": "evt-demo00000010",
+      "event_id": "evt-s1-010",
       "timestamp": "2026-03-12T09:41:37.583Z",
       "ingested_at": "2026-03-12T09:41:37.647Z",
       "event_type": "login_failed",
@@ -176,7 +167,7 @@
       }
     },
     {
-      "event_id": "evt-demo00000011",
+      "event_id": "evt-s1-011",
       "timestamp": "2026-03-12T09:41:41.717Z",
       "ingested_at": "2026-03-12T09:41:41.751Z",
       "event_type": "login_failed",
@@ -192,7 +183,7 @@
       }
     },
     {
-      "event_id": "evt-demo00000012",
+      "event_id": "evt-s1-012",
       "timestamp": "2026-03-12T09:41:45.565Z",
       "ingested_at": "2026-03-12T09:41:45.602Z",
       "event_type": "login_failed",
@@ -208,7 +199,7 @@
       }
     },
     {
-      "event_id": "evt-demo00000013",
+      "event_id": "evt-s1-013",
       "timestamp": "2026-03-12T09:41:50.493Z",
       "ingested_at": "2026-03-12T09:41:50.513Z",
       "event_type": "login_failed",
@@ -224,7 +215,7 @@
       }
     },
     {
-      "event_id": "evt-demo00000014",
+      "event_id": "evt-s1-014",
       "timestamp": "2026-03-12T09:41:55.270Z",
       "ingested_at": "2026-03-12T09:41:55.300Z",
       "event_type": "login_failed",
@@ -240,7 +231,7 @@
       }
     },
     {
-      "event_id": "evt-demo00000015",
+      "event_id": "evt-s1-015",
       "timestamp": "2026-03-12T09:41:59.864Z",
       "ingested_at": "2026-03-12T09:41:59.905Z",
       "event_type": "login_failed",
@@ -256,7 +247,7 @@
       }
     },
     {
-      "event_id": "evt-demo00000016",
+      "event_id": "evt-s1-016",
       "timestamp": "2026-03-12T09:42:03.198Z",
       "ingested_at": "2026-03-12T09:42:03.231Z",
       "event_type": "login_failed",
@@ -272,7 +263,7 @@
       }
     },
     {
-      "event_id": "evt-demo00000017",
+      "event_id": "evt-s1-017",
       "timestamp": "2026-03-12T09:42:08.569Z",
       "ingested_at": "2026-03-12T09:42:08.610Z",
       "event_type": "login_failed",
@@ -288,7 +279,7 @@
       }
     },
     {
-      "event_id": "evt-demo00000018",
+      "event_id": "evt-s1-018",
       "timestamp": "2026-03-12T09:42:11.376Z",
       "ingested_at": "2026-03-12T09:42:11.420Z",
       "event_type": "login_failed",
@@ -304,7 +295,7 @@
       }
     },
     {
-      "event_id": "evt-demo00000019",
+      "event_id": "evt-s1-019",
       "timestamp": "2026-03-12T09:42:14.166Z",
       "ingested_at": "2026-03-12T09:42:14.240Z",
       "event_type": "login_failed",
@@ -320,7 +311,7 @@
       }
     },
     {
-      "event_id": "evt-demo00000020",
+      "event_id": "evt-s1-020",
       "timestamp": "2026-03-12T09:42:17.698Z",
       "ingested_at": "2026-03-12T09:42:17.734Z",
       "event_type": "login_failed",
@@ -336,7 +327,7 @@
       }
     },
     {
-      "event_id": "evt-demo00000021",
+      "event_id": "evt-s1-021",
       "timestamp": "2026-03-12T09:42:22.619Z",
       "ingested_at": "2026-03-12T09:42:22.685Z",
       "event_type": "login_failed",
@@ -352,7 +343,7 @@
       }
     },
     {
-      "event_id": "evt-demo00000022",
+      "event_id": "evt-s1-022",
       "timestamp": "2026-03-12T09:42:26.498Z",
       "ingested_at": "2026-03-12T09:42:26.525Z",
       "event_type": "login_failed",
@@ -368,7 +359,7 @@
       }
     },
     {
-      "event_id": "evt-demo00000023",
+      "event_id": "evt-s1-023",
       "timestamp": "2026-03-12T09:42:31.917Z",
       "ingested_at": "2026-03-12T09:42:31.961Z",
       "event_type": "login_failed",
@@ -384,7 +375,7 @@
       }
     },
     {
-      "event_id": "evt-demo00000024",
+      "event_id": "evt-s1-024",
       "timestamp": "2026-03-12T09:42:34.653Z",
       "ingested_at": "2026-03-12T09:42:34.691Z",
       "event_type": "login_failed",
@@ -400,7 +391,7 @@
       }
     },
     {
-      "event_id": "evt-demo00000025",
+      "event_id": "evt-s1-025",
       "timestamp": "2026-03-12T09:42:39.642Z",
       "ingested_at": "2026-03-12T09:42:39.701Z",
       "event_type": "login_failed",
@@ -416,7 +407,7 @@
       }
     },
     {
-      "event_id": "evt-demo00000026",
+      "event_id": "evt-s1-026",
       "timestamp": "2026-03-12T09:42:44.798Z",
       "ingested_at": "2026-03-12T09:42:44.841Z",
       "event_type": "login_failed",
@@ -432,7 +423,7 @@
       }
     },
     {
-      "event_id": "evt-demo00000027",
+      "event_id": "evt-s1-027",
       "timestamp": "2026-03-12T09:42:49.030Z",
       "ingested_at": "2026-03-12T09:42:49.095Z",
       "event_type": "login_failed",
@@ -448,7 +439,7 @@
       }
     },
     {
-      "event_id": "evt-demo00000028",
+      "event_id": "evt-s1-028",
       "timestamp": "2026-03-12T09:43:21.117Z",
       "ingested_at": "2026-03-12T09:43:21.162Z",
       "event_type": "login_success",
@@ -459,57 +450,6 @@
       "resource": "auth-service",
       "severity": "info",
       "metadata": {}
-    },
-    {
-      "event_id": "evt-demo00000029",
-      "timestamp": "2026-03-12T09:44:06.117Z",
-      "ingested_at": "2026-03-12T09:44:06.147Z",
-      "event_type": "new_device",
-      "user_id": "u-8823",
-      "attempted_username": null,
-      "source_ip": "203.0.113.77",
-      "device_id": "dev-unknown-902",
-      "resource": "auth-service",
-      "severity": "medium",
-      "metadata": {
-        "device_first_seen": true,
-        "prior_known_devices": [
-          "dev-known-114"
-        ]
-      }
-    },
-    {
-      "event_id": "evt-demo00000030",
-      "timestamp": "2026-03-12T09:45:16.117Z",
-      "ingested_at": "2026-03-12T09:45:16.142Z",
-      "event_type": "privilege_escalation",
-      "user_id": "u-8823",
-      "attempted_username": null,
-      "source_ip": "203.0.113.77",
-      "device_id": "dev-unknown-902",
-      "resource": "iam-service",
-      "severity": "high",
-      "metadata": {
-        "role_before": "student",
-        "role_after": "student_admin_assistant"
-      }
-    },
-    {
-      "event_id": "evt-demo00000031",
-      "timestamp": "2026-03-12T09:46:21.117Z",
-      "ingested_at": "2026-03-12T09:46:21.157Z",
-      "event_type": "resource_access",
-      "user_id": "u-8823",
-      "attempted_username": null,
-      "source_ip": "203.0.113.77",
-      "device_id": "dev-unknown-902",
-      "resource": "srv-grades-db",
-      "severity": "high",
-      "metadata": {
-        "resource_tag": "sensitive",
-        "records_accessed": 214,
-        "prior_access_days": null
-      }
     }
   ]
 }

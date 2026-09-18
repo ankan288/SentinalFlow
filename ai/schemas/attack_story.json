@@ -1,0 +1,96 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "SentinelFlow Attack Story",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "incident_id",
+    "attack_type",
+    "confidence",
+    "summary",
+    "attack_progression",
+    "evidence",
+    "impact",
+    "recommendation",
+    "reasoning"
+  ],
+  "properties": {
+    "incident_id": {
+      "type": "string"
+    },
+    "attack_type": {
+      "type": "string"
+    },
+    "confidence": {
+      "type": "number",
+      "minimum": 0,
+      "maximum": 1
+    },
+    "summary": {
+      "type": "string"
+    },
+    "attack_progression": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "evidence": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "event_id",
+          "event_type",
+          "reason"
+        ],
+        "properties": {
+          "event_id": {
+            "type": "string"
+          },
+          "event_type": {
+            "type": "string"
+          },
+          "reason": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "impact": {
+      "type": "string"
+    },
+    "recommendation": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "action",
+        "reason",
+        "risk",
+        "requires_human_approval",
+        "executed"
+      ],
+      "properties": {
+        "action": {
+          "type": "string"
+        },
+        "reason": {
+          "type": "string"
+        },
+        "risk": {
+          "type": "string"
+        },
+        "requires_human_approval": {
+          "type": "boolean"
+        },
+        "executed": {
+          "type": "boolean"
+        }
+      }
+    },
+    "reasoning": {
+      "type": "string"
+    }
+  }
+}

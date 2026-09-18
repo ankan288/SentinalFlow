@@ -1,0 +1,268 @@
+{
+  "SentinelFlow": {
+    "commonTypes": {
+      "Context": {
+        "type": "Record",
+        "attributes": {
+          "approved_by_analyst": {
+            "type": "Boolean"
+          },
+          "approved_by_admin": {
+            "type": "Boolean"
+          },
+          "approval_timestamp": {
+            "type": "String",
+            "required": false
+          },
+          "request_source": {
+            "type": "String"
+          },
+          "mfa_authenticated": {
+            "type": "Boolean"
+          },
+          "risk_level": {
+            "type": "String"
+          },
+          "target_matches_incident": {
+            "type": "Boolean"
+          },
+          "incident_id": {
+            "type": "String",
+            "required": false
+          }
+        }
+      }
+    },
+    "entityTypes": {
+      "Role": {
+        "shape": {
+          "type": "Record",
+          "attributes": {}
+        }
+      },
+      "User": {
+        "memberOfTypes": ["Role"],
+        "shape": {
+          "type": "Record",
+          "attributes": {
+            "role": {
+              "type": "Entity",
+              "name": "Role"
+            },
+            "assigned_incidents": {
+              "type": "Set",
+              "element": {
+                "type": "Entity",
+                "name": "Incident"
+              }
+            }
+          }
+        }
+      },
+      "Service": {
+        "memberOfTypes": ["Role"],
+        "shape": {
+          "type": "Record",
+          "attributes": {
+            "service_name": {
+              "type": "String",
+              "required": false
+            }
+          }
+        }
+      },
+      "Incident": {
+        "shape": {
+          "type": "Record",
+          "attributes": {
+            "incident_id": {
+              "type": "String"
+            },
+            "severity": {
+              "type": "String"
+            },
+            "status": {
+              "type": "String"
+            }
+          }
+        }
+      },
+      "Evidence": {
+        "shape": {
+          "type": "Record",
+          "attributes": {
+            "incident": {
+              "type": "Entity",
+              "name": "Incident"
+            }
+          }
+        }
+      },
+      "Asset": {
+        "shape": {
+          "type": "Record",
+          "attributes": {
+            "asset_id": {
+              "type": "String"
+            },
+            "sensitivity": {
+              "type": "String"
+            }
+          }
+        }
+      },
+      "Investigation": {
+        "shape": {
+          "type": "Record",
+          "attributes": {
+            "incident": {
+              "type": "Entity",
+              "name": "Incident"
+            }
+          }
+        }
+      },
+      "ResponseAction": {
+        "shape": {
+          "type": "Record",
+          "attributes": {
+            "action_type": {
+              "type": "String"
+            },
+            "risk_level": {
+              "type": "String"
+            },
+            "incident": {
+              "type": "Entity",
+              "name": "Incident"
+            }
+          }
+        }
+      },
+      "SecurityRule": {
+        "shape": {
+          "type": "Record",
+          "attributes": {
+            "rule_id": {
+              "type": "String"
+            },
+            "is_active": {
+              "type": "Boolean"
+            }
+          }
+        }
+      },
+      "AuditLog": {
+        "shape": {
+          "type": "Record",
+          "attributes": {
+            "log_type": {
+              "type": "String"
+            }
+          }
+        }
+      }
+    },
+    "actions": {
+      "read_incident": {
+        "appliesTo": {
+          "principalTypes": ["User", "Service"],
+          "resourceTypes": ["Incident"],
+          "context": {
+            "type": "Context"
+          }
+        }
+      },
+      "read_event": {
+        "appliesTo": {
+          "principalTypes": ["User", "Service"],
+          "resourceTypes": ["Incident"],
+          "context": {
+            "type": "Context"
+          }
+        }
+      },
+      "read_evidence": {
+        "appliesTo": {
+          "principalTypes": ["User", "Service"],
+          "resourceTypes": ["Evidence", "Incident"],
+          "context": {
+            "type": "Context"
+          }
+        }
+      },
+      "read_asset": {
+        "appliesTo": {
+          "principalTypes": ["User", "Service"],
+          "resourceTypes": ["Asset"],
+          "context": {
+            "type": "Context"
+          }
+        }
+      },
+      "create_investigation": {
+        "appliesTo": {
+          "principalTypes": ["User", "Service"],
+          "resourceTypes": ["Incident"],
+          "context": {
+            "type": "Context"
+          }
+        }
+      },
+      "propose_remediation": {
+        "appliesTo": {
+          "principalTypes": ["User", "Service"],
+          "resourceTypes": ["Incident"],
+          "context": {
+            "type": "Context"
+          }
+        }
+      },
+      "approve_remediation": {
+        "appliesTo": {
+          "principalTypes": ["User"],
+          "resourceTypes": ["ResponseAction"],
+          "context": {
+            "type": "Context"
+          }
+        }
+      },
+      "execute_remediation": {
+        "appliesTo": {
+          "principalTypes": ["User", "Service"],
+          "resourceTypes": ["ResponseAction"],
+          "context": {
+            "type": "Context"
+          }
+        }
+      },
+      "view_audit_log": {
+        "appliesTo": {
+          "principalTypes": ["User"],
+          "resourceTypes": ["AuditLog"],
+          "context": {
+            "type": "Context"
+          }
+        }
+      },
+      "modify_security_rule": {
+        "appliesTo": {
+          "principalTypes": ["User"],
+          "resourceTypes": ["SecurityRule"],
+          "context": {
+            "type": "Context"
+          }
+        }
+      },
+      "delete_audit_log": {
+        "appliesTo": {
+          "principalTypes": ["User", "Service"],
+          "resourceTypes": ["AuditLog"],
+          "context": {
+            "type": "Context"
+          }
+        }
+      }
+    }
+  }
+}
