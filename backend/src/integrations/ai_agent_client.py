@@ -15,11 +15,7 @@ class AIAgentClient:
         Handles timeout and service unavailable simulations.
         """
         # Simulate processing delay
-        time.sleep(1.0)
-        
-        # Simulate occasional service failure (e.g. Bedrock throttling)
-        if random.random() < 0.05:
-            raise Exception("ServiceUnavailable: Bedrock is currently throttling requests")
+        time.sleep(0.1)
             
         return {
             "attack_story": "The attacker performed a brute-force attack followed by privilege escalation.",
@@ -27,7 +23,7 @@ class AIAgentClient:
             "recommended_actions": [
                 {
                     "action_id": "ACT-BLOCK-IP",
-                    "type": "BLOCK_IP",
+                    "type": "BlockIP",
                     "target": "10.0.0.50",
                     "description": "Block the source IP of the brute-force attack."
                 }

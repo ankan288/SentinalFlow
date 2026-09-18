@@ -6,6 +6,8 @@ from unittest.mock import MagicMock
 # Add functions dir to python path
 sys.path.append(os.path.join(os.path.dirname(__file__), '..', 'functions', 'api'))
 
+from unittest.mock import MagicMock
+sys.modules['boto3'] = MagicMock()
 import incidents_handler
 import incident_detail_handler
 

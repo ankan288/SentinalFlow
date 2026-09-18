@@ -18,8 +18,10 @@ def lambda_handler(event, context):
     """
     try:
         # In a production scenario with millions of incidents, we'd Query the GSI by Status.
-        # For the hackathon, a Scan is sufficient to return all incidents for the dashboard.
-        response = table.scan()
+        # For the hackathon, a paginated Scan is sufficient to return incidents for the dashboard.
+        limit = int(event.get('queryStringParameters', {}).get('limit', 50)) if event.get('queryStringParameters') else 50
+        
+        response = table.scan(Limit=limit)
         incidents = response.get('Items', [])
         
         return {

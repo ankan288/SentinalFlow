@@ -2,6 +2,8 @@ import sys
 import os
 
 sys.path.append(os.path.join(os.path.dirname(__file__), '..', 'functions', 'workflow'))
+from unittest.mock import MagicMock
+sys.modules['boto3'] = MagicMock()
 import authorization_handler
 import execution_handler
 import audit_handler
