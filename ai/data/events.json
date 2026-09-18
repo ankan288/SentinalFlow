@@ -1,0 +1,321 @@
+[
+  {
+    "event_id": "EVT-0001",
+    "timestamp": "2026-09-17T08:30:15Z",
+    "event_type": "login_failed",
+    "actor": {
+      "user_id": "user_1024",
+      "username": "student1024"
+    },
+    "source": {
+      "ip": "203.0.113.50",
+      "device_id": "device_unknown",
+      "user_agent": "Mozilla/5.0"
+    },
+    "target": {
+      "service": "student_portal",
+      "resource": null
+    },
+    "severity": "LOW",
+    "metadata": {
+      "failure_reason": "invalid_password"
+    }
+  },
+
+  {
+    "event_id": "EVT-0002",
+    "timestamp": "2026-09-17T08:30:25Z",
+    "event_type": "login_failed",
+    "actor": {
+      "user_id": "user_1024",
+      "username": "student1024"
+    },
+    "source": {
+      "ip": "203.0.113.50",
+      "device_id": "device_unknown",
+      "user_agent": "Mozilla/5.0"
+    },
+    "target": {
+      "service": "student_portal",
+      "resource": null
+    },
+    "severity": "LOW",
+    "metadata": {
+      "failure_reason": "invalid_password"
+    }
+  },
+
+  {
+    "event_id": "EVT-0003",
+    "timestamp": "2026-09-17T08:30:35Z",
+    "event_type": "login_failed",
+    "actor": {
+      "user_id": "user_1024",
+      "username": "student1024"
+    },
+    "source": {
+      "ip": "203.0.113.50",
+      "device_id": "device_unknown",
+      "user_agent": "Mozilla/5.0"
+    },
+    "target": {
+      "service": "student_portal",
+      "resource": null
+    },
+    "severity": "LOW",
+    "metadata": {
+      "failure_reason": "invalid_password"
+    }
+  },
+
+  {
+    "event_id": "EVT-0004",
+    "timestamp": "2026-09-17T08:30:45Z",
+    "event_type": "login_success",
+    "actor": {
+      "user_id": "user_1024",
+      "username": "student1024"
+    },
+    "source": {
+      "ip": "203.0.113.50",
+      "device_id": "device_unknown",
+      "user_agent": "Mozilla/5.0"
+    },
+    "target": {
+      "service": "student_portal",
+      "resource": null
+    },
+    "severity": "MEDIUM",
+    "metadata": {
+      "authentication_method": "password"
+    }
+  },
+  {
+  "event_id": "EVT-0005",
+  "timestamp": "2026-09-17T09:15:10Z",
+  "event_type": "login_success",
+
+  "actor": {
+    "user_id": "user_2048",
+    "username": "faculty2048"
+  },
+
+  "source": {
+    "ip": "198.51.100.25",
+    "device_id": "device_new_2048",
+    "user_agent": "Mozilla/5.0"
+  },
+
+  "target": {
+    "service": "college_erp",
+    "resource": null
+  },
+
+  "severity": "MEDIUM",
+
+  "metadata": {
+    "authentication_method": "password"
+  }
+},
+
+{
+  "event_id": "EVT-0006",
+  "timestamp": "2026-09-17T09:15:12Z",
+  "event_type": "new_device",
+
+  "actor": {
+    "user_id": "user_2048",
+    "username": "faculty2048"
+  },
+
+  "source": {
+    "ip": "198.51.100.25",
+    "device_id": "device_new_2048",
+    "user_agent": "Mozilla/5.0"
+  },
+
+  "target": {
+    "service": "college_erp",
+    "resource": null
+  },
+
+  "severity": "MEDIUM",
+
+  "metadata": {
+    "previous_device_id": "device_known_2048"
+  }
+},
+
+{
+  "event_id": "EVT-0007",
+  "timestamp": "2026-09-17T09:16:30Z",
+  "event_type": "privilege_escalation",
+
+  "actor": {
+    "user_id": "user_2048",
+    "username": "faculty2048"
+  },
+
+  "source": {
+    "ip": "198.51.100.25",
+    "device_id": "device_new_2048",
+    "user_agent": "Mozilla/5.0"
+  },
+
+  "target": {
+    "service": "college_erp",
+    "resource": "/admin"
+  },
+
+  "severity": "HIGH",
+
+  "metadata": {
+    "previous_privilege": "faculty",
+    "new_privilege": "administrator",
+    "method": "role_change"
+  }
+},
+
+{
+  "event_id": "EVT-0008",
+  "timestamp": "2026-09-17T09:17:05Z",
+  "event_type": "suspicious_request",
+
+  "actor": {
+    "user_id": "user_2048",
+    "username": "faculty2048"
+  },
+
+  "source": {
+    "ip": "198.51.100.25",
+    "device_id": "device_new_2048",
+    "user_agent": "Mozilla/5.0"
+  },
+
+  "target": {
+    "service": "college_erp",
+    "resource": "/admin/users"
+  },
+
+  "severity": "HIGH",
+
+  "metadata": {
+    "request_method": "GET",
+    "reason": "newly_privileged_account_accessing_admin_endpoint"
+  }
+},
+{
+  "event_id": "EVT-0009",
+  "timestamp": "2026-09-17T10:20:10Z",
+  "event_type": "login_success",
+
+  "actor": {
+    "user_id": "user_3072",
+    "username": "staff3072"
+  },
+
+  "source": {
+    "ip": "192.0.2.75",
+    "device_id": "device_new_3072",
+    "user_agent": "Mozilla/5.0"
+  },
+
+  "target": {
+    "service": "college_erp",
+    "resource": null
+  },
+
+  "severity": "MEDIUM",
+
+  "metadata": {
+    "authentication_method": "password"
+  }
+},
+
+{
+  "event_id": "EVT-0010",
+  "timestamp": "2026-09-17T10:20:20Z",
+  "event_type": "new_device",
+
+  "actor": {
+    "user_id": "user_3072",
+    "username": "staff3072"
+  },
+
+  "source": {
+    "ip": "192.0.2.75",
+    "device_id": "device_new_3072",
+    "user_agent": "Mozilla/5.0"
+  },
+
+  "target": {
+    "service": "college_erp",
+    "resource": null
+  },
+
+  "severity": "MEDIUM",
+
+  "metadata": {
+    "previous_device_id": "device_known_3072"
+  }
+},
+
+{
+  "event_id": "EVT-0011",
+  "timestamp": "2026-09-17T10:21:05Z",
+  "event_type": "MFA_change",
+
+  "actor": {
+    "user_id": "user_3072",
+    "username": "staff3072"
+  },
+
+  "source": {
+    "ip": "192.0.2.75",
+    "device_id": "device_new_3072",
+    "user_agent": "Mozilla/5.0"
+  },
+
+  "target": {
+    "service": "college_erp",
+    "resource": null
+  },
+
+  "severity": "HIGH",
+
+  "metadata": {
+    "change": "MFA_device_replaced",
+    "previous_mfa_method": "authenticator_app",
+    "new_mfa_method": "sms"
+  }
+},
+
+{
+  "event_id": "EVT-0012",
+  "timestamp": "2026-09-17T10:22:15Z",
+  "event_type": "resource_access",
+
+  "actor": {
+    "user_id": "user_3072",
+    "username": "staff3072"
+  },
+
+  "source": {
+    "ip": "192.0.2.75",
+    "device_id": "device_new_3072",
+    "user_agent": "Mozilla/5.0"
+  },
+
+  "target": {
+    "service": "college_erp",
+    "resource": "/finance/student-fees"
+  },
+
+  "severity": "HIGH",
+
+  "metadata": {
+    "resource_classification": "sensitive",
+    "access_type": "read"
+  }
+}
+]
