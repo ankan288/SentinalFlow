@@ -1,0 +1,455 @@
+{
+  "scenario_id": "scenario-01-brute-force",
+  "description": "27 failed logins against user jordan.reyes from a single source, followed by a successful login. Exercises RULE-001 and RULE-002.",
+  "expected_detections": [
+    "RULE-001",
+    "RULE-002"
+  ],
+  "events": [
+    {
+      "event_id": "evt-s1-001",
+      "timestamp": "2026-03-12T09:41:04.418Z",
+      "ingested_at": "2026-03-12T09:41:04.439Z",
+      "event_type": "login_failed",
+      "user_id": null,
+      "attempted_username": "jordan.reyes",
+      "source_ip": "203.0.113.77",
+      "device_id": null,
+      "resource": "auth-service",
+      "severity": "low",
+      "metadata": {
+        "reason": "invalid_credentials",
+        "attempt_no": 1
+      }
+    },
+    {
+      "event_id": "evt-s1-002",
+      "timestamp": "2026-03-12T09:41:09.142Z",
+      "ingested_at": "2026-03-12T09:41:09.177Z",
+      "event_type": "login_failed",
+      "user_id": null,
+      "attempted_username": "jordan.reyes",
+      "source_ip": "203.0.113.77",
+      "device_id": null,
+      "resource": "auth-service",
+      "severity": "low",
+      "metadata": {
+        "reason": "invalid_credentials",
+        "attempt_no": 2
+      }
+    },
+    {
+      "event_id": "evt-s1-003",
+      "timestamp": "2026-03-12T09:41:12.312Z",
+      "ingested_at": "2026-03-12T09:41:12.379Z",
+      "event_type": "login_failed",
+      "user_id": null,
+      "attempted_username": "jordan.reyes",
+      "source_ip": "203.0.113.77",
+      "device_id": null,
+      "resource": "auth-service",
+      "severity": "low",
+      "metadata": {
+        "reason": "invalid_credentials",
+        "attempt_no": 3
+      }
+    },
+    {
+      "event_id": "evt-s1-004",
+      "timestamp": "2026-03-12T09:41:15.120Z",
+      "ingested_at": "2026-03-12T09:41:15.187Z",
+      "event_type": "login_failed",
+      "user_id": null,
+      "attempted_username": "jordan.reyes",
+      "source_ip": "203.0.113.77",
+      "device_id": null,
+      "resource": "auth-service",
+      "severity": "low",
+      "metadata": {
+        "reason": "invalid_credentials",
+        "attempt_no": 4
+      }
+    },
+    {
+      "event_id": "evt-s1-005",
+      "timestamp": "2026-03-12T09:41:20.296Z",
+      "ingested_at": "2026-03-12T09:41:20.321Z",
+      "event_type": "login_failed",
+      "user_id": null,
+      "attempted_username": "jordan.reyes",
+      "source_ip": "203.0.113.77",
+      "device_id": null,
+      "resource": "auth-service",
+      "severity": "low",
+      "metadata": {
+        "reason": "invalid_credentials",
+        "attempt_no": 5
+      }
+    },
+    {
+      "event_id": "evt-s1-006",
+      "timestamp": "2026-03-12T09:41:24.568Z",
+      "ingested_at": "2026-03-12T09:41:24.590Z",
+      "event_type": "login_failed",
+      "user_id": null,
+      "attempted_username": "jordan.reyes",
+      "source_ip": "203.0.113.77",
+      "device_id": null,
+      "resource": "auth-service",
+      "severity": "low",
+      "metadata": {
+        "reason": "invalid_credentials",
+        "attempt_no": 6
+      }
+    },
+    {
+      "event_id": "evt-s1-007",
+      "timestamp": "2026-03-12T09:41:27.157Z",
+      "ingested_at": "2026-03-12T09:41:27.190Z",
+      "event_type": "login_failed",
+      "user_id": null,
+      "attempted_username": "jordan.reyes",
+      "source_ip": "203.0.113.77",
+      "device_id": null,
+      "resource": "auth-service",
+      "severity": "low",
+      "metadata": {
+        "reason": "invalid_credentials",
+        "attempt_no": 7
+      }
+    },
+    {
+      "event_id": "evt-s1-008",
+      "timestamp": "2026-03-12T09:41:30.355Z",
+      "ingested_at": "2026-03-12T09:41:30.413Z",
+      "event_type": "login_failed",
+      "user_id": null,
+      "attempted_username": "jordan.reyes",
+      "source_ip": "203.0.113.77",
+      "device_id": null,
+      "resource": "auth-service",
+      "severity": "low",
+      "metadata": {
+        "reason": "invalid_credentials",
+        "attempt_no": 8
+      }
+    },
+    {
+      "event_id": "evt-s1-009",
+      "timestamp": "2026-03-12T09:41:32.935Z",
+      "ingested_at": "2026-03-12T09:41:32.967Z",
+      "event_type": "login_failed",
+      "user_id": null,
+      "attempted_username": "jordan.reyes",
+      "source_ip": "203.0.113.77",
+      "device_id": null,
+      "resource": "auth-service",
+      "severity": "low",
+      "metadata": {
+        "reason": "invalid_credentials",
+        "attempt_no": 9
+      }
+    },
+    {
+      "event_id": "evt-s1-010",
+      "timestamp": "2026-03-12T09:41:37.583Z",
+      "ingested_at": "2026-03-12T09:41:37.647Z",
+      "event_type": "login_failed",
+      "user_id": null,
+      "attempted_username": "jordan.reyes",
+      "source_ip": "203.0.113.77",
+      "device_id": null,
+      "resource": "auth-service",
+      "severity": "low",
+      "metadata": {
+        "reason": "invalid_credentials",
+        "attempt_no": 10
+      }
+    },
+    {
+      "event_id": "evt-s1-011",
+      "timestamp": "2026-03-12T09:41:41.717Z",
+      "ingested_at": "2026-03-12T09:41:41.751Z",
+      "event_type": "login_failed",
+      "user_id": null,
+      "attempted_username": "jordan.reyes",
+      "source_ip": "203.0.113.77",
+      "device_id": null,
+      "resource": "auth-service",
+      "severity": "low",
+      "metadata": {
+        "reason": "invalid_credentials",
+        "attempt_no": 11
+      }
+    },
+    {
+      "event_id": "evt-s1-012",
+      "timestamp": "2026-03-12T09:41:45.565Z",
+      "ingested_at": "2026-03-12T09:41:45.602Z",
+      "event_type": "login_failed",
+      "user_id": null,
+      "attempted_username": "jordan.reyes",
+      "source_ip": "203.0.113.77",
+      "device_id": null,
+      "resource": "auth-service",
+      "severity": "low",
+      "metadata": {
+        "reason": "invalid_credentials",
+        "attempt_no": 12
+      }
+    },
+    {
+      "event_id": "evt-s1-013",
+      "timestamp": "2026-03-12T09:41:50.493Z",
+      "ingested_at": "2026-03-12T09:41:50.513Z",
+      "event_type": "login_failed",
+      "user_id": null,
+      "attempted_username": "jordan.reyes",
+      "source_ip": "203.0.113.77",
+      "device_id": null,
+      "resource": "auth-service",
+      "severity": "low",
+      "metadata": {
+        "reason": "invalid_credentials",
+        "attempt_no": 13
+      }
+    },
+    {
+      "event_id": "evt-s1-014",
+      "timestamp": "2026-03-12T09:41:55.270Z",
+      "ingested_at": "2026-03-12T09:41:55.300Z",
+      "event_type": "login_failed",
+      "user_id": null,
+      "attempted_username": "jordan.reyes",
+      "source_ip": "203.0.113.77",
+      "device_id": null,
+      "resource": "auth-service",
+      "severity": "low",
+      "metadata": {
+        "reason": "invalid_credentials",
+        "attempt_no": 14
+      }
+    },
+    {
+      "event_id": "evt-s1-015",
+      "timestamp": "2026-03-12T09:41:59.864Z",
+      "ingested_at": "2026-03-12T09:41:59.905Z",
+      "event_type": "login_failed",
+      "user_id": null,
+      "attempted_username": "jordan.reyes",
+      "source_ip": "203.0.113.77",
+      "device_id": null,
+      "resource": "auth-service",
+      "severity": "low",
+      "metadata": {
+        "reason": "invalid_credentials",
+        "attempt_no": 15
+      }
+    },
+    {
+      "event_id": "evt-s1-016",
+      "timestamp": "2026-03-12T09:42:03.198Z",
+      "ingested_at": "2026-03-12T09:42:03.231Z",
+      "event_type": "login_failed",
+      "user_id": null,
+      "attempted_username": "jordan.reyes",
+      "source_ip": "203.0.113.77",
+      "device_id": null,
+      "resource": "auth-service",
+      "severity": "low",
+      "metadata": {
+        "reason": "invalid_credentials",
+        "attempt_no": 16
+      }
+    },
+    {
+      "event_id": "evt-s1-017",
+      "timestamp": "2026-03-12T09:42:08.569Z",
+      "ingested_at": "2026-03-12T09:42:08.610Z",
+      "event_type": "login_failed",
+      "user_id": null,
+      "attempted_username": "jordan.reyes",
+      "source_ip": "203.0.113.77",
+      "device_id": null,
+      "resource": "auth-service",
+      "severity": "low",
+      "metadata": {
+        "reason": "invalid_credentials",
+        "attempt_no": 17
+      }
+    },
+    {
+      "event_id": "evt-s1-018",
+      "timestamp": "2026-03-12T09:42:11.376Z",
+      "ingested_at": "2026-03-12T09:42:11.420Z",
+      "event_type": "login_failed",
+      "user_id": null,
+      "attempted_username": "jordan.reyes",
+      "source_ip": "203.0.113.77",
+      "device_id": null,
+      "resource": "auth-service",
+      "severity": "low",
+      "metadata": {
+        "reason": "invalid_credentials",
+        "attempt_no": 18
+      }
+    },
+    {
+      "event_id": "evt-s1-019",
+      "timestamp": "2026-03-12T09:42:14.166Z",
+      "ingested_at": "2026-03-12T09:42:14.240Z",
+      "event_type": "login_failed",
+      "user_id": null,
+      "attempted_username": "jordan.reyes",
+      "source_ip": "203.0.113.77",
+      "device_id": null,
+      "resource": "auth-service",
+      "severity": "low",
+      "metadata": {
+        "reason": "invalid_credentials",
+        "attempt_no": 19
+      }
+    },
+    {
+      "event_id": "evt-s1-020",
+      "timestamp": "2026-03-12T09:42:17.698Z",
+      "ingested_at": "2026-03-12T09:42:17.734Z",
+      "event_type": "login_failed",
+      "user_id": null,
+      "attempted_username": "jordan.reyes",
+      "source_ip": "203.0.113.77",
+      "device_id": null,
+      "resource": "auth-service",
+      "severity": "low",
+      "metadata": {
+        "reason": "invalid_credentials",
+        "attempt_no": 20
+      }
+    },
+    {
+      "event_id": "evt-s1-021",
+      "timestamp": "2026-03-12T09:42:22.619Z",
+      "ingested_at": "2026-03-12T09:42:22.685Z",
+      "event_type": "login_failed",
+      "user_id": null,
+      "attempted_username": "jordan.reyes",
+      "source_ip": "203.0.113.77",
+      "device_id": null,
+      "resource": "auth-service",
+      "severity": "low",
+      "metadata": {
+        "reason": "invalid_credentials",
+        "attempt_no": 21
+      }
+    },
+    {
+      "event_id": "evt-s1-022",
+      "timestamp": "2026-03-12T09:42:26.498Z",
+      "ingested_at": "2026-03-12T09:42:26.525Z",
+      "event_type": "login_failed",
+      "user_id": null,
+      "attempted_username": "jordan.reyes",
+      "source_ip": "203.0.113.77",
+      "device_id": null,
+      "resource": "auth-service",
+      "severity": "low",
+      "metadata": {
+        "reason": "invalid_credentials",
+        "attempt_no": 22
+      }
+    },
+    {
+      "event_id": "evt-s1-023",
+      "timestamp": "2026-03-12T09:42:31.917Z",
+      "ingested_at": "2026-03-12T09:42:31.961Z",
+      "event_type": "login_failed",
+      "user_id": null,
+      "attempted_username": "jordan.reyes",
+      "source_ip": "203.0.113.77",
+      "device_id": null,
+      "resource": "auth-service",
+      "severity": "low",
+      "metadata": {
+        "reason": "invalid_credentials",
+        "attempt_no": 23
+      }
+    },
+    {
+      "event_id": "evt-s1-024",
+      "timestamp": "2026-03-12T09:42:34.653Z",
+      "ingested_at": "2026-03-12T09:42:34.691Z",
+      "event_type": "login_failed",
+      "user_id": null,
+      "attempted_username": "jordan.reyes",
+      "source_ip": "203.0.113.77",
+      "device_id": null,
+      "resource": "auth-service",
+      "severity": "low",
+      "metadata": {
+        "reason": "invalid_credentials",
+        "attempt_no": 24
+      }
+    },
+    {
+      "event_id": "evt-s1-025",
+      "timestamp": "2026-03-12T09:42:39.642Z",
+      "ingested_at": "2026-03-12T09:42:39.701Z",
+      "event_type": "login_failed",
+      "user_id": null,
+      "attempted_username": "jordan.reyes",
+      "source_ip": "203.0.113.77",
+      "device_id": null,
+      "resource": "auth-service",
+      "severity": "low",
+      "metadata": {
+        "reason": "invalid_credentials",
+        "attempt_no": 25
+      }
+    },
+    {
+      "event_id": "evt-s1-026",
+      "timestamp": "2026-03-12T09:42:44.798Z",
+      "ingested_at": "2026-03-12T09:42:44.841Z",
+      "event_type": "login_failed",
+      "user_id": null,
+      "attempted_username": "jordan.reyes",
+      "source_ip": "203.0.113.77",
+      "device_id": null,
+      "resource": "auth-service",
+      "severity": "low",
+      "metadata": {
+        "reason": "invalid_credentials",
+        "attempt_no": 26
+      }
+    },
+    {
+      "event_id": "evt-s1-027",
+      "timestamp": "2026-03-12T09:42:49.030Z",
+      "ingested_at": "2026-03-12T09:42:49.095Z",
+      "event_type": "login_failed",
+      "user_id": null,
+      "attempted_username": "jordan.reyes",
+      "source_ip": "203.0.113.77",
+      "device_id": null,
+      "resource": "auth-service",
+      "severity": "low",
+      "metadata": {
+        "reason": "invalid_credentials",
+        "attempt_no": 27
+      }
+    },
+    {
+      "event_id": "evt-s1-028",
+      "timestamp": "2026-03-12T09:43:21.117Z",
+      "ingested_at": "2026-03-12T09:43:21.162Z",
+      "event_type": "login_success",
+      "user_id": "u-8823",
+      "attempted_username": "jordan.reyes",
+      "source_ip": "203.0.113.77",
+      "device_id": "dev-known-114",
+      "resource": "auth-service",
+      "severity": "info",
+      "metadata": {}
+    }
+  ]
+}

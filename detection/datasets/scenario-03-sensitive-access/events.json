@@ -1,0 +1,26 @@
+{
+  "scenario_id": "scenario-03-sensitive-access",
+  "description": "The now-escalated account accesses the grades database, a resource it has no access history for. Exercises RULE-004. Chains from scenario-02.",
+  "expected_detections": [
+    "RULE-004"
+  ],
+  "events": [
+    {
+      "event_id": "evt-s3-001",
+      "timestamp": "2026-03-12T09:46:21.117Z",
+      "ingested_at": "2026-03-12T09:46:21.157Z",
+      "event_type": "resource_access",
+      "user_id": "u-8823",
+      "attempted_username": null,
+      "source_ip": "203.0.113.77",
+      "device_id": "dev-unknown-902",
+      "resource": "srv-grades-db",
+      "severity": "high",
+      "metadata": {
+        "resource_tag": "sensitive",
+        "records_accessed": 214,
+        "prior_access_days": null
+      }
+    }
+  ]
+}

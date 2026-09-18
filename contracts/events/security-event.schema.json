@@ -1,0 +1,75 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://sentinelflow/contracts/events/security-event.schema.json",
+  "title": "SecurityEvent",
+  "description": "Normalized security event. This is the ONLY shape that crosses trust boundary TB-2 (log ingestion). Every field originating from outside the system (user_id, source_ip, device_id, resource, metadata.*) MUST be treated as untrusted, attacker-controllable data by every downstream consumer.",
+  "type": "object",
+  "required": ["event_id", "timestamp", "event_type", "source_ip", "severity"],
+  "additionalProperties": false,
+  "properties": {
+    "event_id": {
+      "type": "string",
+      "description": "Unique event identifier, assigned at ingestion (not by the source). Used for deduplication (C-10).",
+      "pattern": "^evt-[a-zA-Z0-9]{8,32}$"
+    },
+    "timestamp": {
+      "type": "string",
+      "format": "date-time",
+      "description": "ISO-8601 with millisecond precision, UTC. e.g. 2026-03-12T09:41:02.150Z. Full precision is kept in the data layer; the frontend may round for display."
+    },
+    "ingested_at": {
+      "type": "string",
+      "format": "date-time",
+      "description": "Server-assigned ingestion time, distinct from the (untrusted) source-reported timestamp. Used to catch impossible/future timestamps (Phase 6)."
+    },
+    "event_type": {
+      "type": "string",
+      "enum": [
+        "login_failed",
+        "login_success",
+        "privilege_escalation",
+        "suspicious_request",
+        "resource_access",
+        "password_change",
+        "mfa_change",
+        "new_device"
+      ]
+    },
+    "user_id": {
+      "type": ["string", "null"],
+      "description": "Stable internal identifier, not a raw username string. UNTRUSTED — may be null for pre-auth events (e.g. failed login with unknown account).",
+      "maxLength": 128
+    },
+    "attempted_username": {
+      "type": ["string", "null"],
+      "description": "Raw username string as submitted at login. UNTRUSTED FREE TEXT — the primary prompt-injection vector (T-06). Never interpolate this into an LLM prompt without delimiting/escaping (C-02). Length-capped at ingestion.",
+      "maxLength": 256
+    },
+    "source_ip": {
+      "type": "string",
+      "description": "UNTRUSTED. Validated as a syntactically well-formed IPv4/IPv6 address at ingestion; content beyond that is not trusted.",
+      "maxLength": 45
+    },
+    "device_id": {
+      "type": ["string", "null"],
+      "description": "Device fingerprint hash. UNTRUSTED.",
+      "maxLength": 128
+    },
+    "resource": {
+      "type": ["string", "null"],
+      "description": "Resource or endpoint accessed, e.g. 'srv-grades-db'. UNTRUSTED FREE TEXT in principle; constrain to a known resource enum where possible.",
+      "maxLength": 256
+    },
+    "severity": {
+      "type": "string",
+      "enum": ["info", "low", "medium", "high", "critical"],
+      "description": "Assigned by the ingestion/detection layer, never trusted verbatim from the source."
+    },
+    "metadata": {
+      "type": "object",
+      "description": "Free-form additional context (user-agent, role_before/role_after, etc). UNTRUSTED. Capped in total size (C-01) and never passed to an LLM without sanitization (C-02, C-12). Must not contain raw credentials or full PII (C-12).",
+      "maxProperties": 20,
+      "additionalProperties": true
+    }
+  }
+}

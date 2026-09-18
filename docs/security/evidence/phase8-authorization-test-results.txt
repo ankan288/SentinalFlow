@@ -1,0 +1,28 @@
+============================= test session starts =============================
+platform win32 -- Python 3.13.7, pytest-9.1.1, pluggy-1.6.0
+rootdir: D:\CODE\Projects\Sentinal Flow\SentinelFlow
+collected 21 items
+
+detection/tests/test_authorization.py::test_auth_01_authorized_analyst_reads_permitted_incident PASSED [  4%]
+detection/tests/test_authorization.py::test_auth_02_unauthorized_actor_cannot_read_incident PASSED [  9%]
+detection/tests/test_authorization.py::test_auth_03_ai_investigator_can_read_permitted_evidence PASSED [ 14%]
+detection/tests/test_authorization.py::test_auth_07_security_admin_can_perform_administrative_operations PASSED [ 19%]
+detection/tests/test_authorization.py::test_auth_04_ai_investigator_cannot_execute_remediation PASSED [ 23%]
+detection/tests/test_authorization.py::test_auth_05_ai_investigator_cannot_modify_security_rules PASSED [ 28%]
+detection/tests/test_authorization.py::test_auth_14_ai_generated_approval_cannot_authorize_action PASSED [ 33%]
+detection/tests/test_authorization.py::test_ai_agent_can_propose_remediation PASSED [ 38%]
+detection/tests/test_authorization.py::test_auth_06_analyst_cannot_modify_security_rules PASSED [ 42%]
+detection/tests/test_authorization.py::test_auth_13_user_supplied_role_cannot_escalate_privilege PASSED [ 47%]
+detection/tests/test_authorization.py::test_auth_18_side_effecting_action_without_required_approval_is_denied PASSED [ 52%]
+detection/tests/test_authorization.py::test_analyst_can_execute_when_approved PASSED [ 57%]
+detection/tests/test_authorization.py::test_analyst_cannot_execute_high_risk_remediation PASSED [ 61%]
+detection/tests/test_authorization.py::test_auth_08_unknown_actor_is_denied PASSED [ 66%]
+detection/tests/test_authorization.py::test_auth_09_unknown_action_is_denied PASSED [ 71%]
+detection/tests/test_authorization.py::test_auth_10_unknown_resource_is_denied PASSED [ 76%]
+detection/tests/test_authorization.py::test_auth_12_malformed_context_fails_closed PASSED [ 80%]
+detection/tests/test_authorization.py::test_auth_11_target_mismatch_forbid_remediation PASSED [ 85%]
+detection/tests/test_authorization.py::test_auth_15_untrusted_metadata_cannot_change_authorization PASSED [ 90%]
+detection/tests/test_authorization.py::test_auth_forbid_audit_log_deletion_for_all PASSED [ 95%]
+detection/tests/test_authorization.py::test_auth_20_audit_record_generated_for_every_decision PASSED [100%]
+
+============================= 21 passed in 0.14s ==============================
