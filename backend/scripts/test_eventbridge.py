@@ -4,6 +4,10 @@ import json
 import datetime
 
 sys.path.append(os.path.join(os.path.dirname(__file__), '..', 'functions', 'events'))
+
+from unittest.mock import MagicMock
+sys.modules['boto3'] = MagicMock()
+
 import security_event_handler
 
 print('--- Testing EventBridge to Lambda Flow (Phase 7) ---')

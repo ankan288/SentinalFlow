@@ -5,6 +5,7 @@ import json
 sys.path.append(os.path.join(os.path.dirname(__file__), '..', 'functions', 'workflow'))
 from unittest.mock import MagicMock
 sys.modules['boto3'] = MagicMock()
+os.environ['AUDIT_BUCKET'] = 'mock-audit-bucket'
 import audit_handler
 
 print("--- Testing Immutable Audit Log Generation (Phase 10) ---")

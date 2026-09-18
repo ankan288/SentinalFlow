@@ -6,6 +6,7 @@ from unittest.mock import MagicMock
 sys.modules['boto3'] = MagicMock()
 import authorization_handler
 import execution_handler
+os.environ['AUDIT_BUCKET'] = 'mock-audit-bucket'
 import audit_handler
 
 print("--- Testing Step Functions Workflow (Phase 8) ---")
