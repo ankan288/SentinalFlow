@@ -1,0 +1,56 @@
+IncidentsTable:
+  Type: AWS::DynamoDB::Table
+  Properties:
+    TableName: SentinelFlow-Incidents
+    BillingMode: PAY_PER_REQUEST
+    AttributeDefinitions:
+      - AttributeName: IncidentId
+        AttributeType: S
+      - AttributeName: Status
+        AttributeType: S
+      - AttributeName: CreatedAt
+        AttributeType: S
+    KeySchema:
+      - AttributeName: IncidentId
+        KeyType: HASH
+    GlobalSecondaryIndexes:
+      - IndexName: StatusIndex
+        KeySchema:
+          - AttributeName: Status
+            KeyType: HASH
+          - AttributeName: CreatedAt
+            KeyType: RANGE
+        Projection:
+          ProjectionType: ALL
+
+RecommendationsTable:
+  Type: AWS::DynamoDB::Table
+  Properties:
+    TableName: SentinelFlow-Recommendations
+    BillingMode: PAY_PER_REQUEST
+    AttributeDefinitions:
+      - AttributeName: IncidentId
+        AttributeType: S
+      - AttributeName: RecommendationId
+        AttributeType: S
+    KeySchema:
+      - AttributeName: IncidentId
+        KeyType: HASH
+      - AttributeName: RecommendationId
+        KeyType: RANGE
+
+AuditLogsTable:
+  Type: AWS::DynamoDB::Table
+  Properties:
+    TableName: SentinelFlow-AuditLogs
+    BillingMode: PAY_PER_REQUEST
+    AttributeDefinitions:
+      - AttributeName: IncidentId
+        AttributeType: S
+      - AttributeName: Timestamp
+        AttributeType: S
+    KeySchema:
+      - AttributeName: IncidentId
+        KeyType: HASH
+      - AttributeName: Timestamp
+        KeyType: RANGE

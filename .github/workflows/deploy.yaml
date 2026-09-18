@@ -1,0 +1,68 @@
+name: Deploy SentinelFlow Backend
+
+on:
+  push:
+    branches:
+      - main
+      - backend
+    paths:
+      - 'backend/**'
+
+env:
+  AWS_REGION: us-east-1
+  SAM_STACK_NAME: sentinelflow-backend-prod
+
+permissions:
+  id-token: write
+  contents: read
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+    
+    defaults:
+      run:
+        working-directory: ./backend
+
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v3
+
+      - name: Setup Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.12'
+
+      - name: Setup AWS SAM CLI
+        uses: aws-actions/setup-sam@v2
+
+      - name: Configure AWS Credentials using OIDC
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: arn:aws:iam::${{ secrets.AWS_ACCOUNT_ID }}:role/GitHubActionDeployRole
+          aws-region: ${{ env.AWS_REGION }}
+
+      - name: Install Dependencies
+        run: |
+          pip install -r requirements.txt
+
+      - name: Run Unit Tests
+        run: |
+          python scripts/test_auth.py
+          python scripts/test_search.py
+          python scripts/test_analyze.py
+          python scripts/test_eventbridge.py
+          python scripts/test_workflow.py
+          python scripts/test_cedar.py
+          python scripts/test_audit.py
+
+      - name: SAM Build
+        run: sam build
+
+      - name: SAM Deploy
+        run: |
+          sam deploy \
+            --stack-name ${{ env.SAM_STACK_NAME }} \
+            --capabilities CAPABILITY_IAM CAPABILITY_NAMED_IAM \
+            --no-confirm-changeset \
+            --no-fail-on-empty-changeset

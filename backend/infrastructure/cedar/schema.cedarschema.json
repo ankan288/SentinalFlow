@@ -1,0 +1,25 @@
+{
+    "SentinelFlow": {
+        "entityTypes": {
+            "User": {
+                "memberOfTypes": ["Role"]
+            },
+            "Role": {
+                "memberOfTypes": []
+            },
+            "Resource": {
+                "memberOfTypes": []
+            }
+        },
+        "actions": {
+            "Investigate": { "appliesTo": { "principalTypes": ["User", "Role"], "resourceTypes": ["Resource"] } },
+            "SearchLogs": { "appliesTo": { "principalTypes": ["User", "Role"], "resourceTypes": ["Resource"] } },
+            "CreateRecommendation": { "appliesTo": { "principalTypes": ["User", "Role"], "resourceTypes": ["Resource"] } },
+            "DeleteData": { "appliesTo": { "principalTypes": ["User", "Role"], "resourceTypes": ["Resource"] } },
+            "DisableInfrastructure": { "appliesTo": { "principalTypes": ["User", "Role"], "resourceTypes": ["Resource"] } },
+            "ExecuteAction": { "appliesTo": { "principalTypes": ["User", "Role"], "resourceTypes": ["Resource"] } },
+            "BlockIP": { "appliesTo": { "principalTypes": ["User", "Role"], "resourceTypes": ["Resource"] } },
+            "IsolateHost": { "appliesTo": { "principalTypes": ["User", "Role"], "resourceTypes": ["Resource"] } }
+        }
+    }
+}
