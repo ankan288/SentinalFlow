@@ -1,0 +1,30 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Description: "SentinelFlow Immutable Audit Logs Bucket"
+
+Resources:
+  AuditLogsBucket:
+    Type: AWS::S3::Bucket
+    Properties:
+      BucketName: !Sub "sentinelflow-audit-logs-${AWS::AccountId}-${AWS::Region}"
+      ObjectLockEnabled: true
+      ObjectLockConfiguration:
+        ObjectLockEnabled: "Enabled"
+        Rule:
+          DefaultRetention:
+            Mode: COMPLIANCE
+            Days: 365
+      VersioningConfiguration:
+        Status: Enabled
+      PublicAccessBlockConfiguration:
+        BlockPublicAcls: true
+        IgnorePublicAcls: true
+        BlockPublicPolicy: true
+        RestrictPublicBuckets: true
+      BucketEncryption:
+        ServerSideEncryptionConfiguration:
+          - ServerSideEncryptionByDefault:
+              SSEAlgorithm: AES256
+
+Outputs:
+  AuditBucketName:
+    Value: !Ref AuditLogsBucket

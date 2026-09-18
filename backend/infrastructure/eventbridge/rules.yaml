@@ -1,0 +1,21 @@
+SecurityEventsRule:
+  Type: AWS::Events::Rule
+  Properties:
+    Description: "Routes raw security events to the detection Lambda"
+    EventPattern:
+      source:
+        - "com.sentinelflow.security"
+      detail-type:
+        - "SecurityEvent"
+    State: "ENABLED"
+    Targets:
+      - Arn: !GetAtt SecurityEventHandlerFunction.Arn
+        Id: "DetectionLambdaTarget"
+
+PermissionForEventsToInvokeLambda:
+  Type: AWS::Lambda::Permission
+  Properties:
+    FunctionName: !Ref SecurityEventHandlerFunction
+    Action: "lambda:InvokeFunction"
+    Principal: "events.amazonaws.com"
+    SourceArn: !GetAtt SecurityEventsRule.Arn

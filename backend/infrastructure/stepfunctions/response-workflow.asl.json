@@ -1,0 +1,69 @@
+{
+  "Comment": "SentinelFlow Incident Response Workflow with Human-in-the-Loop",
+  "StartAt": "AuthorizationCheck",
+  "States": {
+    "AuthorizationCheck": {
+      "Type": "Task",
+      "Resource": "${AuthorizationHandlerArn}",
+      "Next": "IsAuthorized",
+      "ResultPath": "$.AuthResult"
+    },
+    "IsAuthorized": {
+      "Type": "Choice",
+      "Choices": [
+        {
+          "Variable": "$.AuthResult.Authorized",
+          "BooleanEquals": true,
+          "Next": "WaitForHumanApproval"
+        }
+      ],
+      "Default": "AuthorizationFailed"
+    },
+    "AuthorizationFailed": {
+      "Type": "Fail",
+      "Error": "Unauthorized",
+      "Cause": "User or Agent lacks permissions to execute this action."
+    },
+    "WaitForHumanApproval": {
+      "Type": "Task",
+      "Resource": "arn:aws:states:::lambda:invoke.waitForTaskToken",
+      "Parameters": {
+        "FunctionName": "${NotifyHumanHandlerArn}",
+        "Payload": {
+          "TaskToken.$": "$$.Task.Token",
+          "IncidentId.$": "$.IncidentId",
+          "Action.$": "$.Action"
+        }
+      },
+      "ResultPath": "$.ApprovalResult",
+      "Next": "IsApproved"
+    },
+    "IsApproved": {
+      "Type": "Choice",
+      "Choices": [
+        {
+          "Variable": "$.ApprovalResult.Approved",
+          "BooleanEquals": true,
+          "Next": "ExecuteAction"
+        }
+      ],
+      "Default": "ActionRejected"
+    },
+    "ActionRejected": {
+      "Type": "Pass",
+      "Result": "Human rejected the action",
+      "End": true
+    },
+    "ExecuteAction": {
+      "Type": "Task",
+      "Resource": "${ExecutionHandlerArn}",
+      "Next": "WriteAuditLog",
+      "ResultPath": "$.ExecutionResult"
+    },
+    "WriteAuditLog": {
+      "Type": "Task",
+      "Resource": "${AuditHandlerArn}",
+      "End": true
+    }
+  }
+}
