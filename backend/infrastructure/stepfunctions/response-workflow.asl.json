@@ -27,6 +27,7 @@
     "WaitForHumanApproval": {
       "Type": "Task",
       "Resource": "arn:aws:states:::lambda:invoke.waitForTaskToken",
+      "TimeoutSeconds": 3600,
       "Parameters": {
         "FunctionName": "${NotifyHumanHandlerArn}",
         "Payload": {

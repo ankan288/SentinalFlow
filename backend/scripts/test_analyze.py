@@ -3,6 +3,8 @@ import os
 import json
 
 sys.path.append(os.path.join(os.path.dirname(__file__), '..', 'functions', 'api'))
+from unittest.mock import MagicMock
+sys.modules['boto3'] = MagicMock()
 import analyze_handler
 
 print('--- Testing AI Agent Integration (Phase 6) ---')

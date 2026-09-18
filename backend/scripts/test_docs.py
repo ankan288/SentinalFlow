@@ -14,3 +14,4 @@ try:
     print("Documentation is finalized and ready for Member 2 & 3.")
 except Exception as e:
     print(f"[FAILED] Could not parse OpenAPI spec: {e}")
+    sys.exit(1)

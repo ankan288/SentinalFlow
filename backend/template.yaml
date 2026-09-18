@@ -19,6 +19,11 @@ Globals:
       AllowMethods: "'GET,POST,OPTIONS'"
       AllowHeaders: "'Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token'"
       AllowOrigin: "'*'"
+    Auth:
+      DefaultAuthorizer: CognitoAuth
+      Authorizers:
+        CognitoAuth:
+          UserPoolArn: !Sub "arn:aws:cognito-idp:${AWS::Region}:${AWS::AccountId}:userpool/mock-pool"
 
 Resources:
   # Included from Phase 2
@@ -51,8 +56,8 @@ Resources:
   GetIncidentsFunction:
     Type: AWS::Serverless::Function
     Properties:
-      CodeUri: functions/
-      Handler: api.incidents_handler.lambda_handler
+      CodeUri: .
+      Handler: functions.api.incidents_handler.lambda_handler
       Policies:
         - DynamoDBReadPolicy:
             TableName: !Ref IncidentsTable
@@ -66,8 +71,8 @@ Resources:
   GetIncidentDetailFunction:
     Type: AWS::Serverless::Function
     Properties:
-      CodeUri: functions/
-      Handler: api.incident_detail_handler.lambda_handler
+      CodeUri: .
+      Handler: functions.api.incident_detail_handler.lambda_handler
       Policies:
         - DynamoDBReadPolicy:
             TableName: !Ref IncidentsTable
@@ -81,8 +86,8 @@ Resources:
   AnalyzeIncidentFunction:
     Type: AWS::Serverless::Function
     Properties:
-      CodeUri: functions/
-      Handler: api.analyze_handler.lambda_handler
+      CodeUri: .
+      Handler: functions.api.analyze_handler.lambda_handler
       Policies:
         - DynamoDBReadPolicy:
             TableName: !Ref IncidentsTable
@@ -98,8 +103,8 @@ Resources:
   SecurityEventHandlerFunction:
     Type: AWS::Serverless::Function
     Properties:
-      CodeUri: functions/
-      Handler: events.security_event_handler.lambda_handler
+      CodeUri: .
+      Handler: functions.events.security_event_handler.lambda_handler
       Events:
         NewSecurityEvent:
           Type: CloudWatchEvent
@@ -114,20 +119,20 @@ Resources:
   AuthorizationHandlerFunction:
     Type: AWS::Serverless::Function
     Properties:
-      CodeUri: functions/
-      Handler: workflow.authorization_handler.lambda_handler
+      CodeUri: .
+      Handler: functions.workflow.authorization_handler.lambda_handler
 
   ExecutionHandlerFunction:
     Type: AWS::Serverless::Function
     Properties:
-      CodeUri: functions/
-      Handler: workflow.execution_handler.lambda_handler
+      CodeUri: .
+      Handler: functions.workflow.execution_handler.lambda_handler
 
   AuditHandlerFunction:
     Type: AWS::Serverless::Function
     Properties:
-      CodeUri: functions/
-      Handler: workflow.audit_handler.lambda_handler
+      CodeUri: .
+      Handler: functions.workflow.audit_handler.lambda_handler
 
   ResponseWorkflowStateMachine:
     Type: AWS::Serverless::StateMachine
