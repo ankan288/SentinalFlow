@@ -1,0 +1,144 @@
+{
+  "project": "SentinelFlow",
+  "audit_phase": "Phase 9 — Security Scorecard & Assurance Review",
+  "date": "2026-09-17",
+  "test_summary": {
+    "total_executed": 43,
+    "passed": 43,
+    "failed": 0,
+    "skipped": 0,
+    "cedar_static_validation": "PASSED"
+  },
+  "controls": [
+    {
+      "control_id": "C-01",
+      "name": "Strict schema validation & field length caps",
+      "status": "VERIFIED",
+      "implementation": "contracts/events/security-event.schema.json",
+      "tests": [
+        "detection/tests/test_security.py::test_schema_rejects_missing_required_fields",
+        "detection/tests/test_security.py::test_schema_rejects_oversized_payloads",
+        "detection/tests/test_security.py::test_schema_rejects_invalid_event_id_format"
+      ]
+    },
+    {
+      "control_id": "C-02",
+      "name": "Log content treated as data, delimited in prompt",
+      "status": "SPECIFIED",
+      "implementation": "docs/security/ai-security.md (Section 10)",
+      "tests": [
+        "detection/tests/test_security.py::test_prompt_injection_in_attempted_username_identical_detector_behavior"
+      ]
+    },
+    {
+      "control_id": "C-03",
+      "name": "Deterministic rule-based detection, LLM-free",
+      "status": "VERIFIED",
+      "implementation": "detection/src/detector.py",
+      "tests": [
+        "detection/tests/test_detector.py::test_rule_001_fires_on_scenario_01",
+        "detection/tests/test_detector.py::test_rule_002_fires_on_scenario_01",
+        "detection/tests/test_detector.py::test_rule_003_fires_on_scenario_02",
+        "detection/tests/test_detector.py::test_rule_004_fires_on_scenario_03"
+      ]
+    },
+    {
+      "control_id": "C-04",
+      "name": "Evidence engine — claims trace to event IDs",
+      "status": "VERIFIED",
+      "implementation": "detection/src/evidence.py",
+      "tests": [
+        "detection/tests/test_security.py::test_evidence_engine_validates_clean_bundle_against_known_events",
+        "detection/tests/test_security.py::test_evidence_engine_catches_fabricated_or_mutated_event_ids"
+      ]
+    },
+    {
+      "control_id": "C-05",
+      "name": "Agent output validated against evidence set before display",
+      "status": "SPECIFIED",
+      "implementation": "docs/security/ai-security.md (Section 6)",
+      "tests": [
+        "detection/tests/test_security.py::test_evidence_engine_catches_fabricated_or_mutated_event_ids"
+      ]
+    },
+    {
+      "control_id": "C-06",
+      "name": "Cedar authorization on every action",
+      "status": "PARTIALLY_VERIFIED",
+      "implementation": "contracts/authorization/authorizer.py, contracts/authorization/policies.cedar",
+      "tests": [
+        "detection/tests/test_authorization.py::test_auth_01_authorized_analyst_reads_permitted_incident",
+        "detection/tests/test_authorization.py::test_auth_08_unknown_actor_is_denied"
+      ]
+    },
+    {
+      "control_id": "C-07",
+      "name": "Tool argument allowlisting & target entity validation",
+      "status": "PARTIALLY_VERIFIED",
+      "implementation": "contracts/authorization/policies.cedar (policy11)",
+      "tests": [
+        "detection/tests/test_authorization.py::test_auth_11_target_mismatch_forbid_remediation"
+      ]
+    },
+    {
+      "control_id": "C-08",
+      "name": "Human approval required for Medium & High actions",
+      "status": "PARTIALLY_VERIFIED",
+      "implementation": "contracts/authorization/policies.cedar (policies 2, 3, 7, 8)",
+      "tests": [
+        "detection/tests/test_authorization.py::test_auth_04_ai_investigator_cannot_execute_remediation",
+        "detection/tests/test_authorization.py::test_auth_18_side_effecting_action_without_required_approval_is_denied"
+      ]
+    },
+    {
+      "control_id": "C-09",
+      "name": "Append-only audit log & immutability guarantee",
+      "status": "PARTIALLY_VERIFIED",
+      "implementation": "contracts/authorization/authorizer.py, contracts/authorization/policies.cedar (policy10)",
+      "tests": [
+        "detection/tests/test_authorization.py::test_auth_forbid_audit_log_deletion_for_all",
+        "detection/tests/test_authorization.py::test_auth_20_audit_record_generated_for_every_decision"
+      ]
+    },
+    {
+      "control_id": "C-10",
+      "name": "Event deduplication by ID + timestamp sanity checks",
+      "status": "VERIFIED",
+      "implementation": "detection/src/detector.py, detection/tests/test_security.py",
+      "tests": [
+        "detection/tests/test_security.py::test_event_deduplication_prevents_false_detection_burst",
+        "detection/tests/test_security.py::test_timestamp_impossible_future_check"
+      ]
+    },
+    {
+      "control_id": "C-11",
+      "name": "Ingestion rate limits and payload size caps",
+      "status": "INTEGRATION_REQUIRED",
+      "implementation": "contracts/events/security-event.schema.json, docs/security/threat-model.md",
+      "tests": [
+        "detection/tests/test_security.py::test_schema_rejects_oversized_payloads"
+      ]
+    },
+    {
+      "control_id": "C-12",
+      "name": "Data minimization — no raw passwords/PII in prompts",
+      "status": "SPECIFIED",
+      "implementation": "contracts/events/security-event.schema.json, docs/security/ai-security.md (Section 12)",
+      "tests": []
+    },
+    {
+      "control_id": "C-13",
+      "name": "Secrets via environment/secret manager, never in repo",
+      "status": "DEPLOYMENT_REQUIRED",
+      "implementation": ".gitignore, docs/security/threat-model.md",
+      "tests": []
+    },
+    {
+      "control_id": "C-14",
+      "name": "Least-privilege IAM for every component",
+      "status": "DEPLOYMENT_REQUIRED",
+      "implementation": "docs/security/threat-model.md (Section 7)",
+      "tests": []
+    }
+  ]
+}
