@@ -31,7 +31,13 @@ def lambda_handler(event, context):
     action = event.get('Action', 'UNKNOWN')
     
     # In reality, executor comes from the TaskToken context
-    executor = event.get('Executor', 'Analyst: admin_user') 
+    executor = event.get('Executor')
+    if not executor:
+        print("Error: Executor missing from workflow event.")
+        return {
+            "status": "ERROR",
+            "message": "Executor identity missing. Cannot attribute audit log."
+        }
     
     audit_record = generate_audit_event(incident_id, action, executor)
     

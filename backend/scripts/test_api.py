@@ -21,9 +21,12 @@ incidents_handler.table.scan.return_value = {
 
 # Test GET /incidents
 print("\n[GET /incidents]")
-event = {}
+event = {
+    'requestContext': {'authorizer': {'claims': {'cognito:groups': '[ANALYST]'}}}
+}
 response = incidents_handler.lambda_handler(event, None)
 print(f"Status Code: {response['statusCode']}")
+assert response['statusCode'] in (200, 201), f"Unexpected status code: {response['statusCode']}"
 print(f"Body: {json.dumps(json.loads(response['body']), indent=2)}")
 
 # Mock the DynamoDB table get_item response
@@ -39,7 +42,11 @@ incident_detail_handler.table.get_item.return_value = {
 
 # Test GET /incidents/{id}
 print("\n[GET /incidents/INC-001]")
-event = {'pathParameters': {'id': 'INC-001'}}
+event = {
+    'pathParameters': {'id': 'INC-001'},
+    'requestContext': {'authorizer': {'claims': {'cognito:groups': '[ANALYST]'}}}
+}
 response = incident_detail_handler.lambda_handler(event, None)
 print(f"Status Code: {response['statusCode']}")
+assert response['statusCode'] in (200, 201), f"Unexpected status code: {response['statusCode']}"
 print(f"Body: {json.dumps(json.loads(response['body']), indent=2)}")
