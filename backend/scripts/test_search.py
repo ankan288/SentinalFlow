@@ -2,6 +2,12 @@ import sys
 import os
 
 sys.path.append(os.path.join(os.path.dirname(__file__), '..', 'src'))
+from unittest.mock import MagicMock
+sys.modules['boto3'] = MagicMock()
+sys.modules['opensearchpy'] = MagicMock()
+sys.modules['requests_aws4auth'] = MagicMock()
+import os
+os.environ['LOCAL_TEST_MODE'] = '1'
 from services.search_service import OpenSearchService
 
 print("--- Testing OpenSearch Interface for AI Agent ---")

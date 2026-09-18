@@ -61,7 +61,7 @@ graph TD
     SFN -->|Checks Permissions| Cedar
     SFN -->|Requires Human Approval| API
     SFN -->|Executes Action| LambdaAction
-    LambdaAction -->|Writes Audit Log| DDB
+    LambdaAction -->|Writes Audit Log| S3[(WORM S3)]
 ```
 
 ## System Components
@@ -78,8 +78,9 @@ graph TD
 - **Authorization (Cedar):** Handles fine-grained access control before any sensitive response action is taken (e.g., verifying if a specific user role is permitted to block an IP address).
 
 ### 4. Data Storage
-- **DynamoDB:** The primary transactional database (source of truth) for Incidents, Recommendations, and Audit Logs.
+- **DynamoDB:** The primary transactional database (source of truth) for Incidents and Recommendations.
 - **OpenSearch:** Optimized for fast, full-text search and filtering of raw security events.
+- **S3 (Object Lock):** WORM-compliant storage serving as the immutable source of truth for Audit Logs.
 
 ### 5. AI Processing
 - **Strands Agents SDK / Amazon Bedrock:** Invoked by API Lambdas when an analyst requests an investigation. The agent queries OpenSearch for evidence and returns structured attack stories and response recommendations.

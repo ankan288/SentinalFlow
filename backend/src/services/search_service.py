@@ -1,20 +1,20 @@
 import os
 import json
 import boto3
-try:
-    from opensearchpy import OpenSearch, RequestsHttpConnection
-    from requests_aws4auth import AWS4Auth
-except ImportError:
-    # Handle local testing environments without dependencies
-    pass
+from opensearchpy import OpenSearch, RequestsHttpConnection
+from requests_aws4auth import AWS4Auth
 
 class OpenSearchService:
     def __init__(self):
-        self.host = os.environ.get('OPENSEARCH_HOST', 'localhost')
+        self.host = os.environ.get('OPENSEARCH_HOST')
         self.region = os.environ.get('AWS_REGION', 'us-east-1')
+        self.local_test_mode = os.environ.get('LOCAL_TEST_MODE') == '1'
+        
+        if not self.host and not self.local_test_mode:
+            raise RuntimeError("OPENSEARCH_HOST environment variable is missing.")
         
         # In AWS, we use IAM Roles (SigV4) to authenticate to OpenSearch.
-        if self.host != 'localhost':
+        if self.host and not self.local_test_mode:
             credentials = boto3.Session().get_credentials()
             awsauth = AWS4Auth(credentials.access_key, credentials.secret_key, 
                              self.region, 'es', session_token=credentials.token)
@@ -44,8 +44,14 @@ class OpenSearchService:
             must_clauses.append({"term": {"source_ip": source_ip}})
         if username:
             must_clauses.append({"term": {"username": username}})
-        if start_time and end_time:
-            must_clauses.append({"range": {"timestamp": {"gte": start_time, "lte": end_time}}})
+            
+        if start_time or end_time:
+            time_range = {}
+            if start_time:
+                time_range["gte"] = start_time
+            if end_time:
+                time_range["lte"] = end_time
+            must_clauses.append({"range": {"timestamp": time_range}})
             
         search_body = {
             "query": {

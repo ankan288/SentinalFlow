@@ -33,7 +33,7 @@ Resources:
               Federated: !Ref GitHubOidcProvider
             Condition:
               StringLike:
-                token.actions.githubusercontent.com:sub: !Sub "repo:${GitHubOrg}/${GitHubRepo}:*"
+                token.actions.githubusercontent.com:sub: !Sub "repo:${GitHubOrg}/${GitHubRepo}:ref:refs/heads/backend"
                 token.actions.githubusercontent.com:aud: "sts.amazonaws.com"
       Policies:
         - PolicyName: SAMDeploymentPolicy
@@ -44,11 +44,23 @@ Resources:
                 Action:
                   - cloudformation:*
                   - s3:*
-                  - iam:*
                   - lambda:*
                   - apigateway:*
                   - dynamodb:*
                   - events:*
                   - states:*
                   - es:*
-                Resource: "*"
+                  - iam:GetRole
+                  - iam:CreateRole
+                  - iam:DeleteRole
+                  - iam:PutRolePolicy
+                  - iam:DeleteRolePolicy
+                  - iam:AttachRolePolicy
+                  - iam:DetachRolePolicy
+                Resource: 
+                  - !Sub "arn:aws:*:*:${AWS::AccountId}:*/*SentinelFlow*"
+                  - !Sub "arn:aws:*:*:${AWS::AccountId}:*/*sentinelflow*"
+              - Effect: Allow
+                Action:
+                  - iam:PassRole
+                Resource: !Sub "arn:aws:iam::${AWS::AccountId}:role/*SentinelFlow*"

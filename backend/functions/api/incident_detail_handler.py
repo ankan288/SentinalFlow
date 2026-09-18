@@ -2,10 +2,15 @@ import json
 import boto3
 import os
 
+import sys
+sys.path.append(os.path.join(os.path.dirname(__file__), '..', '..', 'src'))
+from services.authorization_service import require_role
+
 dynamodb = boto3.resource('dynamodb', region_name='us-east-1')
 table_name = os.environ.get('INCIDENTS_TABLE_NAME', 'SentinelFlow-Incidents')
 table = dynamodb.Table(table_name)
 
+@require_role(['ANALYST', 'ADMIN'])
 def lambda_handler(event, context):
     """
     Handles GET /incidents/{id}

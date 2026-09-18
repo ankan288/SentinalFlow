@@ -13,6 +13,8 @@ Globals:
     Environment:
       Variables:
         INCIDENTS_TABLE_NAME: !Ref IncidentsTable
+        OPENSEARCH_HOST: "search-mock-placeholder.us-east-1.es.amazonaws.com"
+        LOCAL_TEST_MODE: "1"
   Api:
     TracingEnabled: True
     Cors:
