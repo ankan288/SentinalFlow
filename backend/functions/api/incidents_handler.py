@@ -19,10 +19,39 @@ def lambda_handler(event, context):
     try:
         # In a production scenario with millions of incidents, we'd Query the GSI by Status.
         # For the hackathon, a paginated Scan is sufficient to return incidents for the dashboard.
-        limit = int(event.get('queryStringParameters', {}).get('limit', 50)) if event.get('queryStringParameters') else 50
+        query_params = event.get('queryStringParameters') or {}
+        limit_str = query_params.get('limit', '50')
+        next_token = query_params.get('next_token')
         
-        response = table.scan(Limit=limit)
+        try:
+            limit = int(limit_str)
+            if limit <= 0 or limit > 100:
+                raise ValueError()
+        except ValueError:
+            return {
+                "statusCode": 400,
+                "body": json.dumps({"message": "limit must be a positive integer between 1 and 100"})
+            }
+            
+        scan_kwargs = {'Limit': limit}
+        if next_token:
+            import base64
+            try:
+                scan_kwargs['ExclusiveStartKey'] = json.loads(base64.b64decode(next_token).decode('utf-8'))
+            except Exception:
+                return {
+                    "statusCode": 400,
+                    "body": json.dumps({"message": "Invalid next_token"})
+                }
+        
+        response = table.scan(**scan_kwargs)
         incidents = response.get('Items', [])
+        
+        last_evaluated_key = response.get('LastEvaluatedKey')
+        next_token_out = None
+        if last_evaluated_key:
+            import base64
+            next_token_out = base64.b64encode(json.dumps(last_evaluated_key).encode('utf-8')).decode('utf-8')
         
         return {
             "statusCode": 200,
@@ -30,7 +59,7 @@ def lambda_handler(event, context):
                 "Content-Type": "application/json",
                 "Access-Control-Allow-Origin": "*"
             },
-            "body": json.dumps({"incidents": incidents})
+            "body": json.dumps({"incidents": incidents, "next_token": next_token_out})
         }
     except Exception as e:
         print(f"Error fetching incidents: {str(e)}")

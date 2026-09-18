@@ -1,7 +1,9 @@
 import os
 import glob
 
-files = glob.glob('d:/AWS/backend/scripts/test_*.py')
+script_dir = os.path.dirname(os.path.abspath(__file__))
+pattern = os.path.join(script_dir, 'test_*.py')
+files = glob.glob(pattern)
 for f in files:
     if f.endswith('test_pipeline.py') or f.endswith('test_docs.py') or f.endswith('test_cedar.py') or f.endswith('test_search.py'):
         continue

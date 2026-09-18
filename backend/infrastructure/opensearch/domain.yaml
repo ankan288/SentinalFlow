@@ -17,6 +17,6 @@ SentinelFlowSearchDomain:
       Statement:
         - Effect: Allow
           Principal:
-            AWS: "*" # Restrict to specific IAM roles in actual deployment
+            AWS: !Ref LambdaExecutionRoleArn
           Action: "es:*"
           Resource: !Sub "arn:aws:es:${AWS::Region}:${AWS::AccountId}:domain/sentinelflow-events/*"

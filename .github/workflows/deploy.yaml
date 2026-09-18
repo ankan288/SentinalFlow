@@ -4,6 +4,7 @@ on:
   push:
     branches:
       - main
+      - backend
     paths:
       - 'backend/**'
 
@@ -40,6 +41,10 @@ jobs:
         with:
           role-to-assume: arn:aws:iam::${{ secrets.AWS_ACCOUNT_ID }}:role/GitHubActionDeployRole
           aws-region: ${{ env.AWS_REGION }}
+
+      - name: Install Dependencies
+        run: |
+          pip install -r requirements.txt
 
       - name: Run Unit Tests
         run: |

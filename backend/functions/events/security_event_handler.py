@@ -1,4 +1,12 @@
 import json
+import os
+import boto3
+import uuid
+import datetime
+
+dynamodb = boto3.resource('dynamodb', region_name='us-east-1')
+table_name = os.environ.get('INCIDENTS_TABLE_NAME', 'SentinelFlow-Incidents')
+table = dynamodb.Table(table_name)
 
 def lambda_handler(event, context):
     """
@@ -17,10 +25,21 @@ def lambda_handler(event, context):
         
     print(f"Processing event {event_type} from {source_ip}")
     
-    # In a real environment, this Lambda calls Member 2's Detection Logic
-    # Example:
-    # is_threat, severity = detector.evaluate(detail)
-    # if is_threat:
-    #     incident_service.create_incident(...)
+    severity = "HIGH" if event_type.lower() == "brute_force" else "MEDIUM"
+    incident_id = f"INC-{str(uuid.uuid4())[:8]}"
     
-    print("Event processed successfully. Handoff to detection logic complete.")
+    incident = {
+        "IncidentId": incident_id,
+        "Status": "NEW",
+        "Severity": severity,
+        "Description": f"Detected {event_type} from {source_ip}",
+        "CreatedAt": datetime.datetime.utcnow().isoformat() + "Z",
+        "ContextData": json.dumps(detail)
+    }
+    
+    try:
+        table.put_item(Item=incident)
+        print(f"Created incident {incident_id} successfully.")
+    except Exception as e:
+        print(f"Failed to create incident: {e}")
+        raise
