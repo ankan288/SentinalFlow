@@ -1,4 +1,5 @@
 import React, { createContext, useContext, useState } from 'react';
+import { executeResponseAction } from '../api/response';
 
 interface ActionData {
   id: string;
@@ -12,7 +13,7 @@ interface ActionData {
 
 interface ResponseContextType {
   actions: ActionData[];
-  approveAction: (id: string) => Promise<void>;
+  approveAction: (actionId: string, incidentId?: string) => Promise<void>;
 }
 
 const defaultActions: ActionData[] = [
@@ -55,10 +56,18 @@ export const useResponse = () => useContext(ResponseContext);
 export const ResponseProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [actions, setActions] = useState<ActionData[]>(defaultActions);
 
-  const approveAction = async (id: string) => {
-    // Simulate an API call to the backend
-    await new Promise(resolve => setTimeout(resolve, 1000));
-    setActions(prev => prev.map(a => a.id === id ? { ...a, approved: true } : a));
+  const approveAction = async (actionId: string, incidentId: string = 'INC-UNKNOWN') => {
+    try {
+      const response = await executeResponseAction(actionId, incidentId);
+      if (response.success) {
+        setActions(prev => prev.map(a => a.id === actionId ? { ...a, approved: true } : a));
+      } else {
+        throw new Error(response.message);
+      }
+    } catch (error) {
+      console.error('Failed to execute response action:', error);
+      throw error;
+    }
   };
 
   return (

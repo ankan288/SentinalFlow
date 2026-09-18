@@ -1,5 +1,5 @@
 import React from 'react';
-import { ShieldAlert, AlertTriangle } from 'lucide-react';
+import { AlertTriangle } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 
 const mockIncidents = [
@@ -50,6 +50,13 @@ export const IncidentSummary: React.FC = () => {
           <div 
             key={incident.id}
             onClick={() => navigate(`/incidents/${incident.id}`)}
+            onKeyDown={(e) => {
+              if (e.key === 'Enter' || e.key === ' ') {
+                e.preventDefault();
+                navigate(`/incidents/${incident.id}`);
+              }
+            }}
+            tabIndex={0}
             style={{
               padding: 'var(--space-3)',
               backgroundColor: 'var(--bg-tertiary)',

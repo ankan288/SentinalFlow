@@ -13,9 +13,11 @@ import { Welcome } from './routes/Welcome';
 import { DemoProvider } from './context/DemoContext';
 import { ResponseProvider } from './context/ResponseContext';
 
+import { authService } from './services/auth/authService';
+
 // Protected Route Wrapper
 const ProtectedRoute = ({ children }: { children: React.ReactNode }) => {
-  const isAuthenticated = localStorage.getItem('sentinel_auth') === 'mock-token-123';
+  const isAuthenticated = authService.isAuthenticated();
   const location = useLocation();
 
   if (!isAuthenticated) {

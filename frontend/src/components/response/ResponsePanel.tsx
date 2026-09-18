@@ -2,12 +2,14 @@ import React from 'react';
 import { ActionCard } from './ActionCard';
 import { CheckSquare } from 'lucide-react';
 import { useResponse } from '../../context/ResponseContext';
+import { useParams } from 'react-router-dom';
 
 export const ResponsePanel: React.FC = () => {
   const { actions, approveAction } = useResponse();
+  const { id: incidentId } = useParams();
 
   const handleApprove = (id: string) => {
-    approveAction(id);
+    approveAction(id, incidentId);
   };
 
   const handleReview = (id: string) => {
