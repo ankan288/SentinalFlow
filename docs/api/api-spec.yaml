@@ -1,0 +1,96 @@
+openapi: 3.0.3
+info:
+  title: SentinelFlow Backend API
+  description: API for the SentinelFlow Security Incident Response Platform
+  version: 1.0.0
+servers:
+  - url: https://api.sentinelflow.local/v1
+    description: Production Server (Mock)
+paths:
+  /incidents:
+    get:
+      summary: List all security incidents
+      security:
+        - BearerAuth: []
+      responses:
+        '200':
+          description: A list of incidents
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  incidents:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/Incident'
+  /incidents/{id}:
+    get:
+      summary: Get incident details
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: string
+      security:
+        - BearerAuth: []
+      responses:
+        '200':
+          description: Incident details
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Incident'
+  /incidents/{id}/analyze:
+    post:
+      summary: Trigger AI Agent Analysis
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: string
+      security:
+        - BearerAuth: []
+      responses:
+        '200':
+          description: Analysis Complete
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AnalysisResponse'
+components:
+  securitySchemes:
+    BearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+  schemas:
+    Incident:
+      type: object
+      properties:
+        IncidentId:
+          type: string
+        Status:
+          type: string
+        Severity:
+          type: string
+        Description:
+          type: string
+    AnalysisResponse:
+      type: object
+      properties:
+        message:
+          type: string
+        analysis:
+          type: object
+          properties:
+            attack_story:
+              type: string
+            confidence_score:
+              type: number
+            recommended_actions:
+              type: array
+              items:
+                type: object

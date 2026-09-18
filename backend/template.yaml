@@ -1,0 +1,152 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Transform: AWS::Serverless-2016-10-31
+Description: >
+  SentinelFlow Backend (AWS SAM Template)
+  Serverless backend for the SentinelFlow AI security platform.
+
+Globals:
+  Function:
+    Timeout: 30
+    MemorySize: 1024
+    Runtime: python3.11
+    Tracing: Active
+    Environment:
+      Variables:
+        INCIDENTS_TABLE_NAME: !Ref IncidentsTable
+  Api:
+    TracingEnabled: True
+    Cors:
+      AllowMethods: "'GET,POST,OPTIONS'"
+      AllowHeaders: "'Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token'"
+      AllowOrigin: "'*'"
+
+Resources:
+  # Included from Phase 2
+  IncidentsTable:
+    Type: AWS::DynamoDB::Table
+    Properties:
+      TableName: SentinelFlow-Incidents
+      BillingMode: PAY_PER_REQUEST
+      AttributeDefinitions:
+        - AttributeName: IncidentId
+          AttributeType: S
+        - AttributeName: Status
+          AttributeType: S
+        - AttributeName: CreatedAt
+          AttributeType: S
+      KeySchema:
+        - AttributeName: IncidentId
+          KeyType: HASH
+      GlobalSecondaryIndexes:
+        - IndexName: StatusIndex
+          KeySchema:
+            - AttributeName: Status
+              KeyType: HASH
+            - AttributeName: CreatedAt
+              KeyType: RANGE
+          Projection:
+            ProjectionType: ALL
+
+  # --- API Lambdas ---
+  GetIncidentsFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: functions/
+      Handler: api.incidents_handler.lambda_handler
+      Policies:
+        - DynamoDBReadPolicy:
+            TableName: !Ref IncidentsTable
+      Events:
+        GetIncidentsApi:
+          Type: Api
+          Properties:
+            Path: /incidents
+            Method: get
+
+  GetIncidentDetailFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: functions/
+      Handler: api.incident_detail_handler.lambda_handler
+      Policies:
+        - DynamoDBReadPolicy:
+            TableName: !Ref IncidentsTable
+      Events:
+        GetIncidentDetailApi:
+          Type: Api
+          Properties:
+            Path: /incidents/{id}
+            Method: get
+
+  AnalyzeIncidentFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: functions/
+      Handler: api.analyze_handler.lambda_handler
+      Policies:
+        - DynamoDBReadPolicy:
+            TableName: !Ref IncidentsTable
+        - DynamoDBWritePolicy:
+            TableName: !Ref IncidentsTable
+      Events:
+        AnalyzeIncidentApi:
+          Type: Api
+          Properties:
+            Path: /incidents/{id}/analyze
+            Method: post
+
+  SecurityEventHandlerFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: functions/
+      Handler: events.security_event_handler.lambda_handler
+      Events:
+        NewSecurityEvent:
+          Type: CloudWatchEvent
+          Properties:
+            Pattern:
+              source:
+                - com.sentinelflow.security
+              detail-type:
+                - SecurityEvent
+
+  # --- Workflow Lambdas ---
+  AuthorizationHandlerFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: functions/
+      Handler: workflow.authorization_handler.lambda_handler
+
+  ExecutionHandlerFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: functions/
+      Handler: workflow.execution_handler.lambda_handler
+
+  AuditHandlerFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: functions/
+      Handler: workflow.audit_handler.lambda_handler
+
+  ResponseWorkflowStateMachine:
+    Type: AWS::Serverless::StateMachine
+    Properties:
+      DefinitionUri: infrastructure/stepfunctions/response-workflow.asl.json
+      DefinitionSubstitutions:
+        AuthorizationHandlerArn: !GetAtt AuthorizationHandlerFunction.Arn
+        ExecutionHandlerArn: !GetAtt ExecutionHandlerFunction.Arn
+        AuditHandlerArn: !GetAtt AuditHandlerFunction.Arn
+        NotifyHumanHandlerArn: !GetAtt AuditHandlerFunction.Arn # Mocked
+      Policies:
+        - LambdaInvokePolicy:
+            FunctionName: !Ref AuthorizationHandlerFunction
+        - LambdaInvokePolicy:
+            FunctionName: !Ref ExecutionHandlerFunction
+        - LambdaInvokePolicy:
+            FunctionName: !Ref AuditHandlerFunction
+
+Outputs:
+  SentinelFlowApiUrl:
+    Description: "API Gateway endpoint URL for Prod stage"
+    Value: !Sub "https://${ServerlessRestApi}.execute-api.${AWS::Region}.amazonaws.com/Prod/"
