@@ -17,15 +17,32 @@ class AIAgentClient:
         # Simulate processing delay
         time.sleep(0.1)
             
+        import json
+        target_ip = "10.0.0.50"
+        event_type = "brute-force"
+        action_type = "BlockIP"
+        
+        if isinstance(context_data, dict):
+            context_str = context_data.get('ContextData', '{}')
+            try:
+                context_json = json.loads(context_str)
+                target_ip = context_json.get('source_ip', '10.0.0.50')
+                event_type = context_json.get('event_type', 'brute-force')
+                if 'user' in context_json:
+                    target_ip = context_json.get('user')
+                    action_type = "DisableUser"
+            except:
+                pass
+                
         return {
-            "attack_story": "The attacker performed a brute-force attack followed by privilege escalation.",
+            "attack_story": f"The attacker performed a {event_type} attack.",
             "confidence_score": 0.92,
             "recommended_actions": [
                 {
-                    "action_id": "ACT-BLOCK-IP",
-                    "type": "BlockIP",
-                    "target": "10.0.0.50",
-                    "description": "Block the source IP of the brute-force attack."
+                    "action_id": f"ACT-{action_type.upper()}",
+                    "type": action_type,
+                    "target": target_ip,
+                    "description": f"{action_type} for the detected threat."
                 }
             ]
         }

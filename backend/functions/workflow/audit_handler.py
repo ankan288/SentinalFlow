@@ -6,7 +6,7 @@ import boto3
 from botocore.exceptions import ClientError
 
 s3 = boto3.client('s3', region_name='us-east-1')
-bucket_name = os.environ.get('AUDIT_BUCKET', 'SentinelFlow-AuditLogs')
+bucket_name = os.environ.get('AUDIT_BUCKET')
 
 def generate_audit_event(incident_id, action, executor):
     """
@@ -30,14 +30,17 @@ def lambda_handler(event, context):
     incident_id = event.get('IncidentId', 'UNKNOWN')
     action = event.get('Action', 'UNKNOWN')
     
-    # In reality, executor comes from the TaskToken context
-    executor = event.get('Executor')
+    # In reality, executor comes from the TaskToken context or initial input
+    executor = event.get('Executor') or event.get('ApprovalResult', {}).get('Payload', {}).get('Executor') or event.get('ApprovalResult', {}).get('Executor')
     if not executor:
         print("Error: Executor missing from workflow event.")
         return {
             "status": "ERROR",
             "message": "Executor identity missing. Cannot attribute audit log."
         }
+        
+    if not bucket_name:
+        raise ValueError("AUDIT_BUCKET environment variable is not set")
     
     audit_record = generate_audit_event(incident_id, action, executor)
     
@@ -59,9 +62,5 @@ def lambda_handler(event, context):
         }
     except ClientError as e:
         print(f"S3 Put Error: {e}")
-        # Note: In production we would raise the exception to fail the workflow
-        # raise e
-        return {
-            "status": "ERROR",
-            "message": "Failed to write audit log to S3."
-        }
+        # Re-raise so Step Functions correctly fails the execution instead of succeeding
+        raise e

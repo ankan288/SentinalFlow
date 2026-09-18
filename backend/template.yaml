@@ -25,7 +25,7 @@ Globals:
       DefaultAuthorizer: CognitoAuth
       Authorizers:
         CognitoAuth:
-          UserPoolArn: !Sub "arn:aws:cognito-idp:${AWS::Region}:${AWS::AccountId}:userpool/mock-pool"
+          UserPoolArn: !GetAtt SentinelFlowUserPool.Arn
 
 Resources:
   # Included from Phase 2
@@ -53,6 +53,97 @@ Resources:
               KeyType: RANGE
           Projection:
             ProjectionType: ALL
+
+  AuditLogsBucket:
+    Type: AWS::S3::Bucket
+    Properties:
+      BucketName: !Sub "sentinelflow-audit-logs-${AWS::AccountId}-${AWS::Region}"
+      ObjectLockEnabled: true
+      ObjectLockConfiguration:
+        ObjectLockEnabled: "Enabled"
+        Rule:
+          DefaultRetention:
+            Mode: COMPLIANCE
+            Days: 365
+      VersioningConfiguration:
+        Status: Enabled
+      PublicAccessBlockConfiguration:
+        BlockPublicAcls: true
+        IgnorePublicAcls: true
+        BlockPublicPolicy: true
+        RestrictPublicBuckets: true
+      BucketEncryption:
+        ServerSideEncryptionConfiguration:
+          - ServerSideEncryptionByDefault:
+              SSEAlgorithm: AES256
+
+  SentinelFlowUserPool:
+    Type: AWS::Cognito::UserPool
+    Properties:
+      UserPoolName: SentinelFlowUsers
+      UsernameAttributes: 
+        - email
+      AutoVerifiedAttributes:
+        - email
+      Policies:
+        PasswordPolicy:
+          MinimumLength: 8
+          RequireLowercase: true
+          RequireNumbers: true
+          RequireSymbols: true
+          RequireUppercase: true
+
+  SentinelFlowUserPoolClient:
+    Type: AWS::Cognito::UserPoolClient
+    Properties:
+      ClientName: SentinelFlowWebClient
+      UserPoolId: !Ref SentinelFlowUserPool
+      GenerateSecret: false
+      ExplicitAuthFlows:
+        - ALLOW_USER_SRP_AUTH
+        - ALLOW_REFRESH_TOKEN_AUTH
+
+  AdminGroup:
+    Type: AWS::Cognito::UserPoolGroup
+    Properties:
+      GroupName: ADMIN
+      Description: Full access to all actions and infrastructure
+      UserPoolId: !Ref SentinelFlowUserPool
+
+  AnalystGroup:
+    Type: AWS::Cognito::UserPoolGroup
+    Properties:
+      GroupName: ANALYST
+      Description: Can investigate incidents and request AI analysis
+      UserPoolId: !Ref SentinelFlowUserPool
+
+  ViewerGroup:
+    Type: AWS::Cognito::UserPoolGroup
+    Properties:
+      GroupName: VIEWER
+      Description: Read-only access to dashboards and incidents
+      UserPoolId: !Ref SentinelFlowUserPool
+
+  SentinelFlowSearchDomain:
+    Type: AWS::OpenSearchService::Domain
+    Properties:
+      DomainName: sentinelflow-events
+      EngineVersion: OpenSearch_2.11
+      ClusterConfig:
+        InstanceType: t3.small.search
+        InstanceCount: 1
+      EBSOptions:
+        EBSEnabled: true
+        VolumeType: gp3
+        VolumeSize: 10
+      AccessPolicies:
+        Version: "2012-10-17"
+        Statement:
+          - Effect: Allow
+            Principal:
+              AWS: !GetAtt SecurityEventHandlerFunctionRole.Arn
+            Action: "es:*"
+            Resource: !Sub "arn:aws:es:${AWS::Region}:${AWS::AccountId}:domain/sentinelflow-events/*"
 
   # --- API Lambdas ---
   GetIncidentsFunction:
@@ -95,6 +186,11 @@ Resources:
             TableName: !Ref IncidentsTable
         - DynamoDBWritePolicy:
             TableName: !Ref IncidentsTable
+        - StepFunctionsExecutionPolicy:
+            StateMachineName: !GetAtt ResponseWorkflowStateMachine.Name
+      Environment:
+        Variables:
+          STATE_MACHINE_ARN: !Ref ResponseWorkflowStateMachine
       Events:
         AnalyzeIncidentApi:
           Type: Api
@@ -135,6 +231,20 @@ Resources:
     Properties:
       CodeUri: .
       Handler: functions.workflow.audit_handler.lambda_handler
+      Environment:
+        Variables:
+          AUDIT_BUCKET: !Ref AuditLogsBucket
+      Policies:
+        - S3WritePolicy:
+            BucketName: !Ref AuditLogsBucket
+
+  NotifyHumanHandlerFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: .
+      Handler: functions.workflow.notify_handler.lambda_handler
+      Policies:
+        - AWSStepFunctionsFullAccess
 
   ResponseWorkflowStateMachine:
     Type: AWS::Serverless::StateMachine
@@ -144,7 +254,7 @@ Resources:
         AuthorizationHandlerArn: !GetAtt AuthorizationHandlerFunction.Arn
         ExecutionHandlerArn: !GetAtt ExecutionHandlerFunction.Arn
         AuditHandlerArn: !GetAtt AuditHandlerFunction.Arn
-        NotifyHumanHandlerArn: !GetAtt AuditHandlerFunction.Arn # Mocked
+        NotifyHumanHandlerArn: !GetAtt NotifyHumanHandlerFunction.Arn
       Policies:
         - LambdaInvokePolicy:
             FunctionName: !Ref AuthorizationHandlerFunction
@@ -152,6 +262,8 @@ Resources:
             FunctionName: !Ref ExecutionHandlerFunction
         - LambdaInvokePolicy:
             FunctionName: !Ref AuditHandlerFunction
+        - LambdaInvokePolicy:
+            FunctionName: !Ref NotifyHumanHandlerFunction
 
 Outputs:
   SentinelFlowApiUrl:

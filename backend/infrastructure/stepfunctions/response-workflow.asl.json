@@ -43,7 +43,7 @@
       "Type": "Choice",
       "Choices": [
         {
-          "Variable": "$.ApprovalResult.Approved",
+          "Variable": "$.ApprovalResult.Payload.Approved",
           "BooleanEquals": true,
           "Next": "ExecuteAction"
         }

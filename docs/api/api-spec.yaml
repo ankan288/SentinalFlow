@@ -94,3 +94,12 @@ components:
               type: array
               items:
                 type: object
+                properties:
+                  action_id:
+                    type: string
+                  type:
+                    type: string
+                  target:
+                    type: string
+                  description:
+                    type: string

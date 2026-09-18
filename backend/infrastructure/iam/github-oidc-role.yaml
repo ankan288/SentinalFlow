@@ -33,7 +33,9 @@ Resources:
               Federated: !Ref GitHubOidcProvider
             Condition:
               StringLike:
-                token.actions.githubusercontent.com:sub: !Sub "repo:${GitHubOrg}/${GitHubRepo}:ref:refs/heads/backend"
+                token.actions.githubusercontent.com:sub: 
+                  - !Sub "repo:${GitHubOrg}/${GitHubRepo}:ref:refs/heads/backend"
+                  - !Sub "repo:${GitHubOrg}/${GitHubRepo}:ref:refs/heads/main"
                 token.actions.githubusercontent.com:aud: "sts.amazonaws.com"
       Policies:
         - PolicyName: SAMDeploymentPolicy
@@ -50,6 +52,20 @@ Resources:
                   - events:*
                   - states:*
                   - es:*
+                  - cognito-idp:*
+                Resource: 
+                  - !Sub "arn:aws:cloudformation:${AWS::Region}:${AWS::AccountId}:stack/*SentinelFlow*"
+                  - !Sub "arn:aws:cloudformation:${AWS::Region}:${AWS::AccountId}:stack/*sentinelflow*"
+                  - !Sub "arn:aws:s3:::*sentinelflow*"
+                  - !Sub "arn:aws:lambda:${AWS::Region}:${AWS::AccountId}:function:*SentinelFlow*"
+                  - !Sub "arn:aws:apigateway:${AWS::Region}::/restapis/*"
+                  - !Sub "arn:aws:dynamodb:${AWS::Region}:${AWS::AccountId}:table/*SentinelFlow*"
+                  - !Sub "arn:aws:events:${AWS::Region}:${AWS::AccountId}:rule/*SentinelFlow*"
+                  - !Sub "arn:aws:states:${AWS::Region}:${AWS::AccountId}:stateMachine:*SentinelFlow*"
+                  - !Sub "arn:aws:es:${AWS::Region}:${AWS::AccountId}:domain/*sentinelflow*"
+                  - !Sub "arn:aws:cognito-idp:${AWS::Region}:${AWS::AccountId}:userpool/*"
+              - Effect: Allow
+                Action:
                   - iam:GetRole
                   - iam:CreateRole
                   - iam:DeleteRole
@@ -57,10 +73,15 @@ Resources:
                   - iam:DeleteRolePolicy
                   - iam:AttachRolePolicy
                   - iam:DetachRolePolicy
-                Resource: 
-                  - !Sub "arn:aws:*:*:${AWS::AccountId}:*/*SentinelFlow*"
-                  - !Sub "arn:aws:*:*:${AWS::AccountId}:*/*sentinelflow*"
+                Resource: !Sub "arn:aws:iam::${AWS::AccountId}:role/*SentinelFlow*"
               - Effect: Allow
                 Action:
                   - iam:PassRole
                 Resource: !Sub "arn:aws:iam::${AWS::AccountId}:role/*SentinelFlow*"
+                Condition:
+                  StringEquals:
+                    iam:PassedToService:
+                      - lambda.amazonaws.com
+                      - apigateway.amazonaws.com
+                      - states.amazonaws.com
+                      - events.amazonaws.com

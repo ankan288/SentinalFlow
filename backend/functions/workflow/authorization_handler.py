@@ -1,24 +1,54 @@
 import json
 
+import os
+import re
+
 def evaluate_cedar_policy(principal_role, action, resource_type):
     """
-    Simulates Amazon Verified Permissions (Cedar) evaluation engine based on our policies.cedar
+    Simulates Amazon Verified Permissions (Cedar) evaluation engine by parsing policies.cedar.
     """
-    # Forbid rule takes precedence
-    if principal_role == "Agent" and action in ["DeleteData", "DisableInfrastructure", "ExecuteAction"]:
-        return False, "Explicitly forbidden for Agent to execute destructive actions."
+    policy_path = os.path.join(os.path.dirname(__file__), '..', '..', 'infrastructure', 'cedar', 'policies.cedar')
+    if not os.path.exists(policy_path):
+        return False, "Policy file not found."
         
-    # Permit rules
-    if principal_role == "Admin":
-        return True, "Admin is permitted all actions."
+    try:
+        with open(policy_path, 'r') as f:
+            policies = f.read()
+    except Exception as e:
+        return False, f"Failed to read policy: {e}"
         
-    if principal_role == "Agent" and action in ["Investigate", "SearchLogs", "CreateRecommendation"]:
-        return True, "Agent is permitted to investigate and recommend."
-        
-    if principal_role == "Analyst" and action in ["BlockIP", "IsolateHost", "ExecuteAction"] and resource_type == "Incident":
-        return True, "Analyst is permitted to execute mitigation actions on Incidents."
-        
-    return False, "Implicit Deny: No permit rule matched."
+    # Basic regex parser for the hackathon simulation
+    statements = re.findall(r'(permit|forbid)\s*\((.*?)\);', policies, re.DOTALL)
+    
+    is_authorized = False
+    reason = "Implicit Deny: No permit rule matched."
+    
+    principal_role = principal_role.upper()
+    principal_str = f'SentinelFlow::Role::"Admin"' if principal_role == 'ADMIN' else (
+        f'SentinelFlow::Role::"Analyst"' if principal_role == 'ANALYST' else f'SentinelFlow::Role::"Agent"'
+    )
+    action_str = f'SentinelFlow::Action::"{action}"'
+    resource_str = f'SentinelFlow::Resource::"{resource_type}"'
+    
+    for effect, conditions in statements:
+        if 'principal in ' in conditions and principal_str not in conditions:
+            continue
+            
+        if 'action in [' in conditions:
+            actions_match = re.search(r'action in \[(.*?)\]', conditions, re.DOTALL)
+            if actions_match and action_str not in actions_match.group(1):
+                continue
+                
+        if 'resource ==' in conditions and resource_str not in conditions:
+            continue
+            
+        if effect == 'forbid':
+            return False, "Explicitly forbidden."
+        elif effect == 'permit':
+            is_authorized = True
+            reason = "Permit rule matched."
+            
+    return is_authorized, reason
 
 def lambda_handler(event, context):
     action = event.get('Action')

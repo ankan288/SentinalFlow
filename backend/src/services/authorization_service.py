@@ -13,7 +13,14 @@ def require_role(allowed_roles):
             # Extract groups. Cognito can return a comma-separated string or a list.
             user_groups = claims.get('cognito:groups', '')
             if isinstance(user_groups, str):
-                user_groups = [g.strip('[] ') for g in user_groups.split(',') if g]
+                try:
+                    user_groups = json.loads(user_groups)
+                    if not isinstance(user_groups, list):
+                        user_groups = [str(user_groups)]
+                except json.JSONDecodeError:
+                    user_groups = [g.strip('[] "\'') for g in user_groups.split(',') if g.strip('[] "\'')]
+            if isinstance(user_groups, list):
+                user_groups = [g.strip('[] "\'') for g in user_groups if isinstance(g, str)]
             
             # Admin always has access. Otherwise, check if user has one of the allowed roles.
             has_role = 'ADMIN' in user_groups or any(role in user_groups for role in allowed_roles)
