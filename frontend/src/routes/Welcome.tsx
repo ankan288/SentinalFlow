@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { BlackHoleHeroSection } from '../components/ui/blackhole-hero-section';
+import AnimatedGradient from '../components/ui/animated-gradient';
 
 function useNarrow(query = "(max-width: 767px)") {
   const [narrow, setNarrow] = useState(false);
@@ -16,20 +16,12 @@ function useNarrow(query = "(max-width: 767px)") {
 
 export const Welcome = () => {
   const navigate = useNavigate();
-  const narrow = useNarrow();
+  useNarrow();
 
   return (
     <section className="relative min-h-[92svh] w-full md:min-h-[720px] bg-black">
-      <BlackHoleHeroSection
-        focus={narrow ? [0.5, 0.76] : [0.72, 0.46]}
-        scrim={narrow ? "top" : "left"}
-        scrimStrength={0.9}
-        distance={24}
-        elevation={narrow ? -7 : -5.5}
-        fov={narrow ? 58 : 42}
-        glow={narrow ? 0.85 : 1}
-        steps={narrow ? 200 : 300}
-        resolution={narrow ? 0.6 : 0.7}
+      <AnimatedGradient
+        className="w-full h-full"
       >
         <div className="flex h-full min-h-[92svh] items-start px-6 pt-14 sm:px-10 md:min-h-[720px] md:items-center md:pt-0 lg:px-20">
           <div className="max-w-[34rem] z-10 relative">
@@ -57,7 +49,7 @@ export const Welcome = () => {
             </div>
           </div>
         </div>
-      </BlackHoleHeroSection>
+      </AnimatedGradient>
     </section>
   );
 };

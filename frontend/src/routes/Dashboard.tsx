@@ -4,16 +4,12 @@ import { IncidentSummary } from '../components/dashboard/IncidentSummary';
 import { RiskDistribution } from '../components/dashboard/RiskDistribution';
 import { RecentEvents } from '../components/dashboard/RecentEvents';
 import { useDemo } from '../context/DemoContext';
-import GatewayFlow from '../components/ui/gateway-flow';
 
 export const Dashboard: React.FC = () => {
   const { isDemoMode } = useDemo();
 
   return (
-    <div style={{ position: 'relative', minHeight: '100%', margin: 'calc(var(--space-6) * -1)', padding: 'var(--space-6)', overflow: 'hidden' }}>
-      <div style={{ position: 'absolute', inset: 0, zIndex: 0, pointerEvents: 'none' }}>
-        <GatewayFlow mode="dark" />
-      </div>
+    <div style={{ position: 'relative', minHeight: '100%' }}>
       
       <div style={{ position: 'relative', zIndex: 10, height: '100%' }}>
         {!isDemoMode ? (

@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, Link } from 'react-router-dom';
 import { Shield, Lock } from 'lucide-react';
 import { Button } from '../components/common/Button';
 import PortalFieldCollection from '../components/ui/portal-field';
@@ -131,6 +131,13 @@ export const Login: React.FC = () => {
             {loading ? 'Authenticating...' : 'Establish Secure Connection'}
           </Button>
         </form>
+
+        <div style={{ marginTop: 'var(--space-6)', textAlign: 'center', fontSize: '0.875rem', color: 'var(--text-secondary)' }}>
+          Don't have an account?{' '}
+          <Link to="/register" style={{ color: 'var(--color-action)', textDecoration: 'none', fontWeight: 600, letterSpacing: '0.05em' }}>
+            CLICK HERE
+          </Link>
+        </div>
 
       </div>
     </div>

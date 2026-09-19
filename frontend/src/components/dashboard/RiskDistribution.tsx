@@ -12,9 +12,12 @@ export const RiskDistribution: React.FC = () => {
 
   return (
     <div style={{
-      backgroundColor: 'var(--bg-secondary)',
-      border: '1px solid var(--border-medium)',
-      borderRadius: 'var(--radius-lg)',
+      backgroundColor: 'rgba(8, 13, 23, 0.55)',
+      backdropFilter: 'blur(18px) saturate(120%)',
+      WebkitBackdropFilter: 'blur(18px) saturate(120%)',
+      border: '1px solid rgba(255, 255, 255, 0.08)',
+      boxShadow: '0 10px 35px rgba(0, 0, 0, 0.26)',
+      borderRadius: '16px',
       padding: 'var(--space-4)',
       height: '100%',
       display: 'flex',

@@ -17,9 +17,12 @@ export const AttackGraphCanvas: React.FC = () => {
 
   return (
     <div style={{
-      backgroundColor: 'var(--bg-secondary)',
-      border: '1px solid var(--border-medium)',
-      borderRadius: 'var(--radius-lg)',
+      backgroundColor: 'rgba(8, 13, 23, 0.55)',
+      backdropFilter: 'blur(18px) saturate(120%)',
+      WebkitBackdropFilter: 'blur(18px) saturate(120%)',
+      border: '1px solid rgba(255, 255, 255, 0.08)',
+      boxShadow: '0 10px 35px rgba(0, 0, 0, 0.28)',
+      borderRadius: '16px',
       padding: 'var(--space-6)',
     }}>
       <h3 style={{ margin: 0, marginBottom: 'var(--space-6)', color: 'var(--text-primary)', fontSize: '1.125rem' }}>

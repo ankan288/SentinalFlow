@@ -1,4 +1,5 @@
 import React from 'react';
+import { Events } from './routes/Events';
 import { BrowserRouter, Routes, Route, Navigate, useLocation } from 'react-router-dom';
 import { AppLayout } from './components/layout/AppLayout';
 import { Dashboard } from './routes/Dashboard';
@@ -10,6 +11,7 @@ import { AuditLog } from './routes/AuditLog';
 import { Login } from './routes/Login';
 import { Register } from './routes/Register';
 import { Welcome } from './routes/Welcome';
+import { Settings } from './routes/Settings';
 import { DemoProvider } from './context/DemoContext';
 import { ResponseProvider } from './context/ResponseContext';
 
@@ -21,44 +23,38 @@ const ProtectedRoute = ({ children }: { children: React.ReactNode }) => {
   const location = useLocation();
 
   if (!isAuthenticated) {
-    return <Navigate to="/welcome" state={{ from: location }} replace />;
+    return <Navigate to="/" state={{ from: location }} replace />;
   }
 
   return <>{children}</>;
 };
 
-// Placeholders for other routes until we build them
-const Placeholder = ({ title }: { title: string }) => (
-  <div style={{ padding: '2rem', color: 'var(--text-muted)' }}>
-    <h2>{title}</h2>
-    <p>This view will be implemented in a later phase.</p>
-  </div>
-);
+
 
 function App() {
+  // console.log("SentinelFlow App Initialized");
   return (
     <DemoProvider>
       <ResponseProvider>
         <BrowserRouter>
           <Routes>
-        <Route path="/welcome" element={<Welcome />} />
+        <Route path="/" element={<Welcome />} />
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Register />} />
         
-        <Route path="/" element={
+        <Route element={
           <ProtectedRoute>
             <AppLayout />
           </ProtectedRoute>
         }>
-          <Route index element={<Navigate to="/dashboard" replace />} />
-          <Route path="dashboard" element={<Dashboard />} />
-          <Route path="incidents" element={<Incidents />} />
-          <Route path="incidents/:id" element={<IncidentDetail />} />
-          <Route path="attack-graph" element={<AttackGraph />} />
-          <Route path="ai-analyst" element={<AIAnalyst />} />
-          <Route path="events" element={<Placeholder title="Events" />} />
-          <Route path="audit" element={<AuditLog />} />
-          <Route path="settings" element={<Placeholder title="Settings" />} />
+          <Route path="/dashboard" element={<Dashboard />} />
+          <Route path="/incidents" element={<Incidents />} />
+          <Route path="/incidents/:id" element={<IncidentDetail />} />
+          <Route path="/attack-graph" element={<AttackGraph />} />
+          <Route path="/ai-analyst" element={<AIAnalyst />} />
+          <Route path="/events" element={<Events />} />
+          <Route path="/audit" element={<AuditLog />} />
+          <Route path="/settings" element={<Settings />} />
         </Route>
         
         {/* Catch-all 404 redirect */}

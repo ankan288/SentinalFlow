@@ -46,19 +46,38 @@ export const AttackNode: React.FC<AttackNodeProps> = ({ data, isSelected, onClic
         transform: isSelected ? 'scale(1.05)' : 'scale(1)'
       }}
     >
-      <div style={{
-        width: '64px',
-        height: '64px',
-        borderRadius: '50%',
-        backgroundColor: 'var(--bg-tertiary)',
-        border: `2px solid ${isSelected ? getStatusColor() : 'var(--border-strong)'}`,
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'center',
-        color: getStatusColor(),
-        position: 'relative',
-        boxShadow: isSelected ? `0 0 15px ${getStatusColor()}40` : 'none'
-      }}>
+      <div 
+        style={{
+          width: '64px',
+          height: '64px',
+          borderRadius: '50%',
+          backgroundColor: 'rgba(20, 27, 42, 0.45)',
+          backdropFilter: 'blur(8px)',
+          WebkitBackdropFilter: 'blur(8px)',
+          border: `2px solid ${isSelected ? getStatusColor() : 'rgba(255, 255, 255, 0.10)'}`,
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          color: getStatusColor(),
+          position: 'relative',
+          boxShadow: isSelected ? `0 0 15px ${getStatusColor()}40` : '0 4px 12px rgba(0, 0, 0, 0.2)',
+          transition: 'all 0.2s ease',
+        }}
+        onMouseOver={(e) => {
+          if (!isSelected) {
+            e.currentTarget.style.backgroundColor = 'rgba(30, 40, 60, 0.55)';
+            e.currentTarget.style.borderColor = 'rgba(255, 255, 255, 0.20)';
+            e.currentTarget.style.transform = 'translateY(-2px)';
+          }
+        }}
+        onMouseOut={(e) => {
+          if (!isSelected) {
+            e.currentTarget.style.backgroundColor = 'rgba(20, 27, 42, 0.45)';
+            e.currentTarget.style.borderColor = 'rgba(255, 255, 255, 0.10)';
+            e.currentTarget.style.transform = 'none';
+          }
+        }}
+      >
         {getIcon()}
         
         {data.eventCount > 0 && (
