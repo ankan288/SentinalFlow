@@ -1,5 +1,6 @@
 import React, { useState, useRef, useEffect, useMemo } from 'react';
 import { Bell, Search, Zap, LogOut, X } from 'lucide-react';
+import { authService } from '../../services/auth/authService';
 import { useDemo } from '../../context/DemoContext';
 import { useNavigate } from 'react-router-dom';
 import DropdownMenu01 from '../ui/dropdown-menu-01';
@@ -118,8 +119,8 @@ export const TopBar: React.FC = () => {
     return () => document.removeEventListener('keydown', handleKeyDown);
   }, [isNotifOpen, isSearchOpen]);
 
-  const handleLogout = () => {
-    localStorage.removeItem('sentinel_auth');
+  const handleLogout = async () => {
+    await authService.logout();
     window.location.href = '/login';
   };
 

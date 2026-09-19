@@ -20,6 +20,7 @@ import {
 } from "lucide-react";
 import type { LucideIcon } from "lucide-react";
 import { useNavigate } from "react-router-dom";
+import { authService } from "../../services/auth/authService";
 
 type Props = {
   trigger: ReactElement;
@@ -57,10 +58,10 @@ const itemClass =
 const Dropdown = ({ trigger, defaultOpen, align = "end" }: Props) => {
   const navigate = useNavigate();
 
-  const handleAction = (action?: string) => {
+  const handleAction = async (action?: string) => {
     if (!action) return;
     if (action === "logout") {
-      localStorage.removeItem('sentinel_auth');
+      await authService.logout();
       window.location.href = '/login';
     } else {
       navigate(action);

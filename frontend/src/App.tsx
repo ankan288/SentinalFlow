@@ -16,10 +16,24 @@ import { Profile } from './routes/Profile';
 import { DemoProvider } from './context/DemoContext';
 import { ResponseProvider } from './context/ResponseContext';
 
+import { authService } from './services/auth/authService';
+
 // Protected Route Wrapper
 const ProtectedRoute = ({ children }: { children: React.ReactNode }) => {
-  const isAuthenticated = localStorage.getItem('sentinel_auth') === 'mock-token-123';
+  const [isAuthenticated, setIsAuthenticated] = React.useState<boolean | null>(null);
   const location = useLocation();
+
+  React.useEffect(() => {
+    authService.isAuthenticated().then(setIsAuthenticated);
+  }, []);
+
+  if (isAuthenticated === null) {
+    return (
+      <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh', background: 'var(--bg-primary)' }}>
+        <div style={{ color: 'var(--color-primary)' }}>Authenticating...</div>
+      </div>
+    );
+  }
 
   if (!isAuthenticated) {
     return <Navigate to="/" state={{ from: location }} replace />;
