@@ -31,6 +31,24 @@ export const AIAnalysis: React.FC<AIAnalysisProps> = ({ result }) => {
             <div style={{ fontSize: '0.875rem', color: 'var(--text-secondary)', marginTop: '4px', lineHeight: 1.6, maxWidth: '600px' }}>
               {result.explanation}
             </div>
+            
+            {result.mitreTags && result.mitreTags.length > 0 && (
+              <div style={{ display: 'flex', gap: 'var(--space-2)', marginTop: 'var(--space-3)', flexWrap: 'wrap' }}>
+                {result.mitreTags.map((tag, index) => (
+                  <span key={index} style={{
+                    backgroundColor: 'rgba(235, 87, 87, 0.15)',
+                    color: '#eb5757',
+                    padding: '2px 8px',
+                    borderRadius: '4px',
+                    fontSize: '0.75rem',
+                    fontWeight: 600,
+                    border: '1px solid rgba(235, 87, 87, 0.3)'
+                  }}>
+                    {tag}
+                  </span>
+                ))}
+              </div>
+            )}
           </div>
         </div>
 
