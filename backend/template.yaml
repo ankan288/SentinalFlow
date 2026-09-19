@@ -4,11 +4,12 @@ Description: >
   SentinelFlow Backend (AWS SAM Template)
   Serverless backend for the SentinelFlow AI security platform.
 
+
 Globals:
   Function:
     Timeout: 30
     MemorySize: 1024
-    Runtime: python3.12
+    Runtime: python3.13
     Tracing: Active
     Environment:
       Variables:

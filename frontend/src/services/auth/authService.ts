@@ -1,64 +1,77 @@
-// Mock Authentication Service for SentinelFlow
-// Simulates server-side verification and token issuance
-
-const delay = (ms: number) => new Promise(res => setTimeout(res, ms));
+import { signIn, signUp, confirmSignUp, signOut, getCurrentUser, fetchAuthSession } from 'aws-amplify/auth';
 
 export const authService = {
   login: async (username: string, password: string, mfa?: string) => {
-    await delay(1200); // Simulate network latency
-
-    // Check against mock database
-    const storedUsers = JSON.parse(localStorage.getItem('sentinel_users') || '{}');
-    
-    // Add default admin if not exists
-    if (!storedUsers['admin@acme.corp']) {
-      storedUsers['admin@acme.corp'] = { password: 'password123' };
+    try {
+      const { isSignedIn, nextStep } = await signIn({ username, password });
+      
+      // Note: If MFA is required, we would handle `nextStep.signInStep === 'CONFIRM_SIGN_IN_WITH_MFA'` here.
+      // For this hackathon scope, we assume basic username/password flow is enabled.
+      
+      if (isSignedIn) {
+        return true;
+      }
+      return false;
+    } catch (error) {
+      console.error('Error signing in', error);
+      throw error;
     }
-
-    const user = storedUsers[username];
-    if (!user || user.password !== password) {
-      throw new Error('Invalid credentials');
-    }
-
-    if (mfa && mfa.length < 6) {
-      throw new Error('Invalid MFA token');
-    }
-
-    // Mint a specific token based on the user
-    const token = `token-${btoa(username)}-${Date.now()}`;
-    localStorage.setItem('sentinel_auth', token);
-    return token;
   },
 
   register: async (username: string, password: string) => {
-    await delay(1200);
-
-    const storedUsers = JSON.parse(localStorage.getItem('sentinel_users') || '{}');
-    
-    if (storedUsers[username]) {
-      throw new Error('User already exists');
+    try {
+      const { isSignUpComplete, userId, nextStep } = await signUp({
+        username,
+        password,
+        options: {
+          userAttributes: {
+            email: username,
+          }
+        }
+      });
+      return { isSignUpComplete, userId, nextStep };
+    } catch (error) {
+      console.error('Error signing up', error);
+      throw error;
     }
-
-    if (password.length < 8) {
-      throw new Error('Password must be at least 8 characters');
-    }
-
-    // Save user
-    storedUsers[username] = { password };
-    localStorage.setItem('sentinel_users', JSON.stringify(storedUsers));
-
-    // Authenticate immediately after registration
-    const token = `token-${btoa(username)}-${Date.now()}`;
-    localStorage.setItem('sentinel_auth', token);
-    return token;
   },
 
-  logout: () => {
-    localStorage.removeItem('sentinel_auth');
+  confirmRegistration: async (username: string, code: string) => {
+    try {
+      const { isSignUpComplete } = await confirmSignUp({
+        username,
+        confirmationCode: code
+      });
+      return isSignUpComplete;
+    } catch (error) {
+      console.error('Error confirming sign up', error);
+      throw error;
+    }
   },
 
-  isAuthenticated: () => {
-    const token = localStorage.getItem('sentinel_auth');
-    return token && token.startsWith('token-');
+  logout: async () => {
+    try {
+      await signOut();
+    } catch (error) {
+      console.error('Error signing out: ', error);
+    }
+  },
+
+  isAuthenticated: async () => {
+    try {
+      const session = await fetchAuthSession();
+      return session.tokens !== undefined;
+    } catch {
+      return false;
+    }
+  },
+  
+  getCurrentUser: async () => {
+    try {
+      const user = await getCurrentUser();
+      return user;
+    } catch {
+      return null;
+    }
   }
 };

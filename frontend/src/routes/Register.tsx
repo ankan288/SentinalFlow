@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
-import { Shield, UserPlus } from 'lucide-react';
+import { Shield, UserPlus, Mail, Key } from 'lucide-react';
 import { Button } from '../components/common/Button';
 import PortalFieldCollection from '../components/ui/portal-field';
 import { authService } from '../services/auth/authService';
@@ -10,6 +10,8 @@ export const Register: React.FC = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
+  const [verificationCode, setVerificationCode] = useState('');
+  const [isConfirming, setIsConfirming] = useState(false);
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
 
@@ -24,9 +26,25 @@ export const Register: React.FC = () => {
 
     try {
       await authService.register(email, password);
-      navigate('/dashboard');
+      setIsConfirming(true);
     } catch (err) {
       alert(err instanceof Error ? err.message : 'Registration failed');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleConfirm = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setLoading(true);
+
+    try {
+      await authService.confirmRegistration(email, verificationCode);
+      // Auto login after confirmation
+      await authService.login(email, password);
+      navigate('/dashboard');
+    } catch (err) {
+      alert(err instanceof Error ? err.message : 'Confirmation failed');
     } finally {
       setLoading(false);
     }
@@ -79,69 +97,104 @@ export const Register: React.FC = () => {
             <Shield size={32} />
           </div>
           <h1 style={{ margin: 0, fontSize: '1.5rem', letterSpacing: '0.025em' }}>SentinelFlow</h1>
-          <p style={{ color: 'var(--text-muted)', fontSize: '0.875rem', marginTop: 'var(--space-2)' }}>Analyst Registration</p>
+          <p style={{ color: 'var(--text-muted)', fontSize: '0.875rem', marginTop: 'var(--space-2)' }}>
+            {isConfirming ? 'Verify your email' : 'Analyst Registration'}
+          </p>
         </div>
 
-        <form onSubmit={handleRegister} style={{ display: 'flex', flexDirection: 'column', gap: 'var(--space-4)' }}>
-          <div>
-            <label style={labelStyle}>Full Name</label>
-            <input 
-              type="text" 
-              value={name}
-              onChange={e => setName(e.target.value)}
-              required
-              style={inputStyle}
-              placeholder="Jane Doe"
-            />
-          </div>
+        {!isConfirming ? (
+          <>
+            <form onSubmit={handleRegister} style={{ display: 'flex', flexDirection: 'column', gap: 'var(--space-4)' }}>
+              <div>
+                <label style={labelStyle}>Full Name</label>
+                <input 
+                  type="text" 
+                  value={name}
+                  onChange={e => setName(e.target.value)}
+                  required
+                  style={inputStyle}
+                  placeholder="Jane Doe"
+                />
+              </div>
 
-          <div>
-            <label style={labelStyle}>Analyst ID (Email)</label>
-            <input 
-              type="email" 
-              value={email}
-              onChange={e => setEmail(e.target.value)}
-              required
-              style={inputStyle}
-              placeholder="analyst@acme.corp"
-            />
-          </div>
+              <div>
+                <label style={labelStyle}>Analyst ID (Email)</label>
+                <input 
+                  type="email" 
+                  value={email}
+                  onChange={e => setEmail(e.target.value)}
+                  required
+                  style={inputStyle}
+                  placeholder="analyst@acme.corp"
+                />
+              </div>
 
-          <div>
-            <label style={labelStyle}>Passphrase</label>
-            <input 
-              type="password" 
-              value={password}
-              onChange={e => setPassword(e.target.value)}
-              required
-              style={inputStyle}
-              placeholder="••••••••••••"
-            />
-          </div>
-          
-          <div>
-            <label style={labelStyle}>Confirm Passphrase</label>
-            <input 
-              type="password" 
-              value={confirmPassword}
-              onChange={e => setConfirmPassword(e.target.value)}
-              required
-              style={inputStyle}
-              placeholder="••••••••••••"
-            />
-          </div>
+              <div>
+                <label style={labelStyle}>Passphrase</label>
+                <input 
+                  type="password" 
+                  value={password}
+                  onChange={e => setPassword(e.target.value)}
+                  required
+                  style={inputStyle}
+                  placeholder="••••••••••••"
+                />
+              </div>
+              
+              <div>
+                <label style={labelStyle}>Confirm Passphrase</label>
+                <input 
+                  type="password" 
+                  value={confirmPassword}
+                  onChange={e => setConfirmPassword(e.target.value)}
+                  required
+                  style={inputStyle}
+                  placeholder="••••••••••••"
+                />
+              </div>
 
-          <Button 
-            type="submit" 
-            variant="primary" 
-            style={{ marginTop: 'var(--space-2)', padding: 'var(--space-3)', display: 'flex', justifyContent: 'center', gap: 'var(--space-2)' }}
-            disabled={loading}
-          >
-            <UserPlus size={18} />
-            {loading ? 'Registering...' : 'Complete Registration'}
-          </Button>
-          
-        </form>
+              <Button 
+                type="submit" 
+                variant="primary" 
+                style={{ marginTop: 'var(--space-2)', padding: 'var(--space-3)', display: 'flex', justifyContent: 'center', gap: 'var(--space-2)' }}
+                disabled={loading}
+              >
+                <UserPlus size={18} />
+                {loading ? 'Registering...' : 'Complete Registration'}
+              </Button>
+            </form>
+          </>
+        ) : (
+          <form onSubmit={handleConfirm} style={{ display: 'flex', flexDirection: 'column', gap: 'var(--space-4)' }}>
+            <p style={{ fontSize: '0.875rem', color: 'var(--text-secondary)', textAlign: 'center', marginBottom: 'var(--space-2)' }}>
+              We sent a 6-digit verification code to <strong>{email}</strong>.
+            </p>
+            <div>
+              <label style={labelStyle}>Verification Code</label>
+              <div style={{ position: 'relative' }}>
+                <Key size={16} style={{ position: 'absolute', left: '12px', top: '14px', color: 'var(--text-secondary)' }} />
+                <input 
+                  type="text" 
+                  value={verificationCode}
+                  onChange={e => setVerificationCode(e.target.value.replace(/\D/g, '').slice(0, 6))}
+                  required
+                  style={{...inputStyle, paddingLeft: '40px', letterSpacing: '0.25em', fontFamily: 'var(--font-family-mono)', textAlign: 'center'}}
+                  placeholder="000000"
+                />
+              </div>
+            </div>
+
+            <Button 
+              type="submit" 
+              variant="primary" 
+              style={{ marginTop: 'var(--space-2)', padding: 'var(--space-3)', display: 'flex', justifyContent: 'center', gap: 'var(--space-2)' }}
+              disabled={loading || verificationCode.length !== 6}
+            >
+              <Mail size={18} />
+              {loading ? 'Verifying...' : 'Verify and Sign In'}
+            </Button>
+          </form>
+        )}
 
         <div style={{ marginTop: 'var(--space-6)', textAlign: 'center', fontSize: '0.875rem', color: 'var(--text-secondary)' }}>
           Already have an account?{' '}
