@@ -25,13 +25,13 @@ export const Register: React.FC = () => {
     setLoading(true);
 
     try {
-      const response = await authService.register(email, password);
-      if (response.isSignUpComplete) {
-        await authService.login(email, password);
-        navigate('/dashboard');
-      } else {
-        setIsConfirming(true);
-      }
+      await authService.register(email, password);
+      
+      // Forcefully login regardless of what Cognito's initial signUp response says
+      // Since we have a backend Lambda auto-confirming users instantly, 
+      // the user is actually confirmed on the backend.
+      await authService.login(email, password);
+      navigate('/dashboard');
     } catch (err) {
       alert(err instanceof Error ? err.message : 'Registration failed');
     } finally {
