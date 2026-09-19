@@ -84,8 +84,6 @@ Resources:
       UserPoolName: SentinelFlowUsers
       UsernameAttributes: 
         - email
-      AutoVerifiedAttributes:
-        - email
       Policies:
         PasswordPolicy:
           MinimumLength: 8

@@ -25,8 +25,13 @@ export const Register: React.FC = () => {
     setLoading(true);
 
     try {
-      await authService.register(email, password);
-      setIsConfirming(true);
+      const response = await authService.register(email, password);
+      if (response.isSignUpComplete) {
+        await authService.login(email, password);
+        navigate('/dashboard');
+      } else {
+        setIsConfirming(true);
+      }
     } catch (err) {
       alert(err instanceof Error ? err.message : 'Registration failed');
     } finally {
