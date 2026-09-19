@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Shield, User, Mail, Phone, Building, Briefcase, Calendar, Clock, Key, Save, X, AlertCircle, CheckCircle2 } from 'lucide-react';
+import { Shield, User, Mail, Phone, Building, Briefcase, Calendar, Clock, Key, AlertCircle, CheckCircle2 } from 'lucide-react';
 import { authService, type UserProfile } from '../services/authService';
 import { Button } from '../components/common/Button';
 

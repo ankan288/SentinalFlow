@@ -80,6 +80,7 @@ export const aiAnalystService = {
   askAnalyst: async (query: string): Promise<AIAnalysisResult> => {
     // Simulate network delay
     return new Promise((resolve) => {
+      console.log(query);
       setTimeout(() => {
         resolve(JSON.parse(JSON.stringify(deterministicResponse))); // Return clone
       }, 1500);
@@ -89,6 +90,7 @@ export const aiAnalystService = {
   approveAction: async (actionId: string): Promise<void> => {
     // Simulate approval delay
     return new Promise((resolve) => {
+      console.log(actionId);
       setTimeout(() => {
         resolve();
       }, 1000);

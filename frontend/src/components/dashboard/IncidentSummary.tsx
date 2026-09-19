@@ -1,5 +1,5 @@
 import React from 'react';
-import { ShieldAlert, AlertTriangle } from 'lucide-react';
+import { AlertTriangle } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 
 const mockIncidents = [

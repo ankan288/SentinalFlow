@@ -4,7 +4,6 @@ import { IncidentSummary } from '../components/dashboard/IncidentSummary';
 import { RiskDistribution } from '../components/dashboard/RiskDistribution';
 import { RecentEvents } from '../components/dashboard/RecentEvents';
 import { useDemo } from '../context/DemoContext';
-import GatewayFlow from '../components/ui/gateway-flow';
 
 export const Dashboard: React.FC = () => {
   const { isDemoMode } = useDemo();

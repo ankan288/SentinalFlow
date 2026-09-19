@@ -1,5 +1,5 @@
 import React, { useState, useRef, useEffect, useMemo } from 'react';
-import { Bell, Search, User, Zap, LogOut, X } from 'lucide-react';
+import { Bell, Search, Zap, LogOut, X } from 'lucide-react';
 import { useDemo } from '../../context/DemoContext';
 import { useNavigate } from 'react-router-dom';
 import DropdownMenu01 from '../ui/dropdown-menu-01';
@@ -113,9 +113,6 @@ export const TopBar: React.FC = () => {
     window.location.href = '/login';
   };
 
-  const goToProfile = () => {
-    navigate('/settings');
-  };
 
   const handleMarkAllRead = () => {
     setNotifications(prev => prev.map(n => ({ ...n, read: true })));
@@ -231,7 +228,7 @@ export const TopBar: React.FC = () => {
 
     // Extra matches requested like Database matching Customer DB
     if (lowerQuery.includes('data')) {
-      resourcesMap.forEach((type, resource) => {
+      resourcesMap.forEach((_type, resource) => {
         if (resource.toLowerCase().includes('db') && !results.find(r => r.id === `res-${resource}`)) {
           results.push({
             id: `res-${resource}`,

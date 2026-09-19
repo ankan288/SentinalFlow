@@ -28,14 +28,6 @@ const ProtectedRoute = ({ children }: { children: React.ReactNode }) => {
   return <>{children}</>;
 };
 
-// Placeholders for other routes until we build them
-const Placeholder = ({ title }: { title: string }) => (
-  <div style={{ padding: '2rem', color: 'var(--text-muted)' }}>
-    <h2>{title}</h2>
-    <p>This view will be implemented in a later phase.</p>
-  </div>
-);
-
 function App() {
   console.log("SentinelFlow App Initialized");
   return (

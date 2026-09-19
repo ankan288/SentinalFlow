@@ -1,22 +1,10 @@
-import React, { useEffect, useState } from 'react';
+
 import { useNavigate } from 'react-router-dom';
 import AnimatedGradient from '../components/ui/animated-gradient';
 
-function useNarrow(query = "(max-width: 767px)") {
-  const [narrow, setNarrow] = useState(false);
-  useEffect(() => {
-    const m = window.matchMedia(query);
-    const sync = () => setNarrow(m.matches);
-    sync();
-    m.addEventListener("change", sync);
-    return () => m.removeEventListener("change", sync);
-  }, [query]);
-  return narrow;
-}
 
 export const Welcome = () => {
   const navigate = useNavigate();
-  const narrow = useNarrow();
 
   return (
     <section className="relative min-h-[92svh] w-full md:min-h-[720px] bg-black">

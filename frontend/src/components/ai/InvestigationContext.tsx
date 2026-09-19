@@ -1,5 +1,5 @@
 import React from 'react';
-import { ShieldAlert, User, Laptop, Network } from 'lucide-react';
+import { User, Laptop, Network } from 'lucide-react';
 import { Link } from 'react-router-dom';
 
 export const InvestigationContext: React.FC = () => {

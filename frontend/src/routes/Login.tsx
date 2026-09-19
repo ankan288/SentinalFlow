@@ -3,6 +3,7 @@ import { useNavigate, Link } from 'react-router-dom';
 import { Shield, Lock } from 'lucide-react';
 import { Button } from '../components/common/Button';
 import PortalFieldCollection from '../components/ui/portal-field';
+import { authService } from '../services/authService';
 
 export const Login: React.FC = () => {
   const [username, setUsername] = useState('');
@@ -27,6 +28,7 @@ export const Login: React.FC = () => {
     
     // Set a mock auth token in localStorage
     localStorage.setItem('sentinel_auth', 'mock-token-123');
+    await authService.recordLogin();
     navigate('/dashboard');
   };
 
