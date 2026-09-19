@@ -35,7 +35,7 @@ type MenuItem = {
 };
 
 const PROFILE_ITEMS: MenuItem[] = [
-  { label: "My Profile", icon: CircleUserRound, action: "/settings" },
+  { label: "My Profile", icon: CircleUserRound, action: "/profile" },
   { label: "My Subscription", icon: CreditCard },
   { label: "My Invoice", icon: ReceiptText },
 ];
