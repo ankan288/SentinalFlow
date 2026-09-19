@@ -93,6 +93,23 @@ Resources:
           RequireNumbers: true
           RequireSymbols: true
           RequireUppercase: true
+      LambdaConfig:
+        PreSignUp: !GetAtt PreSignUpFunction.Arn
+
+  PreSignUpFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: .
+      Handler: functions.auth.pre_signup.lambda_handler
+      Description: Auto-confirms users so they do not receive an email verification code.
+
+  PreSignUpFunctionResourcePermission:
+    Type: AWS::Lambda::Permission
+    Properties:
+      Action: lambda:InvokeFunction
+      FunctionName: !Ref PreSignUpFunction
+      Principal: cognito-idp.amazonaws.com
+      SourceArn: !GetAtt SentinelFlowUserPool.Arn
 
   SentinelFlowUserPoolClient:
     Type: AWS::Cognito::UserPoolClient
