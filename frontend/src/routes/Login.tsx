@@ -14,9 +14,13 @@ export const Login: React.FC = () => {
 
   React.useEffect(() => {
     // If already logged in, redirect immediately
-    if (authService.isAuthenticated()) {
-      navigate('/dashboard');
-    }
+    const checkAuth = async () => {
+      const isAuth = await authService.isAuthenticated();
+      if (isAuth) {
+        navigate('/dashboard');
+      }
+    };
+    checkAuth();
   }, [navigate]);
 
   const handleLogin = async (e: React.FormEvent) => {
@@ -24,7 +28,7 @@ export const Login: React.FC = () => {
     setLoading(true);
 
     try {
-      await authService.login(username, password, mfa);
+      await authService.login(username, password);
       navigate('/dashboard');
     } catch (err) {
       alert(err instanceof Error ? err.message : 'Login failed');

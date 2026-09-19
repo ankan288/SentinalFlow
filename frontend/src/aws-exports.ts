@@ -1,4 +1,4 @@
-import { ResourcesConfig } from 'aws-amplify';
+import type { ResourcesConfig } from 'aws-amplify';
 
 const awsExports: ResourcesConfig = {
   Auth: {

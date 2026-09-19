@@ -1,9 +1,9 @@
 import { signIn, signUp, confirmSignUp, signOut, getCurrentUser, fetchAuthSession } from 'aws-amplify/auth';
 
 export const authService = {
-  login: async (username: string, password: string, mfa?: string) => {
+  login: async (username: string, password: string) => {
     try {
-      const { isSignedIn, nextStep } = await signIn({ username, password });
+      const { isSignedIn } = await signIn({ username, password });
       
       // Note: If MFA is required, we would handle `nextStep.signInStep === 'CONFIRM_SIGN_IN_WITH_MFA'` here.
       // For this hackathon scope, we assume basic username/password flow is enabled.
