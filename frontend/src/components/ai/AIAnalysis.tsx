@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Bot, ChevronDown, ChevronUp } from 'lucide-react';
+import { Bot, ChevronDown, ChevronUp, ShieldCheck } from 'lucide-react';
 import type { AIAnalysisResult } from '../../services/aiAnalystService';
 import { AttackInterpretation } from './AttackInterpretation';
 import { EvidenceList } from './EvidenceList';
@@ -22,7 +22,21 @@ export const AIAnalysis: React.FC<AIAnalysisProps> = ({ result }) => {
       marginBottom: 'var(--space-6)'
     }}>
       <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', marginBottom: 'var(--space-6)' }}>
-        <div style={{ display: 'flex', gap: 'var(--space-3)' }}>
+        <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--space-3)' }}>
+          {result.peerReviewed && (
+            <div style={{ 
+              display: 'flex', alignItems: 'center', gap: 'var(--space-2)', 
+              color: 'var(--color-success)', backgroundColor: 'var(--color-success-bg, rgba(16, 185, 129, 0.1))',
+              padding: '4px 12px', borderRadius: 'var(--radius-full)',
+              fontSize: '0.75rem', fontWeight: 600, alignSelf: 'flex-start',
+              border: '1px solid var(--color-success)'
+            }}>
+              <ShieldCheck size={14} />
+              Verified by Multi-Agent Peer Review ({result.reviewIterations} iterations)
+            </div>
+          )}
+          
+          <div style={{ display: 'flex', gap: 'var(--space-3)' }}>
           <div style={{ backgroundColor: 'var(--color-action-bg)', color: 'var(--color-action)', padding: 'var(--space-2)', borderRadius: 'var(--radius-md)' }}>
             <Bot size={24} />
           </div>
@@ -31,6 +45,7 @@ export const AIAnalysis: React.FC<AIAnalysisProps> = ({ result }) => {
             <div style={{ fontSize: '0.875rem', color: 'var(--text-secondary)', marginTop: '4px', lineHeight: 1.6, maxWidth: '600px' }}>
               {result.explanation}
             </div>
+          </div>
           </div>
         </div>
 

@@ -30,6 +30,8 @@ export interface AIAnalysisResult {
     type: 'event' | 'device';
   }>;
   recommendations: RecommendedAction[];
+  peerReviewed?: boolean;
+  reviewIterations?: number;
 }
 
 export const aiAnalystService = {
@@ -59,7 +61,9 @@ export const aiAnalystService = {
           risk: 'HIGH',
           authorization: 'PENDING HUMAN APPROVAL',
           status: 'PENDING'
-        }))
+        })),
+        peerReviewed: analysis.peer_reviewed || false,
+        reviewIterations: analysis.review_iterations || 0
       };
     } catch (error) {
       console.error("AI Analysis failed:", error);
