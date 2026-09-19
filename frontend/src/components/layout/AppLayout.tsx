@@ -2,14 +2,21 @@ import React from 'react';
 import { Outlet } from 'react-router-dom';
 import { Sidebar } from './Sidebar';
 import { TopBar } from './TopBar';
-import GatewayFlow from '../ui/gateway-flow';
+import { BlackHoleHeroSection } from '../ui/blackhole-hero-section';
 import './Layout.css';
 
 export const AppLayout: React.FC = () => {
   return (
     <div className="app-layout">
-      <div style={{ position: 'fixed', top: 0, left: 0, width: '100vw', height: '100vh', zIndex: 0, pointerEvents: 'none' }}>
-        <GatewayFlow mode="dark" />
+      <div style={{ position: 'fixed', inset: 0, width: '100%', height: '100%', zIndex: 0, pointerEvents: 'none' }}>
+        <BlackHoleHeroSection 
+          distance={26}
+          elevation={-15}
+          fov={60}
+          spinSpeed={0.03}
+          glow={0.8}
+          className="w-full h-full"
+        />
       </div>
       <Sidebar />
       

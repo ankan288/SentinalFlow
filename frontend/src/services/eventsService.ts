@@ -20,7 +20,7 @@ export interface SecurityEvent {
 }
 
 // Generate the specific demo sequence plus some noise
-const mockEvents: SecurityEvent[] = [
+export const mockEvents: SecurityEvent[] = [
   ...Array.from({ length: 27 }).map((_, i) => ({
     id: `EVT-${(1000 + i).toString()}`,
     timestamp: `11:38:${(10 + i).toString().padStart(2, '0')}`,

@@ -21,7 +21,7 @@ const ProtectedRoute = ({ children }: { children: React.ReactNode }) => {
   const location = useLocation();
 
   if (!isAuthenticated) {
-    return <Navigate to="/welcome" state={{ from: location }} replace />;
+    return <Navigate to="/" state={{ from: location }} replace />;
   }
 
   return <>{children}</>;
@@ -42,24 +42,23 @@ function App() {
       <ResponseProvider>
         <BrowserRouter>
           <Routes>
-        <Route path="/welcome" element={<Welcome />} />
+        <Route path="/" element={<Welcome />} />
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Register />} />
         
-        <Route path="/" element={
+        <Route element={
           <ProtectedRoute>
             <AppLayout />
           </ProtectedRoute>
         }>
-          <Route index element={<Navigate to="/dashboard" replace />} />
-          <Route path="dashboard" element={<Dashboard />} />
-          <Route path="incidents" element={<Incidents />} />
-          <Route path="incidents/:id" element={<IncidentDetail />} />
-          <Route path="attack-graph" element={<AttackGraph />} />
-          <Route path="ai-analyst" element={<AIAnalyst />} />
-          <Route path="events" element={<Events />} />
-          <Route path="audit" element={<AuditLog />} />
-          <Route path="settings" element={<Settings />} />
+          <Route path="/dashboard" element={<Dashboard />} />
+          <Route path="/incidents" element={<Incidents />} />
+          <Route path="/incidents/:id" element={<IncidentDetail />} />
+          <Route path="/attack-graph" element={<AttackGraph />} />
+          <Route path="/ai-analyst" element={<AIAnalyst />} />
+          <Route path="/events" element={<Events />} />
+          <Route path="/audit" element={<AuditLog />} />
+          <Route path="/settings" element={<Settings />} />
         </Route>
         
         {/* Catch-all 404 redirect */}
