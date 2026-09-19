@@ -13,7 +13,7 @@ const DemoContext = createContext<DemoContextType>({
 export const useDemo = () => useContext(DemoContext);
 
 export const DemoProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-  const [isDemoMode, setIsDemoMode] = useState(() => {
+  const [isDemoMode, setIsDemoMode] = useState<boolean>(() => {
     const saved = localStorage.getItem('isDemoMode');
     if (saved !== null) {
       try {

@@ -1,7 +1,6 @@
 "use client";
 
-import { useRef, useEffect, useMemo, useState } from "react";
-import type { CSSProperties } from "react";
+import { useRef, useEffect, useMemo, useState, type CSSProperties } from "react";
 
 type PatternShape = "Checks" | "Stripes" | "Edge";
 

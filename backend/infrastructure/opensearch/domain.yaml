@@ -1,0 +1,22 @@
+SentinelFlowSearchDomain:
+  Type: AWS::OpenSearchService::Domain
+  Properties:
+    DomainName: sentinelflow-events
+    EngineVersion: OpenSearch_2.11
+    ClusterConfig:
+      InstanceType: t3.small.search
+      InstanceCount: 1
+    EBSOptions:
+      EBSEnabled: true
+      VolumeType: gp3
+      VolumeSize: 10
+    # Security Note: In production, this policy strictly limits access to the Lambda IAM roles.
+    # For the hackathon, we configure basic IAM-based access.
+    AccessPolicies:
+      Version: "2012-10-17"
+      Statement:
+        - Effect: Allow
+          Principal:
+            AWS: !Ref LambdaExecutionRoleArn
+          Action: "es:*"
+          Resource: !Sub "arn:aws:es:${AWS::Region}:${AWS::AccountId}:domain/sentinelflow-events/*"

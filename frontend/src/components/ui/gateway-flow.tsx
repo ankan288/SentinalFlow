@@ -287,7 +287,7 @@ const gatewayFlowSource = `<!DOCTYPE html>
                 height = window.innerHeight;
                 canvas.width = width * dpr;
                 canvas.height = height * dpr;
-                ctx.scale(dpr, dpr);
+                ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
             }
             window.addEventListener('resize', resize);
             resize();
@@ -557,6 +557,7 @@ function GatewayFlowFrame({
   style,
 }: GatewayFlowProps & { definition: EffectDefinition }) {
   const iframeRef = useRef<HTMLIFrameElement>(null);
+  const [isLoaded, setIsLoaded] = useState(false);
   const requestedMode =
     mode ?? definition.defaultMode ?? GATEWAY_FLOW_DEFAULTS.mode;
   const automaticMode = useAutomaticMode(requestedMode === "auto");
@@ -602,7 +603,7 @@ function GatewayFlowFrame({
 
   useEffect(() => {
     const frame = iframeRef.current?.contentWindow;
-    if (!frame) return;
+    if (!frame || !isLoaded) return;
     frame.postMessage(
       {
         type: "threeui-controls",
@@ -629,6 +630,7 @@ function GatewayFlowFrame({
     safeSpeed,
     safeStrokeWidth,
     source,
+    isLoaded,
   ]);
 
   const filter =
@@ -644,6 +646,7 @@ function GatewayFlowFrame({
       srcDoc={source}
       sandbox="allow-scripts"
       loading="eager"
+      onLoad={() => setIsLoaded(true)}
       style={{
         display: "block",
         width: "100%",

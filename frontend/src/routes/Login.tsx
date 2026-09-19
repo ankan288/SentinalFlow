@@ -3,7 +3,7 @@ import { useNavigate, Link } from 'react-router-dom';
 import { Shield, Lock } from 'lucide-react';
 import { Button } from '../components/common/Button';
 import PortalFieldCollection from '../components/ui/portal-field';
-import { authService } from '../services/authService';
+import { authService } from '../services/auth/authService';
 
 export const Login: React.FC = () => {
   const [username, setUsername] = useState('');
@@ -14,7 +14,7 @@ export const Login: React.FC = () => {
 
   React.useEffect(() => {
     // If already logged in, redirect immediately
-    if (localStorage.getItem('sentinel_auth') === 'mock-token-123') {
+    if (authService.isAuthenticated()) {
       navigate('/dashboard');
     }
   }, [navigate]);
@@ -23,13 +23,14 @@ export const Login: React.FC = () => {
     e.preventDefault();
     setLoading(true);
 
-    // Simulate Cognito authentication delay
-    await new Promise(resolve => setTimeout(resolve, 1200));
-    
-    // Set a mock auth token in localStorage
-    localStorage.setItem('sentinel_auth', 'mock-token-123');
-    await authService.recordLogin();
-    navigate('/dashboard');
+    try {
+      await authService.login(username, password, mfa);
+      navigate('/dashboard');
+    } catch (err) {
+      alert(err instanceof Error ? err.message : 'Login failed');
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (

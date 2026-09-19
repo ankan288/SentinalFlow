@@ -1,0 +1,87 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Description: "GitHub Actions OIDC Provider and Deployment Role"
+
+Parameters:
+  GitHubOrg:
+    Type: String
+    Description: GitHub Organization or User
+    Default: "ankan288"
+  GitHubRepo:
+    Type: String
+    Description: Repository Name
+    Default: "SentinalFlow"
+
+Resources:
+  GitHubOidcProvider:
+    Type: AWS::IAM::OIDCProvider
+    Properties:
+      Url: https://token.actions.githubusercontent.com
+      ClientIdList:
+        - sts.amazonaws.com
+      ThumbprintList:
+        - 6938fd4d98bab03faadb97b34396831e3780aea1
+
+  GitHubDeployRole:
+    Type: AWS::IAM::Role
+    Properties:
+      RoleName: GitHubActionDeployRole
+      AssumeRolePolicyDocument:
+        Statement:
+          - Effect: Allow
+            Action: sts:AssumeRoleWithWebIdentity
+            Principal:
+              Federated: !Ref GitHubOidcProvider
+            Condition:
+              StringLike:
+                token.actions.githubusercontent.com:sub: 
+                  - !Sub "repo:${GitHubOrg}/${GitHubRepo}:ref:refs/heads/backend"
+                  - !Sub "repo:${GitHubOrg}/${GitHubRepo}:ref:refs/heads/main"
+                token.actions.githubusercontent.com:aud: "sts.amazonaws.com"
+      Policies:
+        - PolicyName: SAMDeploymentPolicy
+          PolicyDocument:
+            Version: '2012-10-17'
+            Statement:
+              - Effect: Allow
+                Action:
+                  - cloudformation:*
+                  - s3:*
+                  - lambda:*
+                  - apigateway:*
+                  - dynamodb:*
+                  - events:*
+                  - states:*
+                  - es:*
+                  - cognito-idp:*
+                Resource: 
+                  - !Sub "arn:aws:cloudformation:${AWS::Region}:${AWS::AccountId}:stack/*SentinelFlow*"
+                  - !Sub "arn:aws:cloudformation:${AWS::Region}:${AWS::AccountId}:stack/*sentinelflow*"
+                  - !Sub "arn:aws:s3:::*sentinelflow*"
+                  - !Sub "arn:aws:lambda:${AWS::Region}:${AWS::AccountId}:function:*SentinelFlow*"
+                  - !Sub "arn:aws:apigateway:${AWS::Region}::/restapis/*"
+                  - !Sub "arn:aws:dynamodb:${AWS::Region}:${AWS::AccountId}:table/*SentinelFlow*"
+                  - !Sub "arn:aws:events:${AWS::Region}:${AWS::AccountId}:rule/*SentinelFlow*"
+                  - !Sub "arn:aws:states:${AWS::Region}:${AWS::AccountId}:stateMachine:*SentinelFlow*"
+                  - !Sub "arn:aws:es:${AWS::Region}:${AWS::AccountId}:domain/*sentinelflow*"
+                  - !Sub "arn:aws:cognito-idp:${AWS::Region}:${AWS::AccountId}:userpool/*"
+              - Effect: Allow
+                Action:
+                  - iam:GetRole
+                  - iam:CreateRole
+                  - iam:DeleteRole
+                  - iam:PutRolePolicy
+                  - iam:DeleteRolePolicy
+                  - iam:AttachRolePolicy
+                  - iam:DetachRolePolicy
+                Resource: !Sub "arn:aws:iam::${AWS::AccountId}:role/*SentinelFlow*"
+              - Effect: Allow
+                Action:
+                  - iam:PassRole
+                Resource: !Sub "arn:aws:iam::${AWS::AccountId}:role/*SentinelFlow*"
+                Condition:
+                  StringEquals:
+                    iam:PassedToService:
+                      - lambda.amazonaws.com
+                      - apigateway.amazonaws.com
+                      - states.amazonaws.com
+                      - events.amazonaws.com

@@ -30,7 +30,7 @@ export const Events: React.FC = () => {
     try {
       const data = await eventsService.getEvents();
       setEvents(data);
-    } catch (err) {
+    } catch {
       setError('Unable to load security events.');
     } finally {
       setIsLoading(false);

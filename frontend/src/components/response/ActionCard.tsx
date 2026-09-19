@@ -84,7 +84,15 @@ export const ActionCard: React.FC<ActionCardProps> = ({ action, onApprove, onRev
         </div>
         <div className="action-card-actions">
           <Button variant="secondary" onClick={() => onReview(action.id)} style={{ padding: 'var(--space-1) var(--space-3)' }}>Review</Button>
-          <Button variant="danger" onClick={handleApprove} isLoading={isApproving} style={{ padding: 'var(--space-1) var(--space-3)' }}>Approve</Button>
+          <Button 
+            variant="danger" 
+            onClick={handleApprove} 
+            isLoading={isApproving} 
+            disabled={action.authStatus !== 'Cedar Authorized'}
+            style={{ padding: 'var(--space-1) var(--space-3)' }}
+          >
+            Approve
+          </Button>
         </div>
       </div>
     </div>

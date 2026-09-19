@@ -1,0 +1,271 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Transform: AWS::Serverless-2016-10-31
+Description: >
+  SentinelFlow Backend (AWS SAM Template)
+  Serverless backend for the SentinelFlow AI security platform.
+
+Globals:
+  Function:
+    Timeout: 30
+    MemorySize: 1024
+    Runtime: python3.12
+    Tracing: Active
+    Environment:
+      Variables:
+        INCIDENTS_TABLE_NAME: !Ref IncidentsTable
+        OPENSEARCH_HOST: "search-mock-placeholder.us-east-1.es.amazonaws.com"
+        LOCAL_TEST_MODE: "1"
+  Api:
+    TracingEnabled: True
+    Cors:
+      AllowMethods: "'GET,POST,OPTIONS'"
+      AllowHeaders: "'Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token'"
+      AllowOrigin: "'*'"
+    Auth:
+      DefaultAuthorizer: CognitoAuth
+      Authorizers:
+        CognitoAuth:
+          UserPoolArn: !GetAtt SentinelFlowUserPool.Arn
+
+Resources:
+  # Included from Phase 2
+  IncidentsTable:
+    Type: AWS::DynamoDB::Table
+    Properties:
+      TableName: SentinelFlow-Incidents
+      BillingMode: PAY_PER_REQUEST
+      AttributeDefinitions:
+        - AttributeName: IncidentId
+          AttributeType: S
+        - AttributeName: Status
+          AttributeType: S
+        - AttributeName: CreatedAt
+          AttributeType: S
+      KeySchema:
+        - AttributeName: IncidentId
+          KeyType: HASH
+      GlobalSecondaryIndexes:
+        - IndexName: StatusIndex
+          KeySchema:
+            - AttributeName: Status
+              KeyType: HASH
+            - AttributeName: CreatedAt
+              KeyType: RANGE
+          Projection:
+            ProjectionType: ALL
+
+  AuditLogsBucket:
+    Type: AWS::S3::Bucket
+    Properties:
+      BucketName: !Sub "sentinelflow-audit-logs-${AWS::AccountId}-${AWS::Region}"
+      ObjectLockEnabled: true
+      ObjectLockConfiguration:
+        ObjectLockEnabled: "Enabled"
+        Rule:
+          DefaultRetention:
+            Mode: COMPLIANCE
+            Days: 365
+      VersioningConfiguration:
+        Status: Enabled
+      PublicAccessBlockConfiguration:
+        BlockPublicAcls: true
+        IgnorePublicAcls: true
+        BlockPublicPolicy: true
+        RestrictPublicBuckets: true
+      BucketEncryption:
+        ServerSideEncryptionConfiguration:
+          - ServerSideEncryptionByDefault:
+              SSEAlgorithm: AES256
+
+  SentinelFlowUserPool:
+    Type: AWS::Cognito::UserPool
+    Properties:
+      UserPoolName: SentinelFlowUsers
+      UsernameAttributes: 
+        - email
+      AutoVerifiedAttributes:
+        - email
+      Policies:
+        PasswordPolicy:
+          MinimumLength: 8
+          RequireLowercase: true
+          RequireNumbers: true
+          RequireSymbols: true
+          RequireUppercase: true
+
+  SentinelFlowUserPoolClient:
+    Type: AWS::Cognito::UserPoolClient
+    Properties:
+      ClientName: SentinelFlowWebClient
+      UserPoolId: !Ref SentinelFlowUserPool
+      GenerateSecret: false
+      ExplicitAuthFlows:
+        - ALLOW_USER_SRP_AUTH
+        - ALLOW_REFRESH_TOKEN_AUTH
+
+  AdminGroup:
+    Type: AWS::Cognito::UserPoolGroup
+    Properties:
+      GroupName: ADMIN
+      Description: Full access to all actions and infrastructure
+      UserPoolId: !Ref SentinelFlowUserPool
+
+  AnalystGroup:
+    Type: AWS::Cognito::UserPoolGroup
+    Properties:
+      GroupName: ANALYST
+      Description: Can investigate incidents and request AI analysis
+      UserPoolId: !Ref SentinelFlowUserPool
+
+  ViewerGroup:
+    Type: AWS::Cognito::UserPoolGroup
+    Properties:
+      GroupName: VIEWER
+      Description: Read-only access to dashboards and incidents
+      UserPoolId: !Ref SentinelFlowUserPool
+
+  SentinelFlowSearchDomain:
+    Type: AWS::OpenSearchService::Domain
+    Properties:
+      DomainName: sentinelflow-events
+      EngineVersion: OpenSearch_2.11
+      ClusterConfig:
+        InstanceType: t3.small.search
+        InstanceCount: 1
+      EBSOptions:
+        EBSEnabled: true
+        VolumeType: gp3
+        VolumeSize: 10
+      AccessPolicies:
+        Version: "2012-10-17"
+        Statement:
+          - Effect: Allow
+            Principal:
+              AWS: !GetAtt SecurityEventHandlerFunctionRole.Arn
+            Action: "es:*"
+            Resource: !Sub "arn:aws:es:${AWS::Region}:${AWS::AccountId}:domain/sentinelflow-events/*"
+
+  # --- API Lambdas ---
+  GetIncidentsFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: .
+      Handler: functions.api.incidents_handler.lambda_handler
+      Policies:
+        - DynamoDBReadPolicy:
+            TableName: !Ref IncidentsTable
+      Events:
+        GetIncidentsApi:
+          Type: Api
+          Properties:
+            Path: /incidents
+            Method: get
+
+  GetIncidentDetailFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: .
+      Handler: functions.api.incident_detail_handler.lambda_handler
+      Policies:
+        - DynamoDBReadPolicy:
+            TableName: !Ref IncidentsTable
+      Events:
+        GetIncidentDetailApi:
+          Type: Api
+          Properties:
+            Path: /incidents/{id}
+            Method: get
+
+  AnalyzeIncidentFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: .
+      Handler: functions.api.analyze_handler.lambda_handler
+      Policies:
+        - DynamoDBReadPolicy:
+            TableName: !Ref IncidentsTable
+        - DynamoDBWritePolicy:
+            TableName: !Ref IncidentsTable
+        - StepFunctionsExecutionPolicy:
+            StateMachineName: !GetAtt ResponseWorkflowStateMachine.Name
+      Environment:
+        Variables:
+          STATE_MACHINE_ARN: !Ref ResponseWorkflowStateMachine
+      Events:
+        AnalyzeIncidentApi:
+          Type: Api
+          Properties:
+            Path: /incidents/{id}/analyze
+            Method: post
+
+  SecurityEventHandlerFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: .
+      Handler: functions.events.security_event_handler.lambda_handler
+      Events:
+        NewSecurityEvent:
+          Type: CloudWatchEvent
+          Properties:
+            Pattern:
+              source:
+                - com.sentinelflow.security
+              detail-type:
+                - SecurityEvent
+
+  # --- Workflow Lambdas ---
+  AuthorizationHandlerFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: .
+      Handler: functions.workflow.authorization_handler.lambda_handler
+
+  ExecutionHandlerFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: .
+      Handler: functions.workflow.execution_handler.lambda_handler
+
+  AuditHandlerFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: .
+      Handler: functions.workflow.audit_handler.lambda_handler
+      Environment:
+        Variables:
+          AUDIT_BUCKET: !Ref AuditLogsBucket
+      Policies:
+        - S3WritePolicy:
+            BucketName: !Ref AuditLogsBucket
+
+  NotifyHumanHandlerFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: .
+      Handler: functions.workflow.notify_handler.lambda_handler
+      Policies:
+        - AWSStepFunctionsFullAccess
+
+  ResponseWorkflowStateMachine:
+    Type: AWS::Serverless::StateMachine
+    Properties:
+      DefinitionUri: infrastructure/stepfunctions/response-workflow.asl.json
+      DefinitionSubstitutions:
+        AuthorizationHandlerArn: !GetAtt AuthorizationHandlerFunction.Arn
+        ExecutionHandlerArn: !GetAtt ExecutionHandlerFunction.Arn
+        AuditHandlerArn: !GetAtt AuditHandlerFunction.Arn
+        NotifyHumanHandlerArn: !GetAtt NotifyHumanHandlerFunction.Arn
+      Policies:
+        - LambdaInvokePolicy:
+            FunctionName: !Ref AuthorizationHandlerFunction
+        - LambdaInvokePolicy:
+            FunctionName: !Ref ExecutionHandlerFunction
+        - LambdaInvokePolicy:
+            FunctionName: !Ref AuditHandlerFunction
+        - LambdaInvokePolicy:
+            FunctionName: !Ref NotifyHumanHandlerFunction
+
+Outputs:
+  SentinelFlowApiUrl:
+    Description: "API Gateway endpoint URL for Prod stage"
+    Value: !Sub "https://${ServerlessRestApi}.execute-api.${AWS::Region}.amazonaws.com/Prod/"

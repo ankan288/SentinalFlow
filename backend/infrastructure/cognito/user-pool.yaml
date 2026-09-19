@@ -1,0 +1,47 @@
+SentinelFlowUserPool:
+  Type: AWS::Cognito::UserPool
+  Properties:
+    UserPoolName: SentinelFlowUsers
+    UsernameAttributes: 
+      - email
+    AutoVerifiedAttributes:
+      - email
+    Policies:
+      PasswordPolicy:
+        MinimumLength: 8
+        RequireLowercase: true
+        RequireNumbers: true
+        RequireSymbols: true
+        RequireUppercase: true
+
+SentinelFlowUserPoolClient:
+  Type: AWS::Cognito::UserPoolClient
+  Properties:
+    ClientName: SentinelFlowWebClient
+    UserPoolId: !Ref SentinelFlowUserPool
+    GenerateSecret: false # False because SPAs (React) cannot keep secrets
+    ExplicitAuthFlows:
+      - ALLOW_USER_SRP_AUTH
+      - ALLOW_REFRESH_TOKEN_AUTH
+
+# --- Role Groups ---
+AdminGroup:
+  Type: AWS::Cognito::UserPoolGroup
+  Properties:
+    GroupName: ADMIN
+    Description: Full access to all actions and infrastructure
+    UserPoolId: !Ref SentinelFlowUserPool
+
+AnalystGroup:
+  Type: AWS::Cognito::UserPoolGroup
+  Properties:
+    GroupName: ANALYST
+    Description: Can investigate incidents and request AI analysis
+    UserPoolId: !Ref SentinelFlowUserPool
+
+ViewerGroup:
+  Type: AWS::Cognito::UserPoolGroup
+  Properties:
+    GroupName: VIEWER
+    Description: Read-only access to dashboards and incidents
+    UserPoolId: !Ref SentinelFlowUserPool

@@ -111,7 +111,7 @@ export const EventDetailsDrawer: React.FC<EventDetailsDrawerProps> = ({ event, o
                   <div style={{ fontSize: '1rem', fontWeight: 600, color: 'var(--text-primary)' }}>{event.relatedIncidentId}</div>
                   <div style={{ fontSize: '0.875rem', color: 'var(--text-secondary)' }}>{event.relatedIncidentName}</div>
                 </div>
-                <Button variant="secondary" onClick={() => navigate(`/incidents/${event.relatedIncidentId?.replace('INC-', '')}`)}>
+                <Button variant="secondary" onClick={() => navigate(`/incidents/${event.relatedIncidentId}`)}>
                   View Incident <ExternalLink size={14} style={{ marginLeft: '4px' }} />
                 </Button>
               </div>

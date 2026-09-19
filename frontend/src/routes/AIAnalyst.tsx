@@ -11,6 +11,7 @@ import { Loader2 } from 'lucide-react';
 export const AIAnalyst: React.FC = () => {
   const [isAnalyzing, setIsAnalyzing] = useState(false);
   const [analysisResult, setAnalysisResult] = useState<AIAnalysisResult | null>(null);
+  const [currentQuery, setCurrentQuery] = useState<string | null>(null);
   
   // Review Modal State
   const [reviewAction, setReviewAction] = useState<RecommendedAction | null>(null);
@@ -24,6 +25,7 @@ export const AIAnalyst: React.FC = () => {
   const handleQuerySubmit = async (query: string) => {
     setIsAnalyzing(true);
     setAnalysisResult(null); // Clear previous
+    setCurrentQuery(query);
     
     try {
       const result = await aiAnalystService.askAnalyst(query);
@@ -74,7 +76,7 @@ export const AIAnalyst: React.FC = () => {
       </header>
       
       <div style={{ flex: 1, maxWidth: '800px', display: 'flex', flexDirection: 'column' }}>
-        <InvestigationContext />
+        {currentQuery && <InvestigationContext incidentId={currentQuery} />}
         
         <AnalystQuery onQuerySubmit={handleQuerySubmit} isLoading={isAnalyzing} />
 

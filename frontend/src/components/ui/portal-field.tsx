@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useMemo, useRef, type CSSProperties } from "react";
+import { useEffect, useMemo, useRef, useState, type CSSProperties } from "react";
 
 /**
  * Self-contained extraction of the "portal-field" effect from MengTo/threeui's
@@ -240,6 +240,7 @@ export default function PortalFieldCollection({
   style,
 }: PortalFieldCollectionProps) {
   const iframeRef = useRef<HTMLIFrameElement>(null);
+  const [isLoaded, setIsLoaded] = useState(false);
 
   const safeSpeed = clamp(speed, 0, 3);
   const safeSize = clamp(size, 0.05, 4);
@@ -256,7 +257,7 @@ export default function PortalFieldCollection({
 
   useEffect(() => {
     const frame = iframeRef.current?.contentWindow;
-    if (!frame) return;
+    if (!frame || !isLoaded) return;
     frame.postMessage(
       {
         type: "portal-controls",
@@ -264,7 +265,7 @@ export default function PortalFieldCollection({
       },
       "*",
     );
-  }, [safeSpeed, safeOpacity, source]);
+  }, [safeSpeed, safeOpacity, source, isLoaded]);
 
   const filter =
     safeHue === 0 && safeSaturation === 1 && safeBrightness === 1
@@ -279,6 +280,7 @@ export default function PortalFieldCollection({
       srcDoc={source}
       sandbox="allow-scripts"
       loading="eager"
+      onLoad={() => setIsLoaded(true)}
       style={{
         display: "block",
         width: "100%",

@@ -87,4 +87,3 @@ export const IncidentFilters: React.FC = () => {
     </div>
   );
 };
-
