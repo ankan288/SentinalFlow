@@ -38,6 +38,8 @@ SentinelFlow/
 
 ## 👥 Contributors
 
+- **Ankan Ghosh** — AWS + Backend + DevOps
+- **Mehali Basu** — Frontend + Design
 - **Anusmita Ray Chaudhuri** — AI / Agent Engineering & Security Intelligence
 - **Anirban Ray** — Cybersecurity + Data + Validation
 
