@@ -16,6 +16,17 @@ export const Register: React.FC = () => {
   const [showPassword, setShowPassword] = useState(false);
   const navigate = useNavigate();
 
+  React.useEffect(() => {
+    // If already logged in, redirect immediately
+    const checkAuth = async () => {
+      const isAuth = await authService.isAuthenticated();
+      if (isAuth) {
+        navigate('/dashboard');
+      }
+    };
+    checkAuth();
+  }, [navigate]);
+
   const handleRegister = async (e: React.FormEvent) => {
     e.preventDefault();
     if (password !== confirmPassword) {
