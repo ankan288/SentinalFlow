@@ -1,9 +1,11 @@
 import React from 'react';
 import { ShieldAlert, AlertCircle, CheckCircle, Activity } from 'lucide-react';
+import type { Incident } from '../../services/incidentsService';
+import type { SecurityEvent } from '../../services/eventsService';
 
 interface OverviewCardProps {
   title: string;
-  value: string;
+  value: string | React.ReactNode;
   subtitle?: string;
   icon: React.ReactNode;
   colorVar: string;
@@ -47,7 +49,57 @@ const OverviewCard: React.FC<OverviewCardProps> = ({ title, value, subtitle, ico
   </div>
 );
 
-export const SecurityOverview: React.FC = () => {
+export const SecurityOverview: React.FC<{ realData?: { incidents: Incident[], events: SecurityEvent[], loading: boolean } }> = ({ realData }) => {
+  if (realData) {
+    const { incidents, events, loading } = realData;
+    
+    // In a real environment with NO events API, total events is 0
+    const totalEvents = events.length;
+    
+    const activeIncidents = incidents.filter(i => i.status !== 'Resolved' && i.status !== 'Closed').length;
+    const highRisk = incidents.filter(i => i.severity === 'High' || i.severity === 'Critical').length;
+    const resolved = incidents.filter(i => i.status === 'Resolved' || i.status === 'Closed').length;
+
+    return (
+      <div style={{
+        display: 'grid',
+        gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))',
+        gap: 'var(--space-4)',
+        marginBottom: 'var(--space-6)'
+      }}>
+        <OverviewCard 
+          title="Total Events (24h)" 
+          value={loading ? "..." : totalEvents.toString()} 
+          subtitle={(!loading && totalEvents === 0) ? "No events received yet" : ""}
+          icon={<Activity size={20} />} 
+          colorVar="--color-low" 
+        />
+        <OverviewCard 
+          title="Active Incidents" 
+          value={loading ? "..." : activeIncidents.toString()} 
+          subtitle={(!loading && activeIncidents === 0) ? "No active incidents" : "Requires immediate attention"}
+          icon={<AlertCircle size={20} />} 
+          colorVar="--color-critical" 
+        />
+        <OverviewCard 
+          title="High Risk" 
+          value={loading ? "..." : highRisk.toString()} 
+          subtitle={(!loading && highRisk === 0) ? "No high-risk incidents" : "Requires attention"}
+          icon={<ShieldAlert size={20} />} 
+          colorVar="--color-high" 
+        />
+        <OverviewCard 
+          title="Resolved" 
+          value={loading ? "..." : resolved.toString()} 
+          subtitle={(!loading && resolved === 0) ? "No incidents resolved" : ""}
+          icon={<CheckCircle size={20} />} 
+          colorVar="--color-success" 
+        />
+      </div>
+    );
+  }
+
+  // Original Demo Mode UI
   return (
     <div style={{
       display: 'grid',

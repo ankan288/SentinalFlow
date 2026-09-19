@@ -5,13 +5,15 @@ import { incidentsService } from '../../services/incidentsService';
 import type { Incident } from '../../services/incidentsService';
 import { useDemo } from '../../context/DemoContext';
 
-export const IncidentSummary: React.FC = () => {
+export const IncidentSummary: React.FC<{ realData?: { incidents: Incident[], loading: boolean } }> = ({ realData }) => {
   const navigate = useNavigate();
   const { isDemoMode } = useDemo();
   const [incidents, setIncidents] = useState<Incident[]>([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
+    if (realData) return; // Skip fetch if we have realData
+    
     let isMounted = true;
     const fetchIncidents = async () => {
       try {
@@ -33,7 +35,10 @@ export const IncidentSummary: React.FC = () => {
     }
     
     return () => { isMounted = false; };
-  }, [isDemoMode]);
+  }, [isDemoMode, realData]);
+
+  const displayIncidents = realData ? realData.incidents.slice(0, 5) : incidents;
+  const isComponentLoading = realData ? realData.loading : loading;
 
   const getSeverityColor = (severity: string) => {
     switch(severity) {
@@ -74,17 +79,18 @@ export const IncidentSummary: React.FC = () => {
         </button>
       </div>
 
-      {loading ? (
+      {isComponentLoading ? (
         <div style={{ padding: 'var(--space-6)', textAlign: 'center', color: 'var(--text-muted)', flex: 1 }}>
           Loading...
         </div>
-      ) : incidents.length === 0 ? (
+      ) : displayIncidents.length === 0 ? (
         <div style={{ padding: 'var(--space-6)', textAlign: 'center', color: 'var(--text-muted)', flex: 1 }}>
-          No active incidents.
+          <p style={{ margin: '0 0 var(--space-2) 0' }}>No active incidents</p>
+          {realData && <p style={{ margin: 0, fontSize: '0.875rem' }}>Your environment is currently clear.</p>}
         </div>
       ) : (
         <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--space-3)', flex: 1 }}>
-          {incidents.map(incident => (
+          {displayIncidents.map(incident => (
             <div 
               key={incident.id}
               onClick={() => navigate(`/incidents/${incident.id}`)}

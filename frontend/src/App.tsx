@@ -15,7 +15,6 @@ import { Settings } from './routes/Settings';
 import { Profile } from './routes/Profile';
 import { DemoProvider } from './context/DemoContext';
 import { ResponseProvider } from './context/ResponseContext';
-
 import { authService } from './services/auth/authService';
 
 // Protected Route Wrapper

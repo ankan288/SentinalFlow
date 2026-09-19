@@ -10,7 +10,9 @@ const mockEvents = [
   { id: 'EV-8917', action: 'Policy Update', actor: 'System', target: 'Firewall Rules', time: '15m ago', icon: Activity, color: 'var(--color-medium)' }
 ];
 
-export const RecentEvents: React.FC = () => {
+import type { SecurityEvent } from '../../services/eventsService';
+
+export const RecentEvents: React.FC<{ realData?: { events: SecurityEvent[], loading: boolean } }> = ({ realData }) => {
   return (
     <div className="recent-events">
       <div className="recent-events-header">
@@ -25,29 +27,54 @@ export const RecentEvents: React.FC = () => {
       </div>
 
       <div className="recent-events-list" role="list" aria-label="Recent Events">
-        {mockEvents.map(event => {
-          const Icon = event.icon;
-          return (
-            <div key={event.id} className="recent-event-item" role="listitem">
-              <div 
-                className="recent-event-icon-wrapper"
-                style={{ color: event.color }}
-                aria-hidden="true"
-              >
-                <Icon size={16} />
-              </div>
-              <div className="recent-event-content">
-                <div className="recent-event-action">{event.action}</div>
-                <div className="recent-event-details">
-                  {event.actor} &rarr; {event.target}
+        {realData ? (
+          realData.loading ? (
+            <div style={{ padding: 'var(--space-6)', textAlign: 'center', color: 'var(--text-muted)' }}>Loading events...</div>
+          ) : realData.events.length === 0 ? (
+            <div style={{ padding: 'var(--space-6)', textAlign: 'center', color: 'var(--text-muted)' }}>
+              <p style={{ margin: '0 0 var(--space-2) 0' }}>No security events received yet</p>
+              <p style={{ margin: 0, fontSize: '0.875rem' }}>Waiting for events from your connected sources...</p>
+            </div>
+          ) : (
+            realData.events.map((event: any) => (
+              <div key={event.id} className="recent-event-item" role="listitem">
+                <div className="recent-event-content">
+                  <div className="recent-event-action">{event.type}</div>
+                  <div className="recent-event-details">
+                    {event.user} &rarr; {event.resource}
+                  </div>
+                </div>
+                <div className="recent-event-time">
+                  {new Date(event.timestamp).toLocaleTimeString()}
                 </div>
               </div>
-              <div className="recent-event-time">
-                {event.time}
+            ))
+          )
+        ) : (
+          mockEvents.map(event => {
+            const Icon = event.icon;
+            return (
+              <div key={event.id} className="recent-event-item" role="listitem">
+                <div 
+                  className="recent-event-icon-wrapper"
+                  style={{ color: event.color }}
+                  aria-hidden="true"
+                >
+                  <Icon size={16} />
+                </div>
+                <div className="recent-event-content">
+                  <div className="recent-event-action">{event.action}</div>
+                  <div className="recent-event-details">
+                    {event.actor} &rarr; {event.target}
+                  </div>
+                </div>
+                <div className="recent-event-time">
+                  {event.time}
+                </div>
               </div>
-            </div>
-          );
-        })}
+            );
+          })
+        )}
       </div>
     </div>
   );

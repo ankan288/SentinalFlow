@@ -1,14 +1,48 @@
 import React from 'react';
 import { PieChart } from 'lucide-react';
+import type { Incident } from '../../services/incidentsService';
 
-export const RiskDistribution: React.FC = () => {
-  // Mock data
-  const data = [
-    { label: 'Critical', value: 2, color: 'var(--color-critical)' },
-    { label: 'High', value: 8, color: 'var(--color-high)' },
-    { label: 'Medium', value: 24, color: 'var(--color-medium)' },
-    { label: 'Low', value: 66, color: 'var(--color-low)' },
-  ];
+export const RiskDistribution: React.FC<{ realData?: { incidents: Incident[], loading: boolean } }> = ({ realData }) => {
+  const getRiskData = () => {
+    if (!realData) {
+      // Mock data for Demo Mode
+      return [
+        { label: 'Critical', value: 2, color: 'var(--color-critical)' },
+        { label: 'High', value: 8, color: 'var(--color-high)' },
+        { label: 'Medium', value: 24, color: 'var(--color-medium)' },
+        { label: 'Low', value: 66, color: 'var(--color-low)' },
+      ];
+    }
+    
+    if (realData.incidents.length === 0) {
+      return [
+        { label: 'Critical', value: 0, color: 'var(--color-critical)' },
+        { label: 'High', value: 0, color: 'var(--color-high)' },
+        { label: 'Medium', value: 0, color: 'var(--color-medium)' },
+        { label: 'Low', value: 0, color: 'var(--color-low)' },
+      ];
+    }
+    
+    const riskCounts: Record<string, number> = { Critical: 0, High: 0, Medium: 0, Low: 0 };
+    realData.incidents.forEach((i) => {
+      if (riskCounts[i.severity] !== undefined) {
+        riskCounts[i.severity]++;
+      } else {
+        riskCounts['Medium']++;
+      }
+    });
+    const total = realData.incidents.length;
+    const getPercent = (count: number) => total === 0 ? 0 : Math.round((count / total) * 100);
+    
+    return [
+      { label: 'Critical', value: getPercent(riskCounts.Critical), color: 'var(--color-critical)' },
+      { label: 'High', value: getPercent(riskCounts.High), color: 'var(--color-high)' },
+      { label: 'Medium', value: getPercent(riskCounts.Medium), color: 'var(--color-medium)' },
+      { label: 'Low', value: getPercent(riskCounts.Low), color: 'var(--color-low)' },
+    ];
+  };
+
+  const data = getRiskData();
 
   return (
     <div style={{
