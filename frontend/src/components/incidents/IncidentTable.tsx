@@ -1,15 +1,40 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { incidentsService } from '../../services/incidentsService';
+import type { Incident } from '../../services/incidentsService';
 
-export const mockIncidents = [
-  { id: 'INC-047', type: 'Credential Compromise', severity: 'High', user: 'admin@acme.com', source: '192.168.1.45', detected: '10 mins ago', status: 'Active' },
-  { id: 'INC-046', type: 'Unusual Data Exfiltration', severity: 'Medium', user: 'svc_reporting', source: '10.0.5.12', detected: '2 hours ago', status: 'Investigating' },
-  { id: 'INC-045', type: 'Multiple Failed Logins', severity: 'Low', user: 'j.smith@acme.com', source: '203.0.113.42', detected: '5 hours ago', status: 'Resolved' },
-  { id: 'INC-044', type: 'Privilege Escalation Attempt', severity: 'Critical', user: 'dev_user1', source: '10.0.8.22', detected: '1 day ago', status: 'Resolved' },
-];
+interface IncidentTableProps {
+  incidents?: Incident[];
+  loading?: boolean;
+}
 
-export const IncidentTable: React.FC = () => {
+export const IncidentTable: React.FC<IncidentTableProps> = ({ incidents: propIncidents, loading: propLoading }) => {
   const navigate = useNavigate();
+  const [internalIncidents, setInternalIncidents] = useState<Incident[]>([]);
+  const [internalLoading, setInternalLoading] = useState(true);
+
+  useEffect(() => {
+    if (propIncidents !== undefined) return;
+    
+    let isMounted = true;
+    const fetchIncidents = async () => {
+      try {
+        setInternalLoading(true);
+        const data = await incidentsService.getIncidents();
+        if (isMounted) setInternalIncidents(data.incidents);
+      } catch (err) {
+        console.error("Failed to fetch incidents", err);
+      } finally {
+        if (isMounted) setInternalLoading(false);
+      }
+    };
+    fetchIncidents();
+    
+    return () => { isMounted = false; };
+  }, [propIncidents]);
+
+  const incidents = propIncidents !== undefined ? propIncidents : internalIncidents;
+  const loading = propLoading !== undefined ? propLoading : internalLoading;
 
   const getSeverityBadge = (severity: string) => {
     let color = '';
@@ -56,51 +81,66 @@ export const IncidentTable: React.FC = () => {
       border: '1px solid rgba(255, 255, 255, 0.08)',
       boxShadow: '0 10px 35px rgba(0, 0, 0, 0.28)',
       borderRadius: '16px',
-      overflow: 'hidden'
+      overflow: 'hidden',
+      position: 'relative'
     }}>
-      <table style={{ width: '100%', borderCollapse: 'collapse', textAlign: 'left' }}>
-        <thead style={{ backgroundColor: 'rgba(20, 27, 42, 0.42)', borderBottom: '1px solid rgba(255, 255, 255, 0.07)' }}>
-          <tr>
-            <th style={thStyle}>Incident ID</th>
-            <th style={thStyle}>Type</th>
-            <th style={thStyle}>Severity</th>
-            <th style={thStyle}>User</th>
-            <th style={thStyle}>Source</th>
-            <th style={thStyle}>Detected</th>
-            <th style={thStyle}>Status</th>
-          </tr>
-        </thead>
-        <tbody>
-          {mockIncidents.map(incident => (
-            <tr 
-              key={incident.id} 
-              onClick={() => navigate(`/incidents/${incident.id}`)}
-              onKeyDown={(e) => {
-                if (e.key === 'Enter' || e.key === ' ') {
-                  e.preventDefault();
-                  navigate(`/incidents/${incident.id}`);
-                }
-              }}
-              tabIndex={0}
-              style={{ 
-                borderBottom: '1px solid rgba(255, 255, 255, 0.05)',
-                cursor: 'pointer',
-                transition: 'background-color 0.2s'
-              }}
-              onMouseOver={(e) => e.currentTarget.style.backgroundColor = 'rgba(255, 255, 255, 0.035)'}
-              onMouseOut={(e) => e.currentTarget.style.backgroundColor = 'transparent'}
-            >
-              <td style={{...tdStyle, fontWeight: 600, color: 'var(--text-primary)'}}>{incident.id}</td>
-              <td style={tdStyle}>{incident.type}</td>
-              <td style={tdStyle}>{getSeverityBadge(incident.severity)}</td>
-              <td style={tdStyle}>{incident.user}</td>
-              <td style={{...tdStyle, fontFamily: 'var(--font-family-mono)', fontSize: '0.8125rem'}}>{incident.source}</td>
-              <td style={{...tdStyle, color: 'var(--text-secondary)'}}>{incident.detected}</td>
-              <td style={tdStyle}>{getStatusBadge(incident.status)}</td>
+      {loading && (
+        <div style={{ padding: 'var(--space-6)', textAlign: 'center', color: 'var(--text-muted)' }}>
+          Loading incidents...
+        </div>
+      )}
+      
+      {!loading && incidents.length === 0 && (
+        <div style={{ padding: 'var(--space-6)', textAlign: 'center', color: 'var(--text-muted)' }}>
+          No incidents found.
+        </div>
+      )}
+
+      {!loading && incidents.length > 0 && (
+        <table style={{ width: '100%', borderCollapse: 'collapse', textAlign: 'left' }}>
+          <thead style={{ backgroundColor: 'rgba(20, 27, 42, 0.42)', borderBottom: '1px solid rgba(255, 255, 255, 0.07)' }}>
+            <tr>
+              <th style={thStyle}>Incident ID</th>
+              <th style={thStyle}>Type</th>
+              <th style={thStyle}>Severity</th>
+              <th style={thStyle}>User</th>
+              <th style={thStyle}>Source</th>
+              <th style={thStyle}>Detected</th>
+              <th style={thStyle}>Status</th>
             </tr>
-          ))}
-        </tbody>
-      </table>
+          </thead>
+          <tbody>
+            {incidents.map(incident => (
+              <tr 
+                key={incident.id} 
+                onClick={() => navigate(`/incidents/${incident.id}`)}
+                onKeyDown={(e) => {
+                  if (e.key === 'Enter' || e.key === ' ') {
+                    e.preventDefault();
+                    navigate(`/incidents/${incident.id}`);
+                  }
+                }}
+                tabIndex={0}
+                style={{ 
+                  borderBottom: '1px solid rgba(255, 255, 255, 0.05)',
+                  cursor: 'pointer',
+                  transition: 'background-color 0.2s'
+                }}
+                onMouseOver={(e) => e.currentTarget.style.backgroundColor = 'rgba(255, 255, 255, 0.035)'}
+                onMouseOut={(e) => e.currentTarget.style.backgroundColor = 'transparent'}
+              >
+                <td style={{...tdStyle, fontWeight: 600, color: 'var(--text-primary)'}}>{incident.id}</td>
+                <td style={tdStyle}>{incident.type}</td>
+                <td style={tdStyle}>{getSeverityBadge(incident.severity)}</td>
+                <td style={tdStyle}>{incident.user}</td>
+                <td style={{...tdStyle, fontFamily: 'var(--font-family-mono)', fontSize: '0.8125rem'}}>{incident.source}</td>
+                <td style={{...tdStyle, color: 'var(--text-secondary)'}}>{new Date(incident.detected).toLocaleString()}</td>
+                <td style={tdStyle}>{getStatusBadge(incident.status)}</td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      )}
     </div>
   );
 };

@@ -1,16 +1,44 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { IncidentFilters } from '../components/incidents/IncidentFilters';
-import { IncidentTable, mockIncidents } from '../components/incidents/IncidentTable';
+import { IncidentTable } from '../components/incidents/IncidentTable';
 import { useDemo } from '../context/DemoContext';
+import { incidentsService } from '../services/incidentsService';
+import type { Incident } from '../services/incidentsService';
 
 export const Incidents: React.FC = () => {
   const { isDemoMode } = useDemo();
+  const [incidents, setIncidents] = useState<Incident[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    let isMounted = true;
+    const fetchIncidents = async () => {
+      try {
+        setLoading(true);
+        const data = await incidentsService.getIncidents();
+        if (isMounted) setIncidents(data.incidents);
+      } catch (err) {
+        console.error("Failed to fetch incidents", err);
+      } finally {
+        if (isMounted) setLoading(false);
+      }
+    };
+    
+    // We fetch even if not in demo mode if we want, but let's respect isDemoMode for now
+    if (isDemoMode) {
+      fetchIncidents();
+    } else {
+      setLoading(false);
+    }
+    
+    return () => { isMounted = false; };
+  }, [isDemoMode]);
 
   const handleExport = () => {
     const headers = ['Incident ID', 'Type', 'Severity', 'User', 'Source', 'Detected', 'Status'];
     const csvContent = [
       headers.join(','),
-      ...mockIncidents.map(inc => `"${inc.id}","${inc.type}","${inc.severity}","${inc.user}","${inc.source}","${inc.detected}","${inc.status}"`)
+      ...incidents.map(inc => `"${inc.id}","${inc.type}","${inc.severity}","${inc.user}","${inc.source}","${inc.detected}","${inc.status}"`)
     ].join('\n');
     
     const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
@@ -42,6 +70,7 @@ export const Incidents: React.FC = () => {
         
         <button 
           onClick={handleExport}
+          disabled={loading || incidents.length === 0}
           style={{
             backgroundColor: 'var(--color-action)',
             color: 'white',
@@ -49,7 +78,8 @@ export const Incidents: React.FC = () => {
             padding: 'var(--space-2) var(--space-4)',
             borderRadius: 'var(--radius-md)',
             fontWeight: 500,
-            cursor: 'pointer'
+            cursor: loading || incidents.length === 0 ? 'not-allowed' : 'pointer',
+            opacity: loading || incidents.length === 0 ? 0.5 : 1
           }}
         >
           Export CSV
@@ -57,7 +87,7 @@ export const Incidents: React.FC = () => {
       </header>
 
       <IncidentFilters />
-      <IncidentTable />
+      <IncidentTable incidents={incidents} loading={loading} />
     </div>
   );
 };

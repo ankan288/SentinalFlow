@@ -41,7 +41,8 @@ const DEFAULT_NOTIFICATIONS: AppNotification[] = [
   }
 ];
 
-import { mockIncidents } from '../incidents/IncidentTable';
+import { incidentsService } from '../../services/incidentsService';
+import type { Incident } from '../../services/incidentsService';
 import { mockEvents } from '../../services/eventsService';
 
 interface SearchResult {
@@ -64,6 +65,7 @@ export const TopBar: React.FC = () => {
   const [selectedIndex, setSelectedIndex] = useState(-1);
   const searchRef = useRef<HTMLDivElement>(null);
   const searchInputRef = useRef<HTMLInputElement>(null);
+  const [incidents, setIncidents] = useState<Incident[]>([]);
 
   const [notifications, setNotifications] = useState<AppNotification[]>(() => {
     const saved = localStorage.getItem('sentinelflow_notifications');
@@ -92,6 +94,14 @@ export const TopBar: React.FC = () => {
     };
     document.addEventListener('mousedown', handleClickOutside);
     return () => document.removeEventListener('mousedown', handleClickOutside);
+  }, []);
+
+  useEffect(() => {
+    let isMounted = true;
+    incidentsService.getIncidents(100).then(res => {
+      if (isMounted) setIncidents(res.incidents);
+    }).catch(console.error);
+    return () => { isMounted = false; };
   }, []);
 
   useEffect(() => {
@@ -139,7 +149,7 @@ export const TopBar: React.FC = () => {
     const results: SearchResult[] = [];
 
     // 1. Search Incidents
-    mockIncidents.forEach(inc => {
+    incidents.forEach(inc => {
       if (
         match(inc.id) || match(inc.type) || match(inc.severity) || match(inc.status) || match(inc.user) || match(inc.source) || match(inc.detected)
       ) {
@@ -173,7 +183,7 @@ export const TopBar: React.FC = () => {
     const devicesMap = new Map<string, string>();
     const resourcesMap = new Map<string, string>();
 
-    mockIncidents.forEach(inc => {
+    incidents.forEach(inc => {
       if (inc.user) usersMap.set(inc.user, 'User');
     });
 

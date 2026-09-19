@@ -1,8 +1,29 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { User, Laptop, Network } from 'lucide-react';
 import { Link } from 'react-router-dom';
+import { incidentsService } from '../../services/incidentsService';
+import type { Incident } from '../../services/incidentsService';
 
-export const InvestigationContext: React.FC = () => {
+export const InvestigationContext: React.FC<{ incidentId?: string }> = ({ incidentId }) => {
+  const [incident, setIncident] = useState<Incident | null>(null);
+
+  useEffect(() => {
+    if (!incidentId) return;
+    
+    let isMounted = true;
+    incidentsService.getIncidentById(incidentId)
+      .then(res => {
+        if (isMounted) setIncident(res);
+      })
+      .catch(console.error);
+      
+    return () => { isMounted = false; };
+  }, [incidentId]);
+
+  if (!incidentId || !incident) {
+    return null; // Don't show context if not loaded
+  }
+
   return (
     <div style={{
       backgroundColor: 'rgba(10, 15, 25, 0.58)',
@@ -24,13 +45,14 @@ export const InvestigationContext: React.FC = () => {
       <div style={{ display: 'flex', flexWrap: 'wrap', gap: 'var(--space-6)', alignItems: 'center' }}>
         <div>
           <div style={{ display: 'flex', alignItems: 'center', gap: 'var(--space-2)' }}>
-            <Link to="/incidents/INC-047" style={{ fontSize: '1.125rem', fontWeight: 600, color: 'var(--text-primary)', textDecoration: 'none' }}>Incident #047</Link>
+            <Link to={`/incidents/${incident.id}`} style={{ fontSize: '1.125rem', fontWeight: 600, color: 'var(--text-primary)', textDecoration: 'none' }}>Incident {incident.id}</Link>
             <span style={{ 
-              backgroundColor: 'var(--color-high-bg)', color: 'var(--color-high)', 
+              backgroundColor: incident.severity === 'Critical' || incident.severity === 'High' ? 'var(--color-critical-bg)' : 'var(--color-medium-bg)', 
+              color: incident.severity === 'Critical' || incident.severity === 'High' ? 'var(--color-critical)' : 'var(--color-medium)', 
               padding: '2px 6px', borderRadius: '4px', fontSize: '0.75rem', fontWeight: 600 
-            }}>HIGH RISK</span>
+            }}>{incident.severity.toUpperCase()}</span>
           </div>
-          <div style={{ color: 'var(--text-secondary)', fontSize: '0.875rem', marginTop: '4px' }}>Credential Compromise</div>
+          <div style={{ color: 'var(--text-secondary)', fontSize: '0.875rem', marginTop: '4px' }}>{incident.type}</div>
         </div>
 
         <div style={{ width: '1px', height: '32px', backgroundColor: 'var(--border-medium)' }}></div>
@@ -40,7 +62,7 @@ export const InvestigationContext: React.FC = () => {
             <User size={16} color="var(--text-muted)" />
             <div>
               <div style={{ fontSize: '0.65rem', color: 'var(--text-muted)', textTransform: 'uppercase' }}>User</div>
-              <div style={{ fontSize: '0.875rem', color: 'var(--text-primary)' }}>john.doe</div>
+              <div style={{ fontSize: '0.875rem', color: 'var(--text-primary)' }}>{incident.user}</div>
             </div>
           </div>
 
@@ -48,7 +70,7 @@ export const InvestigationContext: React.FC = () => {
             <Network size={16} color="var(--text-muted)" />
             <div>
               <div style={{ fontSize: '0.65rem', color: 'var(--text-muted)', textTransform: 'uppercase' }}>Source</div>
-              <div style={{ fontSize: '0.875rem', color: 'var(--text-primary)', fontFamily: 'var(--font-family-mono)' }}>192.168.1.45</div>
+              <div style={{ fontSize: '0.875rem', color: 'var(--text-primary)', fontFamily: 'var(--font-family-mono)' }}>{incident.source}</div>
             </div>
           </div>
 
