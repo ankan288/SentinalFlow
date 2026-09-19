@@ -44,5 +44,9 @@ class AIAgentClient:
                     "target": target_ip,
                     "description": f"{action_type} for the detected threat."
                 }
+            ],
+            "mitre_tags": [
+                "T1078 Valid Accounts",
+                "T1566 Phishing" if event_type == "phishing" else "T1110 Brute Force"
             ]
         }

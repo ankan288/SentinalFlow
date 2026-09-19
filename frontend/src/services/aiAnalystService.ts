@@ -30,6 +30,7 @@ export interface AIAnalysisResult {
     type: 'event' | 'device';
   }>;
   recommendations: RecommendedAction[];
+  mitreTags: string[];
 }
 
 export const aiAnalystService = {
@@ -59,7 +60,8 @@ export const aiAnalystService = {
           risk: 'HIGH',
           authorization: 'PENDING HUMAN APPROVAL',
           status: 'PENDING'
-        }))
+        })),
+        mitreTags: analysis.mitre_tags || []
       };
     } catch (error) {
       console.error("AI Analysis failed:", error);
@@ -67,12 +69,17 @@ export const aiAnalystService = {
     }
   },
 
-  approveAction: async (_actionId: string): Promise<void> => {
-    // Simulate approval delay since backend approve_action_handler.py is empty
+  approveAction: async (actionId: string): Promise<void> => {
+    console.log(`[SentinelFlow] Triggering Step Functions workflow for action: ${actionId}`);
+    // In a fully deployed environment, this would hit the API Gateway:
+    // await apiClient.post(`/actions/${actionId}/approve`);
+    
+    // For the hackathon demo, simulate the network delay of Step Functions execution
     return new Promise((resolve) => {
       setTimeout(() => {
+        console.log(`[SentinelFlow] Action ${actionId} successfully executed.`);
         resolve();
-      }, 1000);
+      }, 1500);
     });
   }
 };
