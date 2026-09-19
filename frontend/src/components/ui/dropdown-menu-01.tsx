@@ -35,7 +35,7 @@ type MenuItem = {
 };
 
 const PROFILE_ITEMS: MenuItem[] = [
-  { label: "My Profile", icon: CircleUserRound, action: "/settings" },
+  { label: "My Profile", icon: CircleUserRound, action: "/profile" },
   { label: "My Subscription", icon: CreditCard },
   { label: "My Invoice", icon: ReceiptText },
 ];
@@ -84,20 +84,19 @@ const Dropdown = ({ trigger, defaultOpen, align = "end" }: Props) => {
               <div className="relative">
                 <Avatar className="size-10">
                   <AvatarImage
-                    src="https://cdn.21st.dev/assets/localized/35d43d7a2b8e4d2a8825923d05530cce38f435cfeead105facebea9fa1fe0353.jpg"
-                    alt="David McMichael"
+                    alt="Jane Doe"
                   />
-                  <AvatarFallback>DM</AvatarFallback>
+                  <AvatarFallback>JD</AvatarFallback>
                 </Avatar>
                 <span className="absolute right-0 bottom-0 size-2 rounded-full bg-green-600 ring-2 ring-background" />
               </div>
 
               <div className="flex flex-col">
                 <span className="text-popover-foreground text-sm font-medium">
-                  David McMichael
+                  Jane Doe
                 </span>
                 <span className="text-muted-foreground text-xs">
-                  david@shadcnspace.com
+                  analyst@acme.corp
                 </span>
               </div>
             </DropdownMenuLabel>
@@ -150,10 +149,9 @@ const DropdownMenu01 = ({ defaultOpen }: { defaultOpen?: boolean }) => {
         <div className="rounded-full hover:ring-2 hover:ring-primary/20 transition-all p-1 -m-1">
           <Avatar className="size-8 cursor-pointer">
             <AvatarImage
-              src="https://cdn.21st.dev/assets/localized/35d43d7a2b8e4d2a8825923d05530cce38f435cfeead105facebea9fa1fe0353.jpg"
-              alt="David McMichael"
+              alt="Jane Doe"
             />
-            <AvatarFallback>DM</AvatarFallback>
+            <AvatarFallback>JD</AvatarFallback>
           </Avatar>
         </div>
       }

@@ -20,7 +20,7 @@ export interface SecurityEvent {
 }
 
 // Generate the specific demo sequence plus some noise
-export const mockEvents: SecurityEvent[] = [
+export const mockEvents: SecurityEvent[] = ([
   ...Array.from({ length: 27 }).map((_, i) => ({
     id: `EVT-${(1000 + i).toString()}`,
     timestamp: `11:38:${(10 + i).toString().padStart(2, '0')}`,
@@ -44,7 +44,7 @@ export const mockEvents: SecurityEvent[] = [
     description: 'Successful Login',
     relatedIncidentId: 'INC-047',
     relatedIncidentName: 'Credential Compromise'
-  } as SecurityEvent,
+  },
   {
     id: 'EVT-1028',
     timestamp: '11:39:15',
@@ -56,7 +56,7 @@ export const mockEvents: SecurityEvent[] = [
     status: 'SUSPICIOUS',
     description: 'New Device',
     device: 'DEV-8821'
-  } as SecurityEvent,
+  },
   {
     id: 'EVT-1029',
     timestamp: '11:40:11',
@@ -71,7 +71,7 @@ export const mockEvents: SecurityEvent[] = [
     newRole: 'SuperAdmin',
     relatedIncidentId: 'INC-047',
     relatedIncidentName: 'Credential Compromise'
-  } as SecurityEvent,
+  },
   {
     id: 'EVT-1030',
     timestamp: '11:41:03',
@@ -84,7 +84,7 @@ export const mockEvents: SecurityEvent[] = [
     description: 'Database Access',
     relatedIncidentId: 'INC-047',
     relatedIncidentName: 'Credential Compromise'
-  } as SecurityEvent,
+  },
   // Add some background noise
   {
     id: 'EVT-1031',
@@ -96,7 +96,7 @@ export const mockEvents: SecurityEvent[] = [
     severity: 'INFO',
     status: 'OBSERVED',
     description: 'Routine Health Check'
-  } as SecurityEvent,
+  },
   {
     id: 'EVT-1032',
     timestamp: '11:43:05',
@@ -107,8 +107,8 @@ export const mockEvents: SecurityEvent[] = [
     severity: 'LOW',
     status: 'OBSERVED',
     description: 'Successful Login'
-  } as SecurityEvent
-].reverse(); // Most recent first for the table
+  }
+] as SecurityEvent[]).reverse(); // Most recent first for the table
 
 export const eventsService = {
   getEvents: async (): Promise<SecurityEvent[]> => {

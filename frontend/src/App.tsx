@@ -12,14 +12,13 @@ import { Login } from './routes/Login';
 import { Register } from './routes/Register';
 import { Welcome } from './routes/Welcome';
 import { Settings } from './routes/Settings';
+import { Profile } from './routes/Profile';
 import { DemoProvider } from './context/DemoContext';
 import { ResponseProvider } from './context/ResponseContext';
 
-import { authService } from './services/auth/authService';
-
 // Protected Route Wrapper
 const ProtectedRoute = ({ children }: { children: React.ReactNode }) => {
-  const isAuthenticated = authService.isAuthenticated();
+  const isAuthenticated = localStorage.getItem('sentinel_auth') === 'mock-token-123';
   const location = useLocation();
 
   if (!isAuthenticated) {
@@ -29,10 +28,8 @@ const ProtectedRoute = ({ children }: { children: React.ReactNode }) => {
   return <>{children}</>;
 };
 
-
-
 function App() {
-  // console.log("SentinelFlow App Initialized");
+  console.log("SentinelFlow App Initialized");
   return (
     <DemoProvider>
       <ResponseProvider>
@@ -55,6 +52,7 @@ function App() {
           <Route path="/events" element={<Events />} />
           <Route path="/audit" element={<AuditLog />} />
           <Route path="/settings" element={<Settings />} />
+          <Route path="/profile" element={<Profile />} />
         </Route>
         
         {/* Catch-all 404 redirect */}

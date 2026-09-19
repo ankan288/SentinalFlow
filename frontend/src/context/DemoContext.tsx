@@ -30,7 +30,7 @@ export const DemoProvider: React.FC<{ children: React.ReactNode }> = ({ children
   }, [isDemoMode]);
 
   const toggleDemoMode = () => {
-    setIsDemoMode(prev => !prev);
+    setIsDemoMode((prev: boolean) => !prev);
   };
 
   return (
