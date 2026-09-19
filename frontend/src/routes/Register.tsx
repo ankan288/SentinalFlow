@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
-import { Shield, UserPlus, Mail, Key } from 'lucide-react';
+import { Shield, UserPlus, Mail, Key, Eye, EyeOff } from 'lucide-react';
 import { Button } from '../components/common/Button';
 import PortalFieldCollection from '../components/ui/portal-field';
 import { authService } from '../services/auth/authService';
@@ -13,6 +13,7 @@ export const Register: React.FC = () => {
   const [verificationCode, setVerificationCode] = useState('');
   const [isConfirming, setIsConfirming] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
   const navigate = useNavigate();
 
   const handleRegister = async (e: React.FormEvent) => {
@@ -136,26 +137,62 @@ export const Register: React.FC = () => {
 
               <div>
                 <label style={labelStyle}>Passphrase</label>
-                <input 
-                  type="password" 
-                  value={password}
-                  onChange={e => setPassword(e.target.value)}
-                  required
-                  style={inputStyle}
-                  placeholder="••••••••••••"
-                />
+                <div style={{ position: 'relative', display: 'flex', alignItems: 'center' }}>
+                  <input 
+                    type={showPassword ? "text" : "password"} 
+                    value={password}
+                    onChange={e => setPassword(e.target.value)}
+                    required
+                    style={{ ...inputStyle, paddingRight: '2.5rem' }}
+                    placeholder="••••••••••••"
+                  />
+                  <button 
+                    type="button"
+                    onClick={() => setShowPassword(!showPassword)}
+                    style={{ 
+                      position: 'absolute', 
+                      right: '0.75rem', 
+                      background: 'none', 
+                      border: 'none', 
+                      color: 'var(--text-secondary)',
+                      cursor: 'pointer',
+                      padding: 0,
+                      display: 'flex'
+                    }}
+                  >
+                    {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
+                  </button>
+                </div>
               </div>
               
               <div>
                 <label style={labelStyle}>Confirm Passphrase</label>
-                <input 
-                  type="password" 
-                  value={confirmPassword}
-                  onChange={e => setConfirmPassword(e.target.value)}
-                  required
-                  style={inputStyle}
-                  placeholder="••••••••••••"
-                />
+                <div style={{ position: 'relative', display: 'flex', alignItems: 'center' }}>
+                  <input 
+                    type={showPassword ? "text" : "password"} 
+                    value={confirmPassword}
+                    onChange={e => setConfirmPassword(e.target.value)}
+                    required
+                    style={{ ...inputStyle, paddingRight: '2.5rem' }}
+                    placeholder="••••••••••••"
+                  />
+                  <button 
+                    type="button"
+                    onClick={() => setShowPassword(!showPassword)}
+                    style={{ 
+                      position: 'absolute', 
+                      right: '0.75rem', 
+                      background: 'none', 
+                      border: 'none', 
+                      color: 'var(--text-secondary)',
+                      cursor: 'pointer',
+                      padding: 0,
+                      display: 'flex'
+                    }}
+                  >
+                    {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
+                  </button>
+                </div>
               </div>
 
               <Button 
