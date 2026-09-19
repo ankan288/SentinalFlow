@@ -9,13 +9,29 @@ interface NodeDetailsProps {
 export const NodeDetails: React.FC<NodeDetailsProps> = ({ data, onClose }) => {
   return (
     <div style={{
-      backgroundColor: 'var(--bg-tertiary)',
-      border: '1px solid var(--border-medium)',
-      borderRadius: 'var(--radius-md)',
+      backgroundColor: 'rgba(10, 15, 25, 0.55)',
+      backdropFilter: 'blur(18px) saturate(120%)',
+      WebkitBackdropFilter: 'blur(18px) saturate(120%)',
+      border: '1px solid rgba(255, 255, 255, 0.09)',
+      boxShadow: '0 10px 30px rgba(0, 0, 0, 0.28)',
+      borderRadius: '12px',
       padding: 'var(--space-4)',
       marginTop: 'var(--space-6)',
-      position: 'relative'
+      position: 'relative',
+      animation: 'slideUpFade 0.2s ease-out'
     }}>
+      <style>{`
+        @keyframes slideUpFade {
+          from {
+            opacity: 0;
+            transform: translateY(6px);
+          }
+          to {
+            opacity: 1;
+            transform: translateY(0);
+          }
+        }
+      `}</style>
       <button 
         onClick={onClose}
         style={{
@@ -26,7 +42,22 @@ export const NodeDetails: React.FC<NodeDetailsProps> = ({ data, onClose }) => {
           border: 'none',
           color: 'var(--text-muted)',
           cursor: 'pointer',
-          fontSize: '1.25rem'
+          fontSize: '1.25rem',
+          width: '24px',
+          height: '24px',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          borderRadius: '50%',
+          transition: 'all 0.2s',
+        }}
+        onMouseOver={(e) => {
+          e.currentTarget.style.backgroundColor = 'rgba(255, 255, 255, 0.08)';
+          e.currentTarget.style.color = 'var(--text-primary)';
+        }}
+        onMouseOut={(e) => {
+          e.currentTarget.style.backgroundColor = 'transparent';
+          e.currentTarget.style.color = 'var(--text-muted)';
         }}
       >
         &times;

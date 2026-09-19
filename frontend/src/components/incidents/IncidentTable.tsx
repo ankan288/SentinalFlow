@@ -1,7 +1,7 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
 
-const mockIncidents = [
+export const mockIncidents = [
   { id: 'INC-047', type: 'Credential Compromise', severity: 'High', user: 'admin@acme.com', source: '192.168.1.45', detected: '10 mins ago', status: 'Active' },
   { id: 'INC-046', type: 'Unusual Data Exfiltration', severity: 'Medium', user: 'svc_reporting', source: '10.0.5.12', detected: '2 hours ago', status: 'Investigating' },
   { id: 'INC-045', type: 'Multiple Failed Logins', severity: 'Low', user: 'j.smith@acme.com', source: '203.0.113.42', detected: '5 hours ago', status: 'Resolved' },
@@ -50,13 +50,16 @@ export const IncidentTable: React.FC = () => {
 
   return (
     <div style={{
-      backgroundColor: 'var(--bg-secondary)',
-      border: '1px solid var(--border-medium)',
-      borderRadius: 'var(--radius-lg)',
+      backgroundColor: 'rgba(8, 13, 23, 0.55)',
+      backdropFilter: 'blur(18px) saturate(120%)',
+      WebkitBackdropFilter: 'blur(18px) saturate(120%)',
+      border: '1px solid rgba(255, 255, 255, 0.08)',
+      boxShadow: '0 10px 35px rgba(0, 0, 0, 0.28)',
+      borderRadius: '16px',
       overflow: 'hidden'
     }}>
       <table style={{ width: '100%', borderCollapse: 'collapse', textAlign: 'left' }}>
-        <thead style={{ backgroundColor: 'var(--bg-tertiary)', borderBottom: '1px solid var(--border-medium)' }}>
+        <thead style={{ backgroundColor: 'rgba(20, 27, 42, 0.42)', borderBottom: '1px solid rgba(255, 255, 255, 0.07)' }}>
           <tr>
             <th style={thStyle}>Incident ID</th>
             <th style={thStyle}>Type</th>
@@ -73,11 +76,11 @@ export const IncidentTable: React.FC = () => {
               key={incident.id} 
               onClick={() => navigate(`/incidents/${incident.id}`)}
               style={{ 
-                borderBottom: '1px solid var(--border-light)',
+                borderBottom: '1px solid rgba(255, 255, 255, 0.05)',
                 cursor: 'pointer',
                 transition: 'background-color 0.2s'
               }}
-              onMouseOver={(e) => e.currentTarget.style.backgroundColor = 'var(--bg-tertiary)'}
+              onMouseOver={(e) => e.currentTarget.style.backgroundColor = 'rgba(255, 255, 255, 0.035)'}
               onMouseOut={(e) => e.currentTarget.style.backgroundColor = 'transparent'}
             >
               <td style={{...tdStyle, fontWeight: 600, color: 'var(--text-primary)'}}>{incident.id}</td>

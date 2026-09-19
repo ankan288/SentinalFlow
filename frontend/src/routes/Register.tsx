@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, Link } from 'react-router-dom';
 import { Shield, UserPlus } from 'lucide-react';
 import { Button } from '../components/common/Button';
 import PortalFieldCollection from '../components/ui/portal-field';
@@ -138,15 +138,14 @@ export const Register: React.FC = () => {
             {loading ? 'Registering...' : 'Complete Registration'}
           </Button>
           
-          <Button
-            type="button"
-            variant="secondary"
-            style={{ display: 'flex', justifyContent: 'center', gap: 'var(--space-2)' }}
-            onClick={() => navigate('/login')}
-          >
-            Back to Login
-          </Button>
         </form>
+
+        <div style={{ marginTop: 'var(--space-6)', textAlign: 'center', fontSize: '0.875rem', color: 'var(--text-secondary)' }}>
+          Already have an account?{' '}
+          <Link to="/login" style={{ color: 'var(--color-action)', textDecoration: 'none', fontWeight: 600, letterSpacing: '0.05em' }}>
+            CLICK HERE
+          </Link>
+        </div>
 
       </div>
     </div>

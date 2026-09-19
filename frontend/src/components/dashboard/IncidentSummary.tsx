@@ -21,9 +21,12 @@ export const IncidentSummary: React.FC = () => {
 
   return (
     <div style={{
-      backgroundColor: 'var(--bg-secondary)',
-      border: '1px solid var(--border-medium)',
-      borderRadius: 'var(--radius-lg)',
+      backgroundColor: 'rgba(8, 13, 23, 0.55)',
+      backdropFilter: 'blur(18px) saturate(120%)',
+      WebkitBackdropFilter: 'blur(18px) saturate(120%)',
+      border: '1px solid rgba(255, 255, 255, 0.08)',
+      boxShadow: '0 10px 35px rgba(0, 0, 0, 0.26)',
+      borderRadius: '16px',
       padding: 'var(--space-4)',
       height: '100%',
       display: 'flex',
@@ -52,14 +55,15 @@ export const IncidentSummary: React.FC = () => {
             onClick={() => navigate(`/incidents/${incident.id}`)}
             style={{
               padding: 'var(--space-3)',
-              backgroundColor: 'var(--bg-tertiary)',
+              backgroundColor: 'rgba(255, 255, 255, 0.015)',
               borderRadius: 'var(--radius-md)',
               borderLeft: `3px solid ${getSeverityColor(incident.severity)}`,
+              borderBottom: '1px solid rgba(255, 255, 255, 0.05)',
               cursor: 'pointer',
               transition: 'background-color 0.2s',
             }}
-            onMouseOver={(e) => e.currentTarget.style.backgroundColor = 'var(--border-medium)'}
-            onMouseOut={(e) => e.currentTarget.style.backgroundColor = 'var(--bg-tertiary)'}
+            onMouseOver={(e) => e.currentTarget.style.backgroundColor = 'rgba(255, 255, 255, 0.035)'}
+            onMouseOut={(e) => e.currentTarget.style.backgroundColor = 'rgba(255, 255, 255, 0.015)'}
           >
             <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 'var(--space-1)' }}>
               <span style={{ fontWeight: 600, fontSize: '0.875rem' }}>{incident.type}</span>

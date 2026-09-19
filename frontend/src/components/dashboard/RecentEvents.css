@@ -1,7 +1,10 @@
 .recent-events {
-  background-color: var(--bg-secondary);
-  border: 1px solid var(--border-medium);
-  border-radius: var(--radius-lg);
+  background-color: rgba(8, 13, 23, 0.56);
+  backdrop-filter: blur(18px) saturate(120%);
+  -webkit-backdrop-filter: blur(18px) saturate(120%);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  box-shadow: 0 10px 35px rgba(0, 0, 0, 0.28);
+  border-radius: 16px;
   padding: var(--space-4);
   height: 100%;
   display: flex;
@@ -52,11 +55,17 @@
   align-items: center;
   gap: var(--space-3);
   padding: var(--space-2);
-  border-bottom: 1px solid var(--border-light);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+  background-color: rgba(255, 255, 255, 0.015);
+  transition: background-color 0.2s ease;
+}
+
+.recent-event-item:hover {
+  background-color: rgba(255, 255, 255, 0.035);
 }
 
 .recent-event-icon-wrapper {
-  background-color: var(--bg-tertiary);
+  background-color: rgba(255, 255, 255, 0.04);
   padding: var(--space-2);
   border-radius: var(--radius-md);
 }

@@ -11,13 +11,28 @@ interface OverviewCardProps {
 
 const OverviewCard: React.FC<OverviewCardProps> = ({ title, value, subtitle, icon, colorVar }) => (
   <div style={{
-    backgroundColor: 'var(--bg-secondary)',
-    border: '1px solid var(--border-medium)',
-    borderRadius: 'var(--radius-lg)',
+    backgroundColor: 'rgba(10, 15, 25, 0.52)',
+    backdropFilter: 'blur(16px) saturate(120%)',
+    WebkitBackdropFilter: 'blur(16px) saturate(120%)',
+    border: '1px solid rgba(255, 255, 255, 0.08)',
+    boxShadow: '0 8px 30px rgba(0, 0, 0, 0.24)',
+    borderRadius: '14px',
     padding: 'var(--space-4)',
     display: 'flex',
     flexDirection: 'column',
-    gap: 'var(--space-2)'
+    gap: 'var(--space-2)',
+    transition: 'all 0.2s ease',
+    cursor: 'default'
+  }}
+  onMouseOver={(e) => {
+    e.currentTarget.style.backgroundColor = 'rgba(15, 22, 35, 0.6)';
+    e.currentTarget.style.borderColor = 'rgba(255, 255, 255, 0.15)';
+    e.currentTarget.style.transform = 'translateY(-2px)';
+  }}
+  onMouseOut={(e) => {
+    e.currentTarget.style.backgroundColor = 'rgba(10, 15, 25, 0.52)';
+    e.currentTarget.style.borderColor = 'rgba(255, 255, 255, 0.08)';
+    e.currentTarget.style.transform = 'translateY(0)';
   }}>
     <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
       <span style={{ color: 'var(--text-secondary)', fontSize: '0.875rem', fontWeight: 500 }}>{title}</span>

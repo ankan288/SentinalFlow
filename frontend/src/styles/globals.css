@@ -3,6 +3,8 @@
   --bg-primary: #0A0F1A;     /* Deep navy background */
   --bg-secondary: #121A2B;   /* Lighter navy for panels */
   --bg-tertiary: #19243C;    /* Even lighter for inputs/cards */
+  --bg-glass: rgba(18, 26, 43, 0.45);
+  --bg-glass-tertiary: rgba(25, 36, 60, 0.45);
   
   --border-light: #2A364F;
   --border-medium: #3A4B6B;
