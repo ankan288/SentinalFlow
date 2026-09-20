@@ -1,11 +1,38 @@
 import { signIn, signUp, confirmSignUp, signOut, getCurrentUser, fetchAuthSession } from 'aws-amplify/auth';
+import { API_BASE_URL } from '../api/client';
+
+async function sendRealLoginTelemetry(email: string, eventType: 'login_success' | 'login_failed' = 'login_success') {
+  try {
+    const url = `${API_BASE_URL.replace(/\/$/, '')}/events/telemetry`;
+    await fetch(url, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        event_type: eventType,
+        user_id: email,
+        resource: 'auth-service'
+      }),
+    });
+  } catch (err) {
+    // Non-blocking telemetry background dispatch warning
+    console.warn('[Telemetry] Live event dispatch notice:', err);
+  }
+}
 
 export const authService = {
   login: async (username: string, password: string) => {
     try {
       const { isSignedIn } = await signIn({ username, password });
-      return isSignedIn;
+      if (isSignedIn) {
+        // Dispatch real login_success telemetry (server extracts real IP and User-Agent)
+        sendRealLoginTelemetry(username, 'login_success');
+        return true;
+      }
+      return false;
     } catch (error) {
+      sendRealLoginTelemetry(username, 'login_failed');
       console.error('Error signing in', error);
       throw error;
     }
@@ -37,6 +64,9 @@ export const authService = {
         username,
         confirmationCode: code
       });
+      if (isSignUpComplete) {
+        sendRealLoginTelemetry(username, 'login_success');
+      }
       return isSignUpComplete;
     } catch (error) {
       console.error('Error confirming sign up', error);
