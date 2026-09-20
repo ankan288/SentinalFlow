@@ -71,7 +71,7 @@ export const AIAnalyst: React.FC = () => {
   return (
     <div style={{ display: 'flex', flexDirection: 'column', height: '100%', paddingBottom: 'var(--space-8)' }}>
       <header style={{ marginBottom: 'var(--space-6)' }}>
-        <h1 style={{ fontSize: '1.5rem', marginBottom: 'var(--space-1)' }}>AI Security Analyst</h1>
+        <h1 style={{ fontSize: '1.5rem', marginBottom: 'var(--space-1)', color: '#ffffff' }}>AI Security Analyst</h1>
         <p style={{ color: 'var(--text-secondary)' }}>Investigate incidents, correlate evidence, and understand attack activity.</p>
       </header>
       

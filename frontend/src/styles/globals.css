@@ -64,6 +64,10 @@ body {
   -moz-osx-font-smoothing: grayscale;
 }
 
+h1, h2, h3 {
+  color: #ffffff !important;
+}
+
 a {
   color: var(--color-action);
   text-decoration: none;

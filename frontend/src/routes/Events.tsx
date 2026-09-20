@@ -62,7 +62,7 @@ export const Events: React.FC = () => {
     <div style={{ display: 'flex', flexDirection: 'column', height: '100%', paddingBottom: 'var(--space-8)' }}>
       <header style={{ marginBottom: 'var(--space-6)', display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
         <div>
-          <h1 style={{ fontSize: '1.5rem', marginBottom: 'var(--space-1)' }}>Security Events</h1>
+          <h1 style={{ fontSize: '1.5rem', marginBottom: 'var(--space-1)', color: '#ffffff' }}>Security Events</h1>
           <p style={{ color: 'var(--text-secondary)' }}>Monitor and investigate raw security activity across your organization.</p>
         </div>
         <div style={{ textAlign: 'right' }}>

@@ -206,7 +206,7 @@ export const Profile: React.FC = () => {
 
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 'var(--space-6)' }}>
         <div>
-          <h1 style={{ fontSize: '1.5rem', fontWeight: 600, color: 'var(--text-primary)', margin: 0 }}>My Profile</h1>
+          <h1 style={{ fontSize: '1.5rem', fontWeight: 600, color: '#ffffff', margin: 0 }}>My Profile</h1>
           <p style={{ color: 'var(--text-muted)', fontSize: '0.875rem', marginTop: '4px' }}>Manage your account and security settings</p>
         </div>
       </div>

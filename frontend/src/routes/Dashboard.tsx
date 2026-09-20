@@ -62,7 +62,7 @@ export const Dashboard: React.FC = () => {
       <div style={{ position: 'relative', zIndex: 10, height: '100%' }}>
         <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--space-6)', height: '100%' }}>
           <header>
-            <h1 style={{ fontSize: '1.5rem', marginBottom: 'var(--space-1)' }}>Security Overview</h1>
+            <h1 style={{ fontSize: '1.5rem', marginBottom: 'var(--space-1)', color: '#ffffff' }}>Security Overview</h1>
             <p style={{ color: 'var(--text-secondary)' }}>System status and active threats across your organization.</p>
           </header>
           

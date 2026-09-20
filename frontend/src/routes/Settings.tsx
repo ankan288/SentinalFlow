@@ -280,7 +280,7 @@ export const Settings: React.FC = () => {
       <SettingsStyles />
       <header style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
         <div>
-          <h1 style={{ fontSize: '1.8rem', marginBottom: '8px', color: 'var(--text-primary)' }}>Settings</h1>
+          <h1 style={{ fontSize: '1.8rem', marginBottom: '8px', color: '#ffffff' }}>Settings</h1>
           <p style={{ color: 'var(--text-secondary)' }}>Manage your organization's security policies, detection rules, integrations, and response configuration.</p>
         </div>
         <div style={{ display: 'flex', gap: '12px' }}>
@@ -307,7 +307,7 @@ export const Settings: React.FC = () => {
         
         {/* 1. Organization */}
         <div className="settings-glass-card">
-          <h3 style={{ fontSize: '1.1rem', display: 'flex', alignItems: 'center', gap: '8px', borderBottom: '1px solid rgba(100, 150, 210, 0.2)', paddingBottom: '12px' }}>
+          <h3 style={{ fontSize: '1.1rem', display: 'flex', alignItems: 'center', gap: '8px', borderBottom: '1px solid rgba(100, 150, 210, 0.2)', paddingBottom: '12px', color: '#ffffff' }}>
             <Building size={18} /> Organization
           </h3>
           <div style={rowStyle}>
@@ -347,7 +347,7 @@ export const Settings: React.FC = () => {
 
         {/* 2. Security & Detection */}
         <div className="settings-glass-card">
-          <h3 style={{ fontSize: '1.1rem', display: 'flex', alignItems: 'center', gap: '8px', borderBottom: '1px solid rgba(100, 150, 210, 0.2)', paddingBottom: '12px' }}>
+          <h3 style={{ fontSize: '1.1rem', display: 'flex', alignItems: 'center', gap: '8px', borderBottom: '1px solid rgba(100, 150, 210, 0.2)', paddingBottom: '12px', color: '#ffffff' }}>
             <Shield size={18} /> Security & Detection
           </h3>
           <div style={rowStyle}>
@@ -380,7 +380,7 @@ export const Settings: React.FC = () => {
 
         {/* 3. Notifications */}
         <div className="settings-glass-card">
-          <h3 style={{ fontSize: '1.1rem', display: 'flex', alignItems: 'center', gap: '8px', borderBottom: '1px solid rgba(100, 150, 210, 0.2)', paddingBottom: '12px' }}>
+          <h3 style={{ fontSize: '1.1rem', display: 'flex', alignItems: 'center', gap: '8px', borderBottom: '1px solid rgba(100, 150, 210, 0.2)', paddingBottom: '12px', color: '#ffffff' }}>
             <BellRing size={18} /> Notifications
           </h3>
           <div style={rowStyle}>
@@ -416,7 +416,7 @@ export const Settings: React.FC = () => {
 
         {/* 4. Response & Approval */}
         <div className="settings-glass-card">
-          <h3 style={{ fontSize: '1.1rem', display: 'flex', alignItems: 'center', gap: '8px', borderBottom: '1px solid rgba(100, 150, 210, 0.2)', paddingBottom: '12px' }}>
+          <h3 style={{ fontSize: '1.1rem', display: 'flex', alignItems: 'center', gap: '8px', borderBottom: '1px solid rgba(100, 150, 210, 0.2)', paddingBottom: '12px', color: '#ffffff' }}>
             <CheckSquare size={18} /> Response & Approval
           </h3>
           <p style={{ fontSize: '0.85rem', color: 'var(--text-muted)', marginBottom: '8px' }}>
@@ -452,7 +452,7 @@ export const Settings: React.FC = () => {
 
         {/* 5. Access & Roles */}
         <div className="settings-glass-card">
-          <h3 style={{ fontSize: '1.1rem', display: 'flex', alignItems: 'center', gap: '8px', borderBottom: '1px solid rgba(100, 150, 210, 0.2)', paddingBottom: '12px' }}>
+          <h3 style={{ fontSize: '1.1rem', display: 'flex', alignItems: 'center', gap: '8px', borderBottom: '1px solid rgba(100, 150, 210, 0.2)', paddingBottom: '12px', color: '#ffffff' }}>
             <Users size={18} /> Access & Roles
           </h3>
           <div style={{ display: 'flex', justifyContent: 'space-around', margin: '16px 0' }}>
@@ -485,7 +485,7 @@ export const Settings: React.FC = () => {
 
         {/* 6. Integrations */}
         <div className="settings-glass-card">
-          <h3 style={{ fontSize: '1.1rem', display: 'flex', alignItems: 'center', gap: '8px', borderBottom: '1px solid rgba(100, 150, 210, 0.2)', paddingBottom: '12px' }}>
+          <h3 style={{ fontSize: '1.1rem', display: 'flex', alignItems: 'center', gap: '8px', borderBottom: '1px solid rgba(100, 150, 210, 0.2)', paddingBottom: '12px', color: '#ffffff' }}>
             <Plug size={18} /> Integrations
           </h3>
           <p style={{ fontSize: '0.8rem', color: 'var(--text-muted)' }}>Demo integration configuration.</p>

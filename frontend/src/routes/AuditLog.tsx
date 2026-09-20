@@ -98,7 +98,7 @@ export const AuditLog: React.FC = () => {
     <div style={{ display: 'flex', flexDirection: 'column', height: '100%' }}>
       <header style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 'var(--space-6)' }}>
         <div>
-          <h1 style={{ fontSize: '1.5rem', marginBottom: 'var(--space-1)' }}>Audit Log</h1>
+          <h1 style={{ fontSize: '1.5rem', marginBottom: 'var(--space-1)', color: '#ffffff' }}>Audit Log</h1>
           <p style={{ color: 'var(--text-secondary)' }}>Immutable record of all system and user actions.</p>
         </div>
         

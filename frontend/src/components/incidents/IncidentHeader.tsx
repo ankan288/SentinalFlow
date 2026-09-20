@@ -59,7 +59,7 @@ export const IncidentHeader: React.FC = () => {
               Active
             </span>
           </div>
-          <h1 style={{ fontSize: '2rem', margin: 0, color: 'var(--text-primary)' }}>Credential Compromise</h1>
+          <h1 style={{ fontSize: '2rem', margin: 0, color: '#ffffff' }}>Credential Compromise</h1>
           <div style={{ color: 'var(--text-secondary)', marginTop: 'var(--space-2)', fontSize: '0.875rem' }}>
             Detected 10 minutes ago • Assigned to: Unassigned
           </div>

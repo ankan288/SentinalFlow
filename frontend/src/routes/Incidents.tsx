@@ -64,7 +64,7 @@ export const Incidents: React.FC = () => {
     <div style={{ display: 'flex', flexDirection: 'column', height: '100%' }}>
       <header style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 'var(--space-6)' }}>
         <div>
-          <h1 style={{ fontSize: '1.5rem', marginBottom: 'var(--space-1)' }}>Incidents</h1>
+          <h1 style={{ fontSize: '1.5rem', marginBottom: 'var(--space-1)', color: '#ffffff' }}>Incidents</h1>
           <p style={{ color: 'var(--text-secondary)' }}>Review and triage detected security incidents.</p>
         </div>
         
