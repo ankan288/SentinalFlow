@@ -226,10 +226,10 @@ Resources:
       Handler: functions.api.audit_handler.lambda_handler
       Policies:
         - S3ReadPolicy:
-            BucketName: !Ref AuditLogBucket
+            BucketName: !Ref AuditLogsBucket
       Environment:
         Variables:
-          AUDIT_BUCKET: !Ref AuditLogBucket
+          AUDIT_BUCKET: !Ref AuditLogsBucket
       Events:
         GetAuditLogsApi:
           Type: Api
