@@ -1,0 +1,29 @@
+name: Seed Demo Data
+
+on:
+  workflow_dispatch:
+
+jobs:
+  seed-data:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v3
+
+      - name: Setup Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.12'
+
+      - name: Configure AWS Credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: us-east-1
+
+      - name: Install boto3
+        run: pip install boto3
+
+      - name: Run Seed Script
+        run: python backend/scripts/seed_demo_data.py
