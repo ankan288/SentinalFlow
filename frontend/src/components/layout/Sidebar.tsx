@@ -7,8 +7,7 @@ import {
   Bot, 
   Activity, 
   FileText, 
-  Settings,
-  ShieldAlert
+  Settings
 } from 'lucide-react';
 import './Layout.css';
 
@@ -28,7 +27,7 @@ export const Sidebar: React.FC = () => {
   return (
     <aside className="sidebar">
       <div className="sidebar-header">
-        <ShieldAlert size={24} color="var(--color-critical)" />
+        <img src="/logo.png" alt="SentinelFlow Logo" style={{ width: '28px', height: '28px', objectFit: 'contain' }} />
         <span>SentinelFlow</span>
       </div>
       

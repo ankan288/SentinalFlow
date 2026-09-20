@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
-import { Shield, UserPlus, Mail, Key, Eye, EyeOff } from 'lucide-react';
+import { UserPlus, Mail, Key, Eye, EyeOff } from 'lucide-react';
 import { Button } from '../components/common/Button';
 import PortalFieldCollection from '../components/ui/portal-field';
 import { authService } from '../services/auth/authService';
@@ -104,15 +104,7 @@ export const Register: React.FC = () => {
       }}>
         
         <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', marginBottom: 'var(--space-6)' }}>
-          <div style={{ 
-            color: 'var(--color-success)', 
-            marginBottom: 'var(--space-4)',
-            backgroundColor: 'var(--color-success-bg)',
-            padding: 'var(--space-3)',
-            borderRadius: '50%'
-          }}>
-            <Shield size={32} />
-          </div>
+          <img src="/logo.png" alt="SentinelFlow Logo" style={{ width: '56px', height: '56px', objectFit: 'contain', marginBottom: 'var(--space-3)' }} />
           <h1 style={{ margin: 0, fontSize: '1.5rem', letterSpacing: '0.025em' }}>SentinelFlow</h1>
           <p style={{ color: 'var(--text-muted)', fontSize: '0.875rem', marginTop: 'var(--space-2)' }}>
             {isConfirming ? 'Verify your email' : 'Analyst Registration'}
