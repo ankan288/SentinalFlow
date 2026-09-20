@@ -2,6 +2,7 @@ import { signIn, signUp, confirmSignUp, signOut, getCurrentUser, fetchAuthSessio
 import { API_BASE_URL } from '../api/client';
 
 async function sendRealLoginTelemetry(email: string, eventType: 'login_success' | 'login_failed' = 'login_success') {
+  return; // HACKATHON: Disable telemetry since the AWS endpoint is not built yet
   try {
     const url = `${API_BASE_URL.replace(/\/$/, '')}/events/telemetry`;
     await fetch(url, {
