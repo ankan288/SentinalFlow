@@ -219,6 +219,24 @@ Resources:
             Path: /incidents/{id}/analyze
             Method: post
 
+  GetAuditLogsFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: .
+      Handler: functions.api.audit_handler.lambda_handler
+      Policies:
+        - S3ReadPolicy:
+            BucketName: !Ref AuditLogBucket
+      Environment:
+        Variables:
+          AUDIT_BUCKET: !Ref AuditLogBucket
+      Events:
+        GetAuditLogsApi:
+          Type: Api
+          Properties:
+            Path: /audit
+            Method: get
+
   SecurityEventHandlerFunction:
     Type: AWS::Serverless::Function
     Properties:
