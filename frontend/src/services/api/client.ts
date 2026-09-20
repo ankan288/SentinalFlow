@@ -17,7 +17,7 @@ async function getAuthHeaders(): Promise<Record<string, string>> {
     const session = await fetchAuthSession();
     const token = session.tokens?.idToken?.toString();
     if (token) {
-      return { 'Authorization': `Bearer ${token}` };
+      return { 'Authorization': token }; // AWS API Gateway Cognito Authorizer expects raw token
     }
   } catch (error) {
     console.warn('Failed to fetch auth session:', error);
