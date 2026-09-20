@@ -44,7 +44,8 @@ const DEFAULT_NOTIFICATIONS: AppNotification[] = [
 
 import { incidentsService } from '../../services/incidentsService';
 import type { Incident } from '../../services/incidentsService';
-import { mockEvents } from '../../services/eventsService';
+import { eventsService } from '../../services/eventsService';
+import type { SecurityEvent } from '../../services/eventsService';
 
 interface SearchResult {
   id: string;
@@ -67,6 +68,7 @@ export const TopBar: React.FC = () => {
   const searchRef = useRef<HTMLDivElement>(null);
   const searchInputRef = useRef<HTMLInputElement>(null);
   const [incidents, setIncidents] = useState<Incident[]>([]);
+  const [events, setEvents] = useState<SecurityEvent[]>([]);
 
   const [notifications, setNotifications] = useState<AppNotification[]>(() => {
     const saved = localStorage.getItem('sentinelflow_notifications');
@@ -101,6 +103,9 @@ export const TopBar: React.FC = () => {
     let isMounted = true;
     incidentsService.getIncidents(100).then(res => {
       if (isMounted) setIncidents(res.incidents);
+    }).catch(console.error);
+    eventsService.getEvents().then(res => {
+      if (isMounted) setEvents(res);
     }).catch(console.error);
     return () => { isMounted = false; };
   }, []);
@@ -165,7 +170,7 @@ export const TopBar: React.FC = () => {
     });
 
     // 2. Search Events
-    mockEvents.forEach(evt => {
+    events.forEach(evt => {
       if (
         match(evt.id) || match(evt.type) || match(evt.description) || match(evt.source) || match(evt.user) || match(evt.resource) || match(evt.device) || match(evt.severity) || match(evt.status) || match(evt.timestamp)
       ) {
@@ -188,7 +193,7 @@ export const TopBar: React.FC = () => {
       if (inc.user) usersMap.set(inc.user, 'User');
     });
 
-    mockEvents.forEach(evt => {
+    events.forEach(evt => {
       if (evt.user) usersMap.set(evt.user, evt.previousRole || 'User');
       if (evt.device) devicesMap.set(evt.device, 'Device');
       if (evt.resource) resourcesMap.set(evt.resource, 'Resource');
