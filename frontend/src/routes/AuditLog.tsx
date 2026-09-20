@@ -7,15 +7,12 @@ export const AuditLog: React.FC = () => {
   const [filterType, setFilterType] = useState<string>('ALL');
   const [isFilterOpen, setIsFilterOpen] = useState(false);
   const [logs, setLogs] = useState<AuditLogItem[]>([]);
-  const [loading, setLoading] = useState(true);
   const filterRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     const fetchLogs = async () => {
-      setLoading(true);
       const realLogs = await auditService.getAuditLogs();
       setLogs(realLogs);
-      setLoading(false);
     };
     fetchLogs();
   }, []);
