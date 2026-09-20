@@ -158,7 +158,7 @@ Resources:
             - Effect: Allow
               Action:
                 - cognito-idp:AdminAddUserToGroup
-              Resource: !GetAtt SentinelFlowUserPool.Arn
+              Resource: "*"
       Events:
         PostConfirmationEvent:
           Type: Cognito
