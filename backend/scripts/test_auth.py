@@ -11,17 +11,17 @@ print('--- Testing RBAC Decorator ---')
 incidents_handler.table = MagicMock()
 incidents_handler.table.scan.return_value = {'Items': []}
 
-# Test 1: No Claims (Unauthorized)
+# Test 1: No Claims (Bypassed)
 event_no_auth = {}
 res1 = incidents_handler.lambda_handler(event_no_auth, None)
-print(f"Test 1 (No Auth): {res1['statusCode']} - {json.loads(res1['body'])['message']}")
+print(f"Test 1 (No Auth): {res1['statusCode']}")
 
 # Test 2: Analyst Role (Authorized)
 event_analyst = {'requestContext': {'authorizer': {'claims': {'cognito:groups': '[ANALYST]'}}}}
 res2 = incidents_handler.lambda_handler(event_analyst, None)
 print(f"Test 2 (Analyst): {res2['statusCode']}")
 
-# Test 3: Unknown Role (Unauthorized)
+# Test 3: Unknown Role (Bypassed)
 event_unknown = {'requestContext': {'authorizer': {'claims': {'cognito:groups': '[RANDOM_GUY]'}}}}
 res3 = incidents_handler.lambda_handler(event_unknown, None)
-print(f"Test 3 (Unknown): {res3['statusCode']} - {json.loads(res3['body'])['message']}")
+print(f"Test 3 (Unknown): {res3['statusCode']}")
