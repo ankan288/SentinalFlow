@@ -1,30 +1,19 @@
 import { signIn, signUp, confirmSignUp, signOut, getCurrentUser, fetchAuthSession } from 'aws-amplify/auth';
-import { authService as userProfileService } from '../authService';
 
 export const authService = {
   login: async (username: string, password: string) => {
     try {
       const { isSignedIn } = await signIn({ username, password });
-      
-      if (isSignedIn) {
-        await userProfileService.recordLogin(username);
-        return true;
-      }
-      // If locally logging in during development without Cognito throw
-      await userProfileService.recordLogin(username);
-      return true;
+      return isSignedIn;
     } catch (error) {
-      console.warn('Amplify signIn warning/fallback, proceeding with session login:', error);
-      await userProfileService.recordLogin(username);
-      return true;
+      console.error('Error signing in', error);
+      throw error;
     }
   },
 
   register: async (username: string, password: string, fullName?: string) => {
     try {
       const nameAttribute = fullName || username.split('@')[0];
-      await userProfileService.registerUser(nameAttribute, username);
-
       const { isSignUpComplete, userId, nextStep } = await signUp({
         username,
         password,
@@ -37,10 +26,8 @@ export const authService = {
       });
       return { isSignUpComplete, userId, nextStep };
     } catch (error) {
-      console.warn('Amplify signUp warning/fallback, proceeding with local registration:', error);
-      const nameAttribute = fullName || username.split('@')[0];
-      await userProfileService.registerUser(nameAttribute, username);
-      return { isSignUpComplete: true, userId: `usr-${Date.now()}`, nextStep: { signUpStep: 'DONE' } };
+      console.error('Error signing up', error);
+      throw error;
     }
   },
 
@@ -52,8 +39,8 @@ export const authService = {
       });
       return isSignUpComplete;
     } catch (error) {
-      console.warn('Amplify confirmSignUp warning/fallback:', error);
-      return true;
+      console.error('Error confirming sign up', error);
+      throw error;
     }
   },
 
@@ -68,28 +55,17 @@ export const authService = {
   isAuthenticated: async () => {
     try {
       const session = await fetchAuthSession();
-      if (session.tokens !== undefined) {
-        return true;
-      }
-      // Check local active email session fallback
-      return !!userProfileService.getActiveUserEmail();
+      return session.tokens !== undefined;
     } catch {
-      return !!userProfileService.getActiveUserEmail();
+      return false;
     }
   },
   
   getCurrentUser: async () => {
     try {
       const user = await getCurrentUser();
-      if (user?.username) {
-        userProfileService.setActiveUserEmail(user.username);
-      }
       return user;
     } catch {
-      const email = userProfileService.getActiveUserEmail();
-      if (email) {
-        return { username: email, userId: `usr-local` };
-      }
       return null;
     }
   }
