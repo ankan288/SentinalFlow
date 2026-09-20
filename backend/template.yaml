@@ -24,6 +24,7 @@ Globals:
       AllowOrigin: "'*'"
     Auth:
       DefaultAuthorizer: CognitoAuth
+      AddDefaultAuthorizerToCorsPreflight: False
       Authorizers:
         CognitoAuth:
           UserPoolArn: !GetAtt SentinelFlowUserPool.Arn

@@ -50,6 +50,9 @@ export const Dashboard: React.FC = () => {
         <div style={{ position: 'relative', zIndex: 10, height: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center', flexDirection: 'column', color: 'var(--text-muted)' }}>
           <h2 style={{ color: 'var(--text-primary)' }}>Security Data Unavailable</h2>
           <p>SentinelFlow cannot currently receive security events from the backend.</p>
+          <div style={{ marginTop: '1rem', padding: '1rem', backgroundColor: 'rgba(220, 38, 38, 0.1)', border: '1px solid #dc2626', borderRadius: '4px', color: '#ef4444' }}>
+            <strong>Error Details:</strong> {typeof error === 'string' ? error : 'Unknown error'}
+          </div>
         </div>
       </div>
     );
