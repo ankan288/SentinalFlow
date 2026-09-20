@@ -1,20 +1,24 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { Download, Filter, Check } from 'lucide-react';
 import { Button } from '../components/common/Button';
-
-const mockAuditLogs = [
-  { id: 'AL-9005', timestamp: '11:44:12 AM', actor: 'System', action: 'Session revoked', auth: '-', result: 'SUCCESS' },
-  { id: 'AL-9004', timestamp: '11:44:10 AM', actor: 'Admin (j.smith)', action: 'Approved session revocation', auth: 'Cedar Authorized', result: 'APPROVED' },
-  { id: 'AL-9003', timestamp: '11:42:05 AM', actor: 'AI Agent', action: 'Recommended session revocation', auth: 'Pending Approval', result: 'LOGGED' },
-  { id: 'AL-9002', timestamp: '10:15:22 AM', actor: 'Admin (m.jones)', action: 'Updated firewall rule block-list', auth: 'Cedar Authorized', result: 'SUCCESS' },
-  { id: 'AL-9001', timestamp: '09:05:01 AM', actor: 'System', action: 'Automated daily backup', auth: 'System Role', result: 'SUCCESS' },
-  { id: 'AL-9000', timestamp: '08:12:44 AM', actor: 'External IP', action: 'Failed login attempt', auth: 'Invalid Credentials', result: 'FAILED' },
-];
+import { auditService, type AuditLogItem } from '../services/auditService';
 
 export const AuditLog: React.FC = () => {
   const [filterType, setFilterType] = useState<string>('ALL');
   const [isFilterOpen, setIsFilterOpen] = useState(false);
+  const [logs, setLogs] = useState<AuditLogItem[]>([]);
+  const [loading, setLoading] = useState(true);
   const filterRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    const fetchLogs = async () => {
+      setLoading(true);
+      const realLogs = await auditService.getAuditLogs();
+      setLogs(realLogs);
+      setLoading(false);
+    };
+    fetchLogs();
+  }, []);
 
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
@@ -25,6 +29,13 @@ export const AuditLog: React.FC = () => {
     document.addEventListener('mousedown', handleClickOutside);
     return () => document.removeEventListener('mousedown', handleClickOutside);
   }, []);
+
+  const filteredLogs = logs.filter(log => {
+    if (filterType === 'ALL') return true;
+    if (filterType === 'SUCCESS') return log.result === 'SUCCESS' || log.result === 'APPROVED';
+    if (filterType === 'WARNINGS') return log.result === 'LOGGED' || log.result === 'FAILED' || log.result === 'DENIED';
+    return true;
+  });
 
   const handleExport = () => {
     const headers = ['Timestamp', 'Actor', 'Action', 'Authorization', 'Result'];
@@ -86,13 +97,6 @@ export const AuditLog: React.FC = () => {
     }
     return <span style={{ color: 'var(--text-primary)', fontWeight: 500 }}>{actor}</span>;
   };
-
-  const filteredLogs = mockAuditLogs.filter(log => {
-    if (filterType === 'ALL') return true;
-    if (filterType === 'SUCCESS') return log.result === 'SUCCESS' || log.result === 'APPROVED';
-    if (filterType === 'WARNINGS') return log.result === 'LOGGED' || log.result === 'FAILED' || log.result === 'DENIED';
-    return true;
-  });
 
   return (
     <div style={{ display: 'flex', flexDirection: 'column', height: '100%' }}>

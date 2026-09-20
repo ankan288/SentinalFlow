@@ -1,3 +1,5 @@
+import { incidentsService } from './incidentsService';
+
 export type EventSeverity = 'CRITICAL' | 'HIGH' | 'MEDIUM' | 'LOW' | 'INFO';
 export type EventStatus = 'CORRELATED' | 'OBSERVED' | 'SUSPICIOUS';
 export type EventType = 'Authentication' | 'Authorization' | 'Privilege' | 'Device' | 'Network' | 'Resource Access' | 'System';
@@ -19,107 +21,50 @@ export interface SecurityEvent {
   relatedIncidentName?: string;
 }
 
-// Generate the specific demo sequence plus some noise
-export const mockEvents: SecurityEvent[] = ([
-  ...Array.from({ length: 27 }).map((_, i) => ({
-    id: `EVT-${(1000 + i).toString()}`,
-    timestamp: `11:38:${(10 + i).toString().padStart(2, '0')}`,
-    type: 'Authentication' as EventType,
-    source: '192.168.1.45',
-    user: 'john.doe',
-    resource: 'Auth Service',
-    severity: 'MEDIUM' as EventSeverity,
-    status: 'OBSERVED' as EventStatus,
-    description: 'Failed Login',
-  })),
-  {
-    id: 'EVT-1027',
-    timestamp: '11:39:02',
-    type: 'Authentication',
-    source: '192.168.1.45',
-    user: 'john.doe',
-    resource: 'Auth Service',
-    severity: 'HIGH',
-    status: 'CORRELATED',
-    description: 'Successful Login',
-    relatedIncidentId: 'INC-047',
-    relatedIncidentName: 'Credential Compromise'
-  },
-  {
-    id: 'EVT-1028',
-    timestamp: '11:39:15',
-    type: 'Device',
-    source: '192.168.1.45',
-    user: 'john.doe',
-    resource: 'Auth Service',
-    severity: 'HIGH',
-    status: 'SUSPICIOUS',
-    description: 'New Device',
-    device: 'DEV-8821'
-  },
-  {
-    id: 'EVT-1029',
-    timestamp: '11:40:11',
-    type: 'Privilege',
-    source: '192.168.1.45',
-    user: 'john.doe',
-    resource: 'IAM Service',
-    severity: 'CRITICAL',
-    status: 'CORRELATED',
-    description: 'Privilege Escalation',
-    previousRole: 'User',
-    newRole: 'SuperAdmin',
-    relatedIncidentId: 'INC-047',
-    relatedIncidentName: 'Credential Compromise'
-  },
-  {
-    id: 'EVT-1030',
-    timestamp: '11:41:03',
-    type: 'Resource Access',
-    source: '192.168.1.45',
-    user: 'john.doe',
-    resource: 'Customer DB',
-    severity: 'CRITICAL',
-    status: 'CORRELATED',
-    description: 'Database Access',
-    relatedIncidentId: 'INC-047',
-    relatedIncidentName: 'Credential Compromise'
-  },
-  // Add some background noise
-  {
-    id: 'EVT-1031',
-    timestamp: '11:42:10',
-    type: 'Network',
-    source: '10.0.4.55',
-    user: 'system',
-    resource: 'Internal Gateway',
-    severity: 'INFO',
-    status: 'OBSERVED',
-    description: 'Routine Health Check'
-  },
-  {
-    id: 'EVT-1032',
-    timestamp: '11:43:05',
-    type: 'Authentication',
-    source: '10.0.5.12',
-    user: 'sarah.smith',
-    resource: 'Auth Service',
-    severity: 'LOW',
-    status: 'OBSERVED',
-    description: 'Successful Login'
-  }
-] as SecurityEvent[]).reverse(); // Most recent first for the table
-
 export const eventsService = {
   getEvents: async (): Promise<SecurityEvent[]> => {
-    return new Promise((resolve) => setTimeout(() => resolve(mockEvents), 600));
+    try {
+      const response = await incidentsService.getIncidents(50);
+      const incidents = response.incidents || [];
+      
+      return incidents.map((inc: any) => {
+        let contextData: any = {};
+        try {
+          if (inc.ContextData) {
+            contextData = typeof inc.ContextData === 'string' ? JSON.parse(inc.ContextData) : inc.ContextData;
+          }
+        } catch (e) {
+          console.warn('Failed to parse ContextData for incident', inc.id);
+        }
+        
+        let type: EventType = 'System';
+        if (contextData.event_type === 'brute_force') type = 'Authentication';
+        if (contextData.event_type === 'unauthorized_access') type = 'Authorization';
+        if (contextData.event_type === 'data_exfiltration') type = 'Resource Access';
+        
+        return {
+          id: inc.id || `EVT-${Math.floor(Math.random()*1000)}`,
+          timestamp: inc.detected ? new Date(inc.detected).toLocaleTimeString() : new Date().toLocaleTimeString(),
+          type: type,
+          source: contextData.source_ip || inc.source || 'Unknown',
+          user: contextData.user || inc.user || 'Unknown User',
+          resource: contextData.target || 'Unknown System',
+          severity: (inc.severity?.toUpperCase() as EventSeverity) || 'MEDIUM',
+          status: inc.status === 'NEW' ? 'SUSPICIOUS' : 'CORRELATED',
+          description: inc.Description || contextData.details || 'Detected Security Event',
+          relatedIncidentId: inc.id,
+          relatedIncidentName: inc.type
+        };
+      });
+    } catch (err) {
+      console.error('Failed to fetch real events:', err);
+      return [];
+    }
   },
   
   getEventById: async (id: string): Promise<SecurityEvent | undefined> => {
-    return new Promise((resolve) => {
-      setTimeout(() => {
-        resolve(mockEvents.find(e => e.id === id));
-      }, 300);
-    });
+    const events = await eventsService.getEvents();
+    return events.find(e => e.id === id);
   }
 };
+

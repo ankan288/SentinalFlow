@@ -1,4 +1,4 @@
-import React, { useState, useCallback } from 'react';
+import React, { useState, useCallback, useEffect } from 'react';
 import { 
   ReactFlow, 
   Controls, 
@@ -12,38 +12,73 @@ import '@xyflow/react/dist/style.css';
 import type { AttackNodeData } from './AttackNode';
 import { ReactFlowAttackNode } from './ReactFlowAttackNode';
 import { NodeDetails } from './NodeDetails';
+import { eventsService } from '../../services/eventsService';
 
 const nodeTypes = {
   attackNode: ReactFlowAttackNode,
 };
 
-const getDetectedDeviceName = (): string => {
-  if (typeof window !== 'undefined') {
-    const stored = localStorage.getItem('sentinelflow_detected_device');
-    if (stored && stored.trim()) return stored.trim();
-  }
-  return import.meta.env.VITE_DEMO_DEVICE_NAME || 'HP Pavilion Laptop 15-eg3xxx';
-};
-
-const initialNodes: Node[] = [
-  { id: 'n1', type: 'attackNode', position: { x: 50, y: 100 }, data: { id: 'n1', type: 'IP', name: '192.168.1.45', status: 'suspicious', eventCount: 27 } },
-  { id: 'n2', type: 'attackNode', position: { x: 250, y: 100 }, data: { id: 'n2', type: 'User', name: 'admin@acme.com', status: 'compromised', eventCount: 3 } },
-  { id: 'n3', type: 'attackNode', position: { x: 450, y: 100 }, data: { id: 'n3', type: 'Device', name: getDetectedDeviceName(), status: 'suspicious', eventCount: 1 } },
-  { id: 'n4', type: 'attackNode', position: { x: 650, y: 100 }, data: { id: 'n4', type: 'Privilege', name: 'SuperAdmin', status: 'compromised', eventCount: 1 } },
-  { id: 'n5', type: 'attackNode', position: { x: 850, y: 100 }, data: { id: 'n5', type: 'Resource', name: 'Customer DB', status: 'targeted', eventCount: 4 } },
-];
-
-const initialEdges: Edge[] = [
-  { id: 'e1-2', source: 'n1', target: 'n2', animated: true, style: { stroke: 'var(--color-high)' } },
-  { id: 'e2-3', source: 'n2', target: 'n3', animated: true, style: { stroke: 'var(--color-critical)' } },
-  { id: 'e3-4', source: 'n3', target: 'n4', animated: true, style: { stroke: 'var(--color-critical)' } },
-  { id: 'e4-5', source: 'n4', target: 'n5', animated: true, style: { stroke: 'var(--color-high)' } },
-];
-
 export const AttackGraphCanvas: React.FC = () => {
-  const [nodes, setNodes] = useState<Node[]>(initialNodes);
-  const [edges, setEdges] = useState<Edge[]>(initialEdges);
+  const [nodes, setNodes] = useState<Node[]>([]);
+  const [edges, setEdges] = useState<Edge[]>([]);
   const [selectedNode, setSelectedNode] = useState<AttackNodeData | null>(null);
+
+  useEffect(() => {
+    const loadGraph = async () => {
+      const events = await eventsService.getEvents();
+      
+      const newNodes: Node[] = [];
+      const newEdges: Edge[] = [];
+      const nodeMap = new Set<string>();
+      
+      let xOffset = 50;
+      let yOffset = 100;
+      
+      events.forEach((evt, idx) => {
+        // Create source node (IP) if doesn't exist
+        const sourceId = `ip-${evt.source}`;
+        if (!nodeMap.has(sourceId) && evt.source !== 'Unknown') {
+          nodeMap.add(sourceId);
+          newNodes.push({
+            id: sourceId,
+            type: 'attackNode',
+            position: { x: xOffset, y: yOffset + (idx * 50) % 200 },
+            data: { id: sourceId, type: 'IP', name: evt.source, status: 'suspicious', eventCount: 1 }
+          });
+          xOffset += 200;
+        }
+
+        // Create target node (Resource) if doesn't exist
+        const targetId = `res-${evt.resource}`;
+        if (!nodeMap.has(targetId) && evt.resource !== 'Unknown System') {
+          nodeMap.add(targetId);
+          newNodes.push({
+            id: targetId,
+            type: 'attackNode',
+            position: { x: xOffset, y: yOffset + (idx * 50) % 200 },
+            data: { id: targetId, type: 'Resource', name: evt.resource, status: evt.status === 'CORRELATED' ? 'compromised' : 'targeted', eventCount: 1 }
+          });
+        }
+        
+        // Add edge
+        if (evt.source !== 'Unknown' && evt.resource !== 'Unknown System') {
+          const edgeId = `e-${sourceId}-${targetId}-${idx}`;
+          newEdges.push({
+            id: edgeId,
+            source: sourceId,
+            target: targetId,
+            animated: true,
+            style: { stroke: evt.severity === 'CRITICAL' || evt.severity === 'HIGH' ? 'var(--color-critical)' : 'var(--color-warning)' }
+          });
+        }
+      });
+      
+      setNodes(newNodes);
+      setEdges(newEdges);
+    };
+    
+    loadGraph();
+  }, []);
 
   const onNodesChange = useCallback(
     (changes: NodeChange[]) => setNodes((nds) => applyNodeChanges(changes, nds)),
@@ -82,20 +117,26 @@ export const AttackGraphCanvas: React.FC = () => {
       </h3>
 
       <div style={{ flex: 1, borderRadius: '12px', overflow: 'hidden', border: '1px solid rgba(255, 255, 255, 0.05)' }}>
-        <ReactFlow
-          nodes={nodes}
-          edges={edges}
-          onNodesChange={onNodesChange}
-          onEdgesChange={onEdgesChange}
-          onNodeClick={onNodeClick}
-          onPaneClick={onPaneClick}
-          nodeTypes={nodeTypes}
-          fitView
-          colorMode="dark"
-        >
-          <Background color="#333" gap={16} />
-          <Controls />
-        </ReactFlow>
+        {nodes.length > 0 ? (
+          <ReactFlow
+            nodes={nodes}
+            edges={edges}
+            onNodesChange={onNodesChange}
+            onEdgesChange={onEdgesChange}
+            onNodeClick={onNodeClick}
+            onPaneClick={onPaneClick}
+            nodeTypes={nodeTypes}
+            fitView
+            colorMode="dark"
+          >
+            <Background color="#333" gap={16} />
+            <Controls />
+          </ReactFlow>
+        ) : (
+          <div style={{ padding: '2rem', textAlign: 'center', color: '#888' }}>
+            No attack paths detected in the current incident data.
+          </div>
+        )}
       </div>
 
       {selectedNode && (

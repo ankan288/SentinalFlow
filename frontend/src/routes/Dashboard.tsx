@@ -6,7 +6,7 @@ import { RecentEvents } from '../components/dashboard/RecentEvents';
 import { useDemo } from '../context/DemoContext';
 import { incidentsService } from '../services/incidentsService';
 import type { Incident } from '../services/incidentsService';
-import type { SecurityEvent } from '../services/eventsService';
+import { eventsService, type SecurityEvent } from '../services/eventsService';
 
 export const Dashboard: React.FC = () => {
   const { isDemoMode } = useDemo();
@@ -26,7 +26,8 @@ export const Dashboard: React.FC = () => {
         const res = await incidentsService.getIncidents(100);
         if (isMounted) {
           setIncidents(res.incidents);
-          setEvents([]); // Backend has no /events API yet, so we reflect reality
+          const realEvents = await eventsService.getEvents();
+          setEvents(realEvents);
           setError(false);
         }
       } catch (e) {
