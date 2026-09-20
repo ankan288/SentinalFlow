@@ -1,3 +1,5 @@
+import { fetchAuthSession } from 'aws-amplify/auth';
+
 export const API_BASE_URL = import.meta.env.VITE_API_URL || 'https://zxcqppde45.execute-api.us-east-1.amazonaws.com/Prod';
 
 export class ApiError extends Error {
@@ -10,15 +12,30 @@ export class ApiError extends Error {
   }
 }
 
+async function getAuthHeaders(): Promise<Record<string, string>> {
+  try {
+    const session = await fetchAuthSession();
+    const token = session.tokens?.idToken?.toString();
+    if (token) {
+      return { 'Authorization': `Bearer ${token}` };
+    }
+  } catch (error) {
+    console.warn('Failed to fetch auth session:', error);
+  }
+  return {};
+}
+
 export const apiClient = {
   async get<T>(endpoint: string): Promise<T> {
     const url = `${API_BASE_URL}${endpoint.startsWith('/') ? endpoint : `/${endpoint}`}`;
+    const authHeaders = await getAuthHeaders();
     
     try {
       const response = await fetch(url, {
         method: 'GET',
         headers: {
           'Content-Type': 'application/json',
+          ...authHeaders
         },
       });
 
@@ -35,12 +52,14 @@ export const apiClient = {
 
   async post<T, D = unknown>(endpoint: string, data?: D): Promise<T> {
     const url = `${API_BASE_URL}${endpoint.startsWith('/') ? endpoint : `/${endpoint}`}`;
+    const authHeaders = await getAuthHeaders();
     
     try {
       const response = await fetch(url, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
+          ...authHeaders
         },
         body: data ? JSON.stringify(data) : undefined,
       });
