@@ -37,7 +37,7 @@ export const Register: React.FC = () => {
     setLoading(true);
 
     try {
-      const response = await authService.register(email, password);
+      const response = await authService.register(email, password, name);
       if (response.isSignUpComplete) {
         await authService.login(email, password);
         navigate('/dashboard');

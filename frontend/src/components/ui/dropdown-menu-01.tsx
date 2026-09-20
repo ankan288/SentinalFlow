@@ -1,6 +1,6 @@
 "use client";
 
-import type { ReactElement } from "react";
+import { useState, useEffect, type ReactElement } from "react";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import {
   DropdownMenu,
@@ -21,11 +21,14 @@ import {
 import type { LucideIcon } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { authService } from "../../services/auth/authService";
+import { authService as userProfileService, type UserProfile } from "../../services/authService";
+import { getInitials } from "../../utils/avatarUtils";
 
 type Props = {
-  trigger: ReactElement;
+  trigger?: ReactElement;
   defaultOpen?: boolean;
   align?: "start" | "center" | "end";
+  profile?: UserProfile | null;
 };
 
 type MenuItem = {
@@ -55,7 +58,7 @@ const LOGOUT_ITEM: MenuItem = {
 const itemClass =
   "p-2 text-sm font-medium text-popover-foreground cursor-pointer gap-2";
 
-const Dropdown = ({ trigger, defaultOpen, align = "end" }: Props) => {
+const Dropdown = ({ trigger, defaultOpen, align = "end", profile }: Props) => {
   const navigate = useNavigate();
 
   const handleAction = async (action?: string) => {
@@ -68,11 +71,25 @@ const Dropdown = ({ trigger, defaultOpen, align = "end" }: Props) => {
     }
   };
 
+  const name = profile?.name || 'Security Analyst';
+  const email = profile?.email || 'analyst@sentinelflow.io';
+  const initials = getInitials(name);
+  const avatarUrl = profile?.avatar_url;
+
+  const defaultTrigger = (
+    <div className="rounded-full hover:ring-2 hover:ring-primary/20 transition-all p-1 -m-1">
+      <Avatar className="size-8 cursor-pointer">
+        {avatarUrl && <AvatarImage src={avatarUrl} alt={name} />}
+        <AvatarFallback>{initials}</AvatarFallback>
+      </Avatar>
+    </div>
+  );
+
   return (
     <div className="flex items-center justify-center p-0">
       <DropdownMenu defaultOpen={defaultOpen}>
         <DropdownMenuTrigger className="cursor-pointer" asChild>
-          {trigger}
+          {trigger || defaultTrigger}
         </DropdownMenuTrigger>
 
         <DropdownMenuContent
@@ -84,20 +101,18 @@ const Dropdown = ({ trigger, defaultOpen, align = "end" }: Props) => {
             <DropdownMenuLabel className="flex items-center gap-3 px-4 py-3">
               <div className="relative">
                 <Avatar className="size-10">
-                  <AvatarImage
-                    alt="Jane Doe"
-                  />
-                  <AvatarFallback>JD</AvatarFallback>
+                  {avatarUrl && <AvatarImage src={avatarUrl} alt={name} />}
+                  <AvatarFallback>{initials}</AvatarFallback>
                 </Avatar>
                 <span className="absolute right-0 bottom-0 size-2 rounded-full bg-green-600 ring-2 ring-background" />
               </div>
 
-              <div className="flex flex-col">
-                <span className="text-popover-foreground text-sm font-medium">
-                  Jane Doe
+              <div className="flex flex-col min-w-0">
+                <span className="text-popover-foreground text-sm font-medium truncate">
+                  {name}
                 </span>
-                <span className="text-muted-foreground text-xs">
-                  analyst@acme.corp
+                <span className="text-muted-foreground text-xs truncate">
+                  {email}
                 </span>
               </div>
             </DropdownMenuLabel>
@@ -142,20 +157,38 @@ const Dropdown = ({ trigger, defaultOpen, align = "end" }: Props) => {
 };
 
 const DropdownMenu01 = ({ defaultOpen }: { defaultOpen?: boolean }) => {
+  const [profile, setProfile] = useState<UserProfile | null>(null);
+
+  useEffect(() => {
+    let isMounted = true;
+    const fetchProfile = async () => {
+      const p = await userProfileService.getProfile();
+      if (isMounted) setProfile(p);
+    };
+
+    fetchProfile();
+
+    const handleProfileUpdate = (e: Event) => {
+      const customEvent = e as CustomEvent<UserProfile>;
+      if (customEvent.detail && isMounted) {
+        setProfile(customEvent.detail);
+      } else if (isMounted) {
+        fetchProfile();
+      }
+    };
+
+    window.addEventListener('sentinelflow_profile_updated', handleProfileUpdate);
+    return () => {
+      isMounted = false;
+      window.removeEventListener('sentinelflow_profile_updated', handleProfileUpdate);
+    };
+  }, []);
+
   return (
     <Dropdown
       align="end"
       defaultOpen={defaultOpen}
-      trigger={
-        <div className="rounded-full hover:ring-2 hover:ring-primary/20 transition-all p-1 -m-1">
-          <Avatar className="size-8 cursor-pointer">
-            <AvatarImage
-              alt="Jane Doe"
-            />
-            <AvatarFallback>JD</AvatarFallback>
-          </Avatar>
-        </div>
-      }
+      profile={profile}
     />
   );
 };
