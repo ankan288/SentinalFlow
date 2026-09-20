@@ -147,6 +147,25 @@ Resources:
             Action: "es:*"
             Resource: !Sub "arn:aws:es:${AWS::Region}:${AWS::AccountId}:domain/sentinelflow-events/*"
 
+  # --- Auth Lambdas ---
+  PostConfirmationFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: .
+      Handler: functions.auth.post_confirmation.lambda_handler
+      Policies:
+        - Statement:
+            - Effect: Allow
+              Action:
+                - cognito-idp:AdminAddUserToGroup
+              Resource: !GetAtt SentinelFlowUserPool.Arn
+      Events:
+        PostConfirmationEvent:
+          Type: Cognito
+          Properties:
+            UserPool: !Ref SentinelFlowUserPool
+            Trigger: PostConfirmation
+
   # --- API Lambdas ---
   GetIncidentsFunction:
     Type: AWS::Serverless::Function
