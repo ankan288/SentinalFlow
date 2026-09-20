@@ -17,10 +17,18 @@ const nodeTypes = {
   attackNode: ReactFlowAttackNode,
 };
 
+const getDetectedDeviceName = (): string => {
+  if (typeof window !== 'undefined') {
+    const stored = localStorage.getItem('sentinelflow_detected_device');
+    if (stored && stored.trim()) return stored.trim();
+  }
+  return import.meta.env.VITE_DEMO_DEVICE_NAME || 'HP Pavilion Laptop 15-eg3xxx';
+};
+
 const initialNodes: Node[] = [
   { id: 'n1', type: 'attackNode', position: { x: 50, y: 100 }, data: { id: 'n1', type: 'IP', name: '192.168.1.45', status: 'suspicious', eventCount: 27 } },
   { id: 'n2', type: 'attackNode', position: { x: 250, y: 100 }, data: { id: 'n2', type: 'User', name: 'admin@acme.com', status: 'compromised', eventCount: 3 } },
-  { id: 'n3', type: 'attackNode', position: { x: 450, y: 100 }, data: { id: 'n3', type: 'Device', name: 'MacBook Pro', status: 'suspicious', eventCount: 1 } },
+  { id: 'n3', type: 'attackNode', position: { x: 450, y: 100 }, data: { id: 'n3', type: 'Device', name: getDetectedDeviceName(), status: 'suspicious', eventCount: 1 } },
   { id: 'n4', type: 'attackNode', position: { x: 650, y: 100 }, data: { id: 'n4', type: 'Privilege', name: 'SuperAdmin', status: 'compromised', eventCount: 1 } },
   { id: 'n5', type: 'attackNode', position: { x: 850, y: 100 }, data: { id: 'n5', type: 'Resource', name: 'Customer DB', status: 'targeted', eventCount: 4 } },
 ];

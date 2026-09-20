@@ -19,6 +19,8 @@ sys.path.insert(0, os.path.join(REPO_ROOT, "contracts", "authorization"))
 sys.path.insert(0, os.path.join(REPO_ROOT, "ai-agent", "src"))
 sys.path.insert(0, os.path.join(REPO_ROOT, "detection", "src"))
 
+sys.path.insert(0, REPO_ROOT)
+from demo.device_info import get_device_model_name
 from pipeline import SentinelFlowPipeline
 from authorizer import authorize
 from audit_store import default_audit_store
@@ -39,17 +41,26 @@ def run_canonical_demo():
     print("Monitored Org: Northgate Institute of Technology (Synthetic Demo Environment)")
     print("Pipeline Mode: Deterministic Detection (TB-3) + Cedar Authorization (TB-5)")
 
+    # Detect real machine model
+    detected_device = get_device_model_name()
+
     # 1. Load Demo Dataset
     demo_path = os.path.join(REPO_ROOT, "shared", "demo", "sentinelflow-demo.json")
     with open(demo_path, "r", encoding="utf-8") as f:
         demo_data = json.load(f)
 
+    # Dynamic replacement of hardcoded placeholder device with real host machine name
+    demo_data["entities"]["compromised_device_id"] = detected_device
     events = demo_data["events"]
+    for ev in events:
+        if ev.get("device_id") and ev["device_id"] == "dev-unknown-902":
+            ev["device_id"] = detected_device
+
     print(f"\n[1] LOADED DATASET: {demo_data['title']}")
     print(f"    Total Synthetic Events: {len(events)}")
     print(f"    Target Account: {demo_data['entities']['target_user_id']}")
     print(f"    Attacker IP: {demo_data['entities']['attacker_source_ip']}")
-    print(f"    Compromised Device: {demo_data['entities']['compromised_device_id']}")
+    print(f"    Compromised Device (Detected Host): {demo_data['entities']['compromised_device_id']}")
     print(f"    Target Database: {demo_data['entities']['sensitive_resource']}")
 
     # 2. Run Pipeline

@@ -20,11 +20,14 @@ sys.path.insert(0, os.path.join(REPO_ROOT, "contracts", "authorization"))
 sys.path.insert(0, os.path.join(REPO_ROOT, "ai-agent", "src"))
 sys.path.insert(0, os.path.join(REPO_ROOT, "detection", "src"))
 
+sys.path.insert(0, REPO_ROOT)
+from shared.device_info import get_device_model_name
 from pipeline import SentinelFlowPipeline
 from detector import run_all_rules
 
 
 def generate_external_attack_sequence() -> list[dict]:
+    detected_device = get_device_model_name()
     base_time = datetime(2026, 3, 19, 14, 0, 0, tzinfo=timezone.utc)
     events = []
 
@@ -68,7 +71,7 @@ def generate_external_attack_sequence() -> list[dict]:
         "source_ip": "203.0.113.99",
         "user_id": "test-user-9001",
         "attempted_username": "test-user-9001",
-        "device_id": "test-device-9001",
+        "device_id": detected_device,
         "resource": None,
         "severity": "medium",
         "metadata": {"user_agent": "SyntheticTestBrowser/1.0"}
@@ -83,7 +86,7 @@ def generate_external_attack_sequence() -> list[dict]:
         "source_ip": "203.0.113.99",
         "user_id": "test-user-9001",
         "attempted_username": "test-user-9001",
-        "device_id": "test-device-9001",
+        "device_id": detected_device,
         "resource": None,
         "severity": "high",
         "metadata": {"role_before": "regular_user", "role_after": "system_admin"}
@@ -98,7 +101,7 @@ def generate_external_attack_sequence() -> list[dict]:
         "source_ip": "203.0.113.99",
         "user_id": "test-user-9001",
         "attempted_username": "test-user-9001",
-        "device_id": "test-device-9001",
+        "device_id": detected_device,
         "resource": "srv-grades-db",
         "severity": "high",
         "metadata": {"access_type": "read_records"}
