@@ -16,13 +16,4 @@ export default defineConfig({
     environment: 'jsdom',
     setupFiles: './src/test/setup.ts',
   },
-  server: {
-    proxy: {
-      '/api': {
-        target: 'https://zxcqppde45.execute-api.us-east-1.amazonaws.com/Prod',
-        changeOrigin: true,
-        rewrite: (path) => path.replace(/^\/api/, ''),
-      },
-    },
-  },
 })
